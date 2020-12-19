@@ -1,45 +1,28 @@
 <template>
-  <footer class="page-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col s6 m3">
-          <img
-            class="materialize-logo"
-            src="https://cdn.shopify.com/s/files/1/1775/8583/t/1/assets/materialize-logo.png?v=17909639059119771368"
-            alt="Materialize"
-          />
-          <p>Made with love by Materialize.</p>
-        </div>
-        <div class="col s6 m3">
-          <h5>About</h5>
-          <ul>
-            <li><a href="#!">Blog</a></li>
-            <li><a href="#!">Pricing</a></li>
-            <li><a href="#!">Docs</a></li>
-          </ul>
-        </div>
-        <div class="col s6 m3">
-          <h5>Connect</h5>
-          <ul>
-            <li><a href="#!">Community</a></li>
-            <li><a href="#!">Subscribe</a></li>
-            <li><a href="#!">Email</a></li>
-          </ul>
-        </div>
-        <div class="col s6 m3">
-          <h5>Contact</h5>
-          <ul>
-            <li><a href="#!">Twitter</a></li>
-            <li><a href="#!">Facebook</a></li>
-            <li><a href="#!">Github</a></li>
-          </ul>
-        </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <nav class="float-left">
+        <ul>
+          <li>
+            <a href="https://www.creative-tim.com"> Creative Tim </a>
+          </li>
+          <li>
+            <a href="https://creative-tim.com/presentation"> About Us </a>
+          </li>
+          <li>
+            <a href="http://blog.creative-tim.com"> Blog </a>
+          </li>
+          <li>
+            <a href="https://www.creative-tim.com/license"> Licenses </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="copyright float-right">
+        &copy;
+        , made with <i class="material-icons">favorite</i> by
+        <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>
+        for a better web.
       </div>
     </div>
   </footer>
 </template>
-<script>
-export default {
-  name: 'AppFooter',
-}
-</script>

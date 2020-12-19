@@ -11,7 +11,7 @@
                 </div>
             </nav>
         </div>
-        <ul id="sidenav-left" class="sidenav sidenav-fixed">
+        <ul id="sidenav-left" class="sidenav">
             <li><a href="/pages/admin-dashboard" class="logo-container">Admin<i class="material-icons left">spa</i></a></li>
             <li class="no-padding">
                 <ul class="collapsible collapsible-accordion">
@@ -64,7 +64,7 @@
                     <li class="bold waves-effect"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
                         <div class="collapsible-body">
                             <ul>
-                                <li><a href="/pages/admin-log-in" class="waves-effect">Log In<i class="material-icons">person</i></a></li>
+                                <li><a href="#" data-target="sidenav-left" class="sidenav-trigger"><i class="material-icons">menu</i></a></li>
                                 <li><a href="/pages/admin-settings" class="waves-effect">Settings<i class="material-icons">settings</i></a></li>
                             </ul>
                         </div>

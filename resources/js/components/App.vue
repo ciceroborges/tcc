@@ -1,30 +1,36 @@
 <template>
   <!-- div pai -->
   <div>
-    <!-- header do sistema -->
-    <app-header v-show="header" />
-     <!-- componente principal -->
-    <app-main />
-    <!-- footer do sistema -->
-    <app-footer v-show="footer"/>
+    <!-- sidebar do sistema -->
+    <app-sidebar />
+    <div class="main-panel">
+      <!-- navbar do sistema -->
+      <app-navbar  />
+      <!-- componente principal -->
+      <app-content />
+      <!-- footer do sistema -->
+      <app-footer />
+    </div>
   </div>
 </template>
 <script>
 // componentes importados
-import AppHeader from "./static/AppHeader";
-import AppMain from "./static/AppMain";
+import AppSidebar from "./static/AppSidebar";
+import AppNavbar from "./static/AppNavbar";
+import AppContent from "./static/AppContent";
 import AppFooter from "./static/AppFooter";
 
 export default {
   name: "App",
   components: {
-    AppHeader,
-    AppMain,
+    AppSidebar,
+    AppNavbar,
+    AppContent,
     AppFooter,
   },
   data() {
     return {
-      routes: ["login", "register"],
+      routes: [],
       header: true,
       footer: true,
     };
