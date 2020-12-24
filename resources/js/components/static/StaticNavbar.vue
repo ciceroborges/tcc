@@ -89,7 +89,7 @@
               <a class="dropdown-item" href="#">Profile</a>
               <a class="dropdown-item" href="#">Settings</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Log out</a>
+              <a class="dropdown-item" href="#" @click.prevent="logout">Log out</a>
             </div>
           </li>
         </ul>
@@ -98,3 +98,14 @@
   </nav>
   <!-- End Navbar -->
 </template>
+<script>
+export default {
+  methods: {
+    logout(){
+      //falta chamar o axios
+      localStorage.clear();
+      this.$router.push('/login');
+    }
+  }
+}
+</script>

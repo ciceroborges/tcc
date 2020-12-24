@@ -5,28 +5,39 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 //---------------components-----------------//
 import App from './components/App'
+import Home from './components/Home'
 /*
 componentes de autenticação
 */
-import AppLogin from './components/auth/AppLogin'
-import AppRegister from './components/auth/AppRegister'
+import Login from './components/auth/Login'
+import Register from './components/auth/Register'
 //-----------------routes-------------------//
 Vue.use(VueRouter)
 const router = new VueRouter({
     mode: 'history',
     routes: [
+        {
+            path: '/',
+            name: 'home',
+            component: Home,
+        },
+        {
+            path: '/home',
+            name: 'home',
+            component: Home,
+        },
         /*
         componentes de autenticação
         */
         {
             path: '/login',
             name: 'login',
-            component: AppLogin,
+            component: Login,
         },
         {
             path: '/register',
             name: 'register',
-            component: AppRegister,
+            component: Register,
         },
     ],
 });
@@ -36,18 +47,18 @@ const app = new Vue({
     components: { App },
     router,
     beforeCreate: function () {
-        let activeUser = sessionStorage.getItem("user");
+        let activeUser = localStorage.getItem("user");
         if (activeUser) {
-            Vue.prototype.$user = JSON.parse(activeUser);
+            //Vue.prototype.$user = JSON.parse(activeUser);
         } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                 this.$router.push('/login');
         }
     },
     watch: {
         $route: function (to, from) {
-            let activeUser = sessionStorage.getItem("user");
+            let activeUser = localStorage.getItem("user");
             if (activeUser) {
-                Vue.prototype.$user = JSON.parse(activeUser);
+                //Vue.prototype.$user = JSON.parse(activeUser);
             } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                     this.$router.push('/login');
             }

@@ -2,20 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
+use App\Models\User;
 class UserController extends Controller
 {
     public function login(Request $request)
-    {
-        return $request->All();
+    {   
+        $validation = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:25',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if ($validation->fails()) {
+            return response($validation->errors(), 400);
+        }
+
+        $user = User::where('email', ($request->email))->first();
+        
+        if($user) {
+            if(Hash::check($request->password, $user->password)) {
+                Auth::login($user);
+                return response()->json([
+                    'status' => 'Success!',
+                    'user' => [
+                        'id' => Crypt::encryptString($user->id),
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'Invalid password!'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 'User not found!'
+            ]);
+        }
     }
+
     public function register(Request $request)
     {
-        if (User::find(trim(strip_tags($request->email)))) {
-            return 'O usuário já existe';
+        $validation = Validator::make($request->all(), [
+            'account' => 'required|string|email|max:25',
+            'password' => 'required|string|min:6',
+            'confirm_password' => 'required|string|min:6',
+        ]);
+
+        if ($validation->fails()) {
+            return response($validation->errors(), 400);
+        }
+        
+        $user = User::where('email', ($request->account))->first();
+        
+        if ($user) {
+            return response()->json([
+                'status' => 'User already exists!'
+            ]);
         } else {
             if ($request->password === $request->confirm_password) {
                 $result = User::create([
@@ -25,14 +74,33 @@ class UserController extends Controller
                 ]);
                 
                 if($result) {
-                    return 'Usuário cadastrado com sucesso';
+                    return response()->json([
+                        'status' => 'Success!'
+                    ]);
                 } else {
-                    return 'Ocorreu algum problema ao cadastrar, tente novamente!';
+                    return response()->json([
+                        'status' => 'Failure!'
+                    ]);
                 }
 
             } else {
-                return 'As senhas não são iguais';
+                return response()->json([
+                    'status' => 'The passwords do not match!'
+                ]);
             }
+        }
+    }
+
+    public function logout()
+    {   
+        if(Auth::logout()) {
+            return response()->json([
+                'status' => 'Success!'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'Failure!'
+            ]);
         }
     }
 }
