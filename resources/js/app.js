@@ -17,12 +17,8 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/',
-            name: 'home',
-            component: Home,
-        },
-        {
             path: '/home',
+            alias: '/',
             name: 'home',
             component: Home,
         },
@@ -49,7 +45,7 @@ const app = new Vue({
     beforeCreate: function () {
         let activeUser = localStorage.getItem("user");
         if (activeUser) {
-            //Vue.prototype.$user = JSON.parse(activeUser);
+            Vue.prototype.$user = JSON.parse(activeUser);
         } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                 this.$router.push('/login');
         }
@@ -58,7 +54,7 @@ const app = new Vue({
         $route: function (to, from) {
             let activeUser = localStorage.getItem("user");
             if (activeUser) {
-                //Vue.prototype.$user = JSON.parse(activeUser);
+                Vue.prototype.$user = JSON.parse(activeUser);
             } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                     this.$router.push('/login');
             }

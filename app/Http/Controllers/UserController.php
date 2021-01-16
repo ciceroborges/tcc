@@ -15,7 +15,7 @@ class UserController extends Controller
     {   
         $validation = Validator::make($request->all(), [
             'email' => 'required|string|email|max:25',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:5',
         ]);
 
         if ($validation->fails()) {
@@ -50,16 +50,16 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'account' => 'required|string|email|max:25',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|string|min:6',
+            'email' => 'required|string|email|max:25',
+            'password' => 'required|string|min:5',
+            'confirm_password' => 'required|string|min:5',
         ]);
 
         if ($validation->fails()) {
             return response($validation->errors(), 400);
         }
         
-        $user = User::where('email', ($request->account))->first();
+        $user = User::where('email', ($request->email))->first();
         
         if ($user) {
             return response()->json([

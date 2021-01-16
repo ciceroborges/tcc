@@ -1927,6 +1927,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 // componentes importados
 
 
@@ -2062,7 +2063,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      account: "",
+      user: "",
+      email: "",
       password: ""
     };
   },
@@ -2070,17 +2072,16 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var _this = this;
 
-      if (this.account && this.password) {
+      if (this.email && this.password) {
         this.$axios.post(this.$urlAPI + "user/login", {
-          account: this.account,
+          email: this.email,
           password: this.password
         }).then(function (response) {
           if (response.data.status === 'Success!') {
             localStorage.setItem('user', JSON.stringify(response.data.user));
+            _this.user = JSON.parse(localStorage.getItem("user"));
 
             _this.$router.push('/home');
-
-            console.log($user);
           }
         })["catch"](function (e) {
           console.log(e);
@@ -2315,6 +2316,121 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   methods: {
+    logout: function logout() {
+      //falta chamar o axios
+      localStorage.clear();
+      this.$router.push('/login');
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      active_module: "dashboard",
+      modules: {
+        dashboard: {
+          name: "dashboard",
+          title: "Início",
+          route: "home",
+          icon: "dashboard",
+          active: true
+        },
+        appointments: {
+          name: "appointments",
+          title: "Atendimentos",
+          route: "appointments",
+          icon: "assignment",
+          active: false
+        },
+        calendar: {
+          name: "calendar",
+          title: "Calendário",
+          route: "calendar",
+          icon: "date_range",
+          active: false
+        },
+        departments: {
+          name: "departments",
+          title: "Departamentos",
+          route: "departments",
+          icon: "workspaces",
+          active: false
+        },
+        patients: {
+          name: "patients",
+          title: "Pacientes",
+          route: "patients",
+          icon: "accessible",
+          active: false
+        },
+        users: {
+          name: "users",
+          title: "Usuários",
+          route: "users",
+          icon: "groups",
+          active: false
+        }
+      }
+    };
+  },
+  methods: {
+    setActiveModule: function setActiveModule(name) {
+      if (this.active_module !== name) {
+        this.modules[this.active_module].active = false;
+        this.active_module = name;
+        this.modules[name].active = true;
+      }
+    },
     logout: function logout() {
       localStorage.clear();
       this.$router.push('/login');
@@ -2878,7 +2994,7 @@ var staticRenderFns = [
                 ]),
                 _vm._v(" "),
                 _c("h3", { staticClass: "card-title" }, [
-                  _vm._v("49/50\n                "),
+                  _vm._v("\n            49/50\n            "),
                   _c("small", [_vm._v("GB")])
                 ])
               ]
@@ -2921,7 +3037,7 @@ var staticRenderFns = [
                 _c("i", { staticClass: "material-icons" }, [
                   _vm._v("date_range")
                 ]),
-                _vm._v(" Last 24 Hours\n              ")
+                _vm._v(" Last 24 Hours\n          ")
               ])
             ])
           ])
@@ -2954,7 +3070,7 @@ var staticRenderFns = [
                 _c("i", { staticClass: "material-icons" }, [
                   _vm._v("local_offer")
                 ]),
-                _vm._v(" Tracked from Github\n              ")
+                _vm._v(" Tracked from Github\n          ")
               ])
             ])
           ])
@@ -2981,7 +3097,7 @@ var staticRenderFns = [
             _c("div", { staticClass: "card-footer" }, [
               _c("div", { staticClass: "stats" }, [
                 _c("i", { staticClass: "material-icons" }, [_vm._v("update")]),
-                _vm._v(" Just Updated\n              ")
+                _vm._v(" Just Updated\n          ")
               ])
             ])
           ])
@@ -3004,9 +3120,9 @@ var staticRenderFns = [
               _c("p", { staticClass: "card-category" }, [
                 _c("span", { staticClass: "text-success" }, [
                   _c("i", { staticClass: "fa fa-long-arrow-up" }),
-                  _vm._v(" 55% ")
+                  _vm._v(" 55%\n            ")
                 ]),
-                _vm._v(" increase in today sales.")
+                _vm._v("\n            increase in today sales.\n          ")
               ])
             ]),
             _vm._v(" "),
@@ -3015,7 +3131,7 @@ var staticRenderFns = [
                 _c("i", { staticClass: "material-icons" }, [
                   _vm._v("access_time")
                 ]),
-                _vm._v(" updated 4 minutes ago\n              ")
+                _vm._v(" updated 4 minutes ago\n          ")
               ])
             ])
           ])
@@ -3045,7 +3161,7 @@ var staticRenderFns = [
                 _c("i", { staticClass: "material-icons" }, [
                   _vm._v("access_time")
                 ]),
-                _vm._v(" campaign sent 2 days ago\n              ")
+                _vm._v(" campaign sent 2 days ago\n          ")
               ])
             ])
           ])
@@ -3075,744 +3191,7 @@ var staticRenderFns = [
                 _c("i", { staticClass: "material-icons" }, [
                   _vm._v("access_time")
                 ]),
-                _vm._v(" campaign sent 2 days ago\n              ")
-              ])
-            ])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-lg-6 col-md-12" }, [
-          _c("div", { staticClass: "card" }, [
-            _c(
-              "div",
-              {
-                staticClass: "card-header card-header-tabs card-header-primary"
-              },
-              [
-                _c("div", { staticClass: "nav-tabs-navigation" }, [
-                  _c("div", { staticClass: "nav-tabs-wrapper" }, [
-                    _c("span", { staticClass: "nav-tabs-title" }, [
-                      _vm._v("Tasks:")
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "ul",
-                      {
-                        staticClass: "nav nav-tabs",
-                        attrs: { "data-tabs": "tabs" }
-                      },
-                      [
-                        _c("li", { staticClass: "nav-item" }, [
-                          _c(
-                            "a",
-                            {
-                              staticClass: "nav-link active",
-                              attrs: { href: "#profile", "data-toggle": "tab" }
-                            },
-                            [
-                              _c("i", { staticClass: "material-icons" }, [
-                                _vm._v("bug_report")
-                              ]),
-                              _vm._v(" Bugs\n                        "),
-                              _c("div", { staticClass: "ripple-container" })
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("li", { staticClass: "nav-item" }, [
-                          _c(
-                            "a",
-                            {
-                              staticClass: "nav-link",
-                              attrs: { href: "#messages", "data-toggle": "tab" }
-                            },
-                            [
-                              _c("i", { staticClass: "material-icons" }, [
-                                _vm._v("code")
-                              ]),
-                              _vm._v(" Website\n                        "),
-                              _c("div", { staticClass: "ripple-container" })
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("li", { staticClass: "nav-item" }, [
-                          _c(
-                            "a",
-                            {
-                              staticClass: "nav-link",
-                              attrs: { href: "#settings", "data-toggle": "tab" }
-                            },
-                            [
-                              _c("i", { staticClass: "material-icons" }, [
-                                _vm._v("cloud")
-                              ]),
-                              _vm._v(" Server\n                        "),
-                              _c("div", { staticClass: "ripple-container" })
-                            ]
-                          )
-                        ])
-                      ]
-                    )
-                  ])
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "tab-content" }, [
-                _c(
-                  "div",
-                  { staticClass: "tab-pane active", attrs: { id: "profile" } },
-                  [
-                    _c("table", { staticClass: "table" }, [
-                      _c("tbody", [
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: {
-                                    type: "checkbox",
-                                    value: "",
-                                    checked: ""
-                                  }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              'Sign contract for "What are conference organizers afraid of?"'
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: { type: "checkbox", value: "" }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Lines From Great Russian Literature? Or E-mails From My Boss?"
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: { type: "checkbox", value: "" }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit\n                        "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: {
-                                    type: "checkbox",
-                                    value: "",
-                                    checked: ""
-                                  }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Create 4 Invisible User Experiences you Never Knew About"
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ])
-                      ])
-                    ])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "tab-pane", attrs: { id: "messages" } },
-                  [
-                    _c("table", { staticClass: "table" }, [
-                      _c("tbody", [
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: {
-                                    type: "checkbox",
-                                    value: "",
-                                    checked: ""
-                                  }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit\n                        "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: { type: "checkbox", value: "" }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              'Sign contract for "What are conference organizers afraid of?"'
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ])
-                      ])
-                    ])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "tab-pane", attrs: { id: "settings" } },
-                  [
-                    _c("table", { staticClass: "table" }, [
-                      _c("tbody", [
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: { type: "checkbox", value: "" }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Lines From Great Russian Literature? Or E-mails From My Boss?"
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: {
-                                    type: "checkbox",
-                                    value: "",
-                                    checked: ""
-                                  }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit\n                        "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c("td", [
-                            _c("div", { staticClass: "form-check" }, [
-                              _c("label", { staticClass: "form-check-label" }, [
-                                _c("input", {
-                                  staticClass: "form-check-input",
-                                  attrs: {
-                                    type: "checkbox",
-                                    value: "",
-                                    checked: ""
-                                  }
-                                }),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "form-check-sign" }, [
-                                  _c("span", { staticClass: "check" })
-                                ])
-                              ])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              'Sign contract for "What are conference organizers afraid of?"'
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "td-actions text-right" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-primary btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Edit Task"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("edit")
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-danger btn-link btn-sm",
-                                attrs: {
-                                  type: "button",
-                                  rel: "tooltip",
-                                  title: "Remove"
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "material-icons" }, [
-                                  _vm._v("close")
-                                ])
-                              ]
-                            )
-                          ])
-                        ])
-                      ])
-                    ])
-                  ]
-                )
-              ])
-            ])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-lg-6 col-md-12" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header card-header-warning" }, [
-              _c("h4", { staticClass: "card-title" }, [
-                _vm._v("Employees Stats")
-              ]),
-              _vm._v(" "),
-              _c("p", { staticClass: "card-category" }, [
-                _vm._v("New employees on 15th September, 2016")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body table-responsive" }, [
-              _c("table", { staticClass: "table table-hover" }, [
-                _c("thead", { staticClass: "text-warning" }, [
-                  _c("th", [_vm._v("ID")]),
-                  _vm._v(" "),
-                  _c("th", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("th", [_vm._v("Salary")]),
-                  _vm._v(" "),
-                  _c("th", [_vm._v("Country")])
-                ]),
-                _vm._v(" "),
-                _c("tbody", [
-                  _c("tr", [
-                    _c("td", [_vm._v("1")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Dakota Rice")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("$36,738")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Niger")])
-                  ]),
-                  _vm._v(" "),
-                  _c("tr", [
-                    _c("td", [_vm._v("2")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Minerva Hooper")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("$23,789")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Curaçao")])
-                  ]),
-                  _vm._v(" "),
-                  _c("tr", [
-                    _c("td", [_vm._v("3")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Sage Rodriguez")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("$56,142")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Netherlands")])
-                  ]),
-                  _vm._v(" "),
-                  _c("tr", [
-                    _c("td", [_vm._v("4")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Philip Chaney")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("$38,735")]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("Korea, South")])
-                  ])
-                ])
+                _vm._v(" campaign sent 2 days ago\n          ")
               ])
             ])
           ])
@@ -3872,20 +3251,20 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model.trim",
-                            value: _vm.account,
-                            expression: "account",
+                            value: _vm.email,
+                            expression: "email",
                             modifiers: { trim: true }
                           }
                         ],
                         staticClass: "form-control",
                         attrs: { type: "text", required: "" },
-                        domProps: { value: _vm.account },
+                        domProps: { value: _vm.email },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.account = $event.target.value.trim()
+                            _vm.email = $event.target.value.trim()
                           },
                           blur: function($event) {
                             return _vm.$forceUpdate()
@@ -4547,173 +3926,91 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "sidebar",
-        attrs: { "data-color": "azure", "data-background-color": "black" }
-      },
-      [
-        _c("div", { staticClass: "logo" }, [
+  return _c(
+    "div",
+    {
+      staticClass: "sidebar",
+      attrs: { "data-color": "azure", "data-background-color": "black" }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "logo" },
+        [
           _c(
-            "a",
-            {
-              staticClass: "simple-text logo-normal",
-              attrs: { href: "http://www.creative-tim.com" }
-            },
-            [_vm._v("\n      Creative Tim\n    ")]
+            "router-link",
+            { staticClass: "simple-text logo-normal", attrs: { to: "/" } },
+            [_vm._v("\n      GESTÃO POLICLÍNICA\n    ")]
           )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "sidebar-wrapper" }, [
-          _c("ul", { staticClass: "nav" }, [
-            _c("li", { staticClass: "nav-item active" }, [
-              _c(
-                "a",
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "sidebar-wrapper" }, [
+        _c(
+          "ul",
+          { staticClass: "nav" },
+          [
+            _vm._l(_vm.modules, function(item, index) {
+              return _c(
+                "li",
                 {
-                  staticClass: "nav-link",
-                  attrs: { href: "./dashboard.html" }
+                  key: index,
+                  staticClass: "nav-item",
+                  class: { active: item.active },
+                  on: {
+                    click: function($event) {
+                      return _vm.setActiveModule(item.name)
+                    }
+                  }
                 },
                 [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("dashboard")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Dashboard")])
-                ]
+                  _c(
+                    "router-link",
+                    { staticClass: "nav-link", attrs: { to: item.route } },
+                    [
+                      _c("i", { staticClass: "material-icons" }, [
+                        _vm._v(_vm._s(item.icon))
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [_vm._v(_vm._s(item.title))])
+                    ]
+                  )
+                ],
+                1
               )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                { staticClass: "nav-link", attrs: { href: "./user.html" } },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("person")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("User Profile")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                { staticClass: "nav-link", attrs: { href: "./tables.html" } },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("content_paste")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Table List")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "nav-link",
-                  attrs: { href: "./typography.html" }
-                },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("library_books")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Typography")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                { staticClass: "nav-link", attrs: { href: "./icons.html" } },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("bubble_chart")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Icons")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                { staticClass: "nav-link", attrs: { href: "./map.html" } },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("location_ons")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Maps")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "nav-link",
-                  attrs: { href: "./notifications.html" }
-                },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("notifications")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("Notifications")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                { staticClass: "nav-link", attrs: { href: "./rtl.html" } },
-                [
-                  _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("language")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", [_vm._v("RTL Support")])
-                ]
-              )
-            ]),
+            }),
             _vm._v(" "),
             _c("li", { staticClass: "nav-item active-pro" }, [
               _c(
                 "a",
-                { staticClass: "nav-link", attrs: { href: "./upgrade.html" } },
+                {
+                  staticClass: "nav-link",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.logout()
+                    }
+                  }
+                },
                 [
                   _c("i", { staticClass: "material-icons" }, [
-                    _vm._v("unarchive")
+                    _vm._v("exit_to_app")
                   ]),
                   _vm._v(" "),
-                  _c("p", [_vm._v("Upgrade to PRO")])
+                  _c("p", [_vm._v("SAIR")])
                 ]
               )
             ])
-          ])
-        ])
-      ]
-    )
-  }
-]
+          ],
+          2
+        )
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -19965,11 +19262,8 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
   mode: 'history',
   routes: [{
-    path: '/',
-    name: 'home',
-    component: _components_Home__WEBPACK_IMPORTED_MODULE_4__["default"]
-  }, {
     path: '/home',
+    alias: '/',
     name: 'home',
     component: _components_Home__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
@@ -19996,7 +19290,8 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_1___default.a({
   beforeCreate: function beforeCreate() {
     var activeUser = localStorage.getItem("user");
 
-    if (activeUser) {//Vue.prototype.$user = JSON.parse(activeUser);
+    if (activeUser) {
+      vue__WEBPACK_IMPORTED_MODULE_1___default.a.prototype.$user = JSON.parse(activeUser);
     } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
       this.$router.push('/login');
     }
@@ -20005,7 +19300,8 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_1___default.a({
     $route: function $route(to, from) {
       var activeUser = localStorage.getItem("user");
 
-      if (activeUser) {//Vue.prototype.$user = JSON.parse(activeUser);
+      if (activeUser) {
+        vue__WEBPACK_IMPORTED_MODULE_1___default.a.prototype.$user = JSON.parse(activeUser);
       } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
         this.$router.push('/login');
       }
@@ -20464,15 +19760,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _StaticSidebar_vue_vue_type_template_id_1582f550___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StaticSidebar.vue?vue&type=template&id=1582f550& */ "./resources/js/components/static/StaticSidebar.vue?vue&type=template&id=1582f550&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _StaticSidebar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./StaticSidebar.vue?vue&type=script&lang=js& */ "./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _StaticSidebar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _StaticSidebar_vue_vue_type_template_id_1582f550___WEBPACK_IMPORTED_MODULE_0__["render"],
   _StaticSidebar_vue_vue_type_template_id_1582f550___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -20486,6 +19784,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/js/components/static/StaticSidebar.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_StaticSidebar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./StaticSidebar.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/static/StaticSidebar.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_StaticSidebar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

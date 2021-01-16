@@ -3,6 +3,7 @@
   <div>
     <!-- sidebar do sistema -->
     <static-sidebar v-if="sidebar" />
+    <!-- div main -->
     <div id="main" class="main-panel">
       <!-- navbar do sistema -->
       <static-navbar v-if="navbar" />
