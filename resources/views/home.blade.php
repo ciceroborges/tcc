@@ -19,7 +19,7 @@ The above copyright notice and this permission notice shall be included in all c
     <link rel="icon" type="image/png" href="{{ asset ('img/favicon.png') }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>
-        Material Dashboard by Creative Tim
+        GS Policlínica
     </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <!--     Fonts and icons     -->
@@ -33,7 +33,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 <body class="">
     <div id="app" class="wrapper">
-        <app></app>
+        <app :user="{{ json_encode(Auth::user()) }}"></app>
     </div>
     <!--   Core JS Files   -->
     <script src="{{ asset ('js/core/jquery.min.js') }}"></script>

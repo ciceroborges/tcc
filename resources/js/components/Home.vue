@@ -127,3 +127,13 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  props:{
+    user: ''
+  },
+  created(){
+    console.log(this.user);
+  }
+}
+</script>

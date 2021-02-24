@@ -3,6 +3,8 @@
 import axios from 'axios'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueLoading from 'vuejs-loading-plugin'
+import Swal from 'sweetalert2'
 //---------------components-----------------//
 import App from './components/App'
 import Home from './components/Home'
@@ -43,21 +45,33 @@ const app = new Vue({
     components: { App },
     router,
     beforeCreate: function () {
-        let activeUser = localStorage.getItem("user");
-        if (activeUser) {
-            Vue.prototype.$user = JSON.parse(activeUser);
-        } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+        let storagedUser = localStorage.getItem("user");
+        if (storagedUser) {
+            let user = JSON.parse(storagedUser);
+            if (document.cookie.includes(`app_session=${user.id}`)) {
+                Vue.prototype.$user = user;
+            } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+                localStorage.clear();
                 this.$router.push('/login');
+            }
+        } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+            this.$router.push('/login');
         }
     },
     watch: {
         $route: function (to, from) {
-            let activeUser = localStorage.getItem("user");
-            if (activeUser) {
-                Vue.prototype.$user = JSON.parse(activeUser);
-            } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+            let storagedUser = localStorage.getItem("user");
+            if (storagedUser) {
+                let user = JSON.parse(storagedUser);
+                if (document.cookie.includes(`app_session=${user.id}`)) {
+                    Vue.prototype.$user = user;
+                } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+                    localStorage.clear();
                     this.$router.push('/login');
-            }
+                }
+            } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
+                this.$router.push('/login');
+            }          
         }
     }
 });
@@ -65,6 +79,11 @@ const app = new Vue({
 Vue.prototype.$axios = axios;
 Vue.prototype.$urlBASE = 'http://localhost:8000/';
 Vue.prototype.$urlAPI = 'http://localhost:8000/api/';
+
+Vue.use(VueLoading, {
+    dark: false,
+    text: '',
+})
 
 
 

@@ -1,13 +1,13 @@
 <template>
-  <div class="sidebar" data-color="azure" data-background-color="black">
+  <div class="sidebar" data-color="azure" data-background-color="black" >
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
 
-        Tip 2: you can also add an image using data-image tag
+        Tip 2: you can also add an image using data-image tag data-image="/img/sidebar-11.jpg"
     -->
     <div class="logo">
       <router-link to="/" class="simple-text logo-normal">
-        GESTÃO POLICLÍNICA
+        <img width="250" src="/img/logo-xl.png"/>
       </router-link>
     </div>
     <div class="sidebar-wrapper">
@@ -87,18 +87,27 @@ export default {
       },
     };
   },
+  created() {},
   methods: {
     setActiveModule(name) {
       if (this.active_module !== name) {
         this.modules[this.active_module].active = false;
         this.active_module = name;
         this.modules[name].active = true;
+        this.$loading(true);
+        setTimeout(() => {
+          this.$loading(false);
+        }, 1000);
       }
     },
-    logout(){
+    logout() {
+      this.$loading(true);
       localStorage.clear();
-      this.$router.push('/login');
-    }
+      setTimeout(() => {
+        this.$loading(false);
+        this.$router.push("/login");
+      }, 1000);
+    },
   },
 };
 </script>

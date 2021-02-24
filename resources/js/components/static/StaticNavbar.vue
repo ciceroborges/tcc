@@ -89,7 +89,9 @@
               <a class="dropdown-item" href="#">Profile</a>
               <a class="dropdown-item" href="#">Settings</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#" @click.prevent="logout">Log out</a>
+              <a class="dropdown-item" href="#" @click.prevent="logout"
+                >Log out</a
+              >
             </div>
           </li>
         </ul>
@@ -101,11 +103,15 @@
 <script>
 export default {
   methods: {
-    logout(){
+    logout() {
       //falta chamar o axios
+      this.$loading(true);
       localStorage.clear();
-      this.$router.push('/login');
-    }
-  }
-}
+      setTimeout(() => {
+        this.$loading(false);
+        this.$router.push("/login");
+      }, 1000);
+    },
+  },
+};
 </script>

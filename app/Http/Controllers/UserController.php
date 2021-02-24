@@ -28,21 +28,27 @@ class UserController extends Controller
             if(Hash::check($request->password, $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'status' => 'Success!',
+                    'message' => 'User logged in!', 
+                    'status' => 1,
                     'user' => [
-                        'id' => Crypt::encryptString($user->id),
-                        'name' => $user->name,
-                        'email' => $user->email,
+                        'id' => Crypt::encryptString(Auth::user()->id),
+                        'name' => Auth::user()->name,
+                        'email' => Auth::user()->email,
+                        'email_verified_at' => Auth::user()->email_verified_at,
+                        'created_at' => Auth::user()->created_at,
+                        'updated_at' => Auth::user()->updated_at
                     ]
                 ]);
             } else {
                 return response()->json([
-                    'status' => 'Invalid password!'
+                    'message' => 'Invalid password!', 
+                    'status' => 2
                 ]);
             }
         } else {
             return response()->json([
-                'status' => 'User not found!'
+                'message' => 'User not found!', 
+                'status' => 0
             ]);
         }
     }

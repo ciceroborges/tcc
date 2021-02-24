@@ -13,13 +13,23 @@
                 <div class="col-md-12">
                   <div class="form-group bmd-form-group">
                     <label class="bmd-label-floating">E-mail</label>
-                    <input type="text" class="form-control" v-model.trim="email" required/>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model.trim="email"
+                      required
+                    />
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="form-group bmd-form-group">
                     <label class="bmd-label-floating">Senha</label>
-                    <input type="password" class="form-control" v-model.trim="password" required/>
+                    <input
+                      type="password"
+                      class="form-control"
+                      v-model.trim="password"
+                      required
+                    />
                   </div>
                 </div>
               </div>
@@ -43,19 +53,26 @@ export default {
       password: "",
     };
   },
+  created(){
+  },
   methods: {
     login() {
+      this.$loading(true);
       if (this.email && this.password) {
+        const api = `${this.$urlAPI}user/login`; 
         this.$axios
-          .post(this.$urlAPI + `user/login`, {
+          .post(api, {
             email: this.email,
             password: this.password,
           })
-          .then((response) => {
-            if(response.data.status === 'Success!') {
-              localStorage.setItem('user', JSON.stringify(response.data.user));
-              this.user = JSON.parse(localStorage.getItem("user"));
-              this.$router.push('/home');
+          .then(({data}) => {
+            if (data.status) {
+              localStorage.setItem("user", JSON.stringify(data.user));
+              document.cookie = `app_session=${JSON.parse(localStorage.getItem('user')).id}`;
+              setTimeout(() => {
+                this.$loading(false);
+                this.$router.push("/home");
+              }, 1000);
             }
           })
           .catch((e) => {
