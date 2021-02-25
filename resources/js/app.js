@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueLoading from 'vuejs-loading-plugin'
 import Swal from 'sweetalert2'
+import moment from 'moment';
 //---------------components-----------------//
 import App from './components/App'
 import Home from './components/Home'
@@ -48,7 +49,7 @@ const app = new Vue({
         let storagedUser = localStorage.getItem("user");
         if (storagedUser) {
             let user = JSON.parse(storagedUser);
-            if (document.cookie.includes(`app_session=${user.id}`)) {
+            if (document.cookie.includes(`app_session=${user.token}`)) {
                 Vue.prototype.$user = user;
             } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                 localStorage.clear();
@@ -63,7 +64,7 @@ const app = new Vue({
             let storagedUser = localStorage.getItem("user");
             if (storagedUser) {
                 let user = JSON.parse(storagedUser);
-                if (document.cookie.includes(`app_session=${user.id}`)) {
+                if (document.cookie.includes(`app_session=${user.token}`)) {
                     Vue.prototype.$user = user;
                 } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                     localStorage.clear();

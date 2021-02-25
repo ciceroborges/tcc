@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "moment": "^2.29.1",
         "sweetalert2": "^10.13.1",
         "vue-router": "^3.4.9",
         "vuejs-loading-plugin": "^1.0.51",

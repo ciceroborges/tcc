@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Appointments extends Model
+class Session extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -16,28 +16,18 @@ class Appointments extends Model
      * @var array
      */
     protected $fillable = [
-        'department_id',
-        'patient_id',
-        'anamnesis',
-        'complaint',
+        'appointment_id',
+        'title',
+        'description',
         'status',
+        'date',
     ];
-
-    /**
+    
+     /**
      * Defining Relationships
      */
-    public function department()
+    public function appointment()
     {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function patient()
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
-    public function session()
-    {
-        return $this->hasMany(Session::class);
+        return $this->belongsTo(Appointments::class);
     }
 }

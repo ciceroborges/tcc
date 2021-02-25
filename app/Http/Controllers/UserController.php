@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 use App\Models\User;
+
 class UserController extends Controller
 {
     public function login(Request $request)
-    {   
+    {
         $validation = Validator::make($request->all(), [
             'email' => 'required|string|email|max:25',
             'password' => 'required|string|min:5',
@@ -23,12 +24,12 @@ class UserController extends Controller
         }
 
         $user = User::where('email', ($request->email))->first();
-        
-        if($user) {
-            if(Hash::check($request->password, $user->password)) {
+
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'message' => 'User logged in!', 
+                    'message' => 'User logged in!',
                     'status' => 1,
                     'user' => [
                         'id' => Crypt::encryptString(Auth::user()->id),
@@ -36,18 +37,19 @@ class UserController extends Controller
                         'email' => Auth::user()->email,
                         'email_verified_at' => Auth::user()->email_verified_at,
                         'created_at' => Auth::user()->created_at,
-                        'updated_at' => Auth::user()->updated_at
+                        'updated_at' => Auth::user()->updated_at,
+                        'token' => Crypt::encryptString(Auth::user()->id.'|'.Auth::user()->name.'|'.Auth::user()->email)
                     ]
                 ]);
             } else {
                 return response()->json([
-                    'message' => 'Invalid password!', 
+                    'message' => 'Invalid password!',
                     'status' => 2
                 ]);
             }
         } else {
             return response()->json([
-                'message' => 'User not found!', 
+                'message' => 'User not found!',
                 'status' => 0
             ]);
         }
@@ -64,9 +66,9 @@ class UserController extends Controller
         if ($validation->fails()) {
             return response($validation->errors(), 400);
         }
-        
+
         $user = User::where('email', ($request->email))->first();
-        
+
         if ($user) {
             return response()->json([
                 'status' => 'User already exists!'
@@ -78,8 +80,8 @@ class UserController extends Controller
                     'email' => trim(strip_tags($request->email)),
                     'password' => Hash::make($request->password)
                 ]);
-                
-                if($result) {
+
+                if ($result) {
                     return response()->json([
                         'status' => 'Success!'
                     ]);
@@ -88,7 +90,6 @@ class UserController extends Controller
                         'status' => 'Failure!'
                     ]);
                 }
-
             } else {
                 return response()->json([
                     'status' => 'The passwords do not match!'
@@ -98,8 +99,8 @@ class UserController extends Controller
     }
 
     public function logout()
-    {   
-        if(Auth::logout()) {
+    {
+        if (Auth::logout()) {
             return response()->json([
                 'status' => 'Success!'
             ]);

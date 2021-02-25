@@ -18,6 +18,8 @@ class CreateUserGroupTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('group_id');
+            $table->timestamps();
+            $table->softDeletes();
             // foreign keys
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('group_id')->references('id')->on('groups');

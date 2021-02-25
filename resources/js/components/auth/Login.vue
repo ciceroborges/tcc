@@ -68,7 +68,7 @@ export default {
           .then(({data}) => {
             if (data.status) {
               localStorage.setItem("user", JSON.stringify(data.user));
-              document.cookie = `app_session=${JSON.parse(localStorage.getItem('user')).id}`;
+              document.cookie = `app_session=${JSON.parse(localStorage.getItem('user')).token}`;
               setTimeout(() => {
                 this.$loading(false);
                 this.$router.push("/home");
