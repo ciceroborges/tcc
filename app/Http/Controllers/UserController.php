@@ -29,7 +29,8 @@ class UserController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'message' => 'User logged in!',
+                    'message' => 'Login efetuado com sucesso!',
+                    'flag' => 'success',
                     'status' => 1,
                     'user' => [
                         'id' => Crypt::encryptString(Auth::user()->id),
@@ -43,13 +44,15 @@ class UserController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    'message' => 'Invalid password!',
-                    'status' => 2
+                    'message' => 'Senha inválida! Verifique as informações enviadas.',
+                    'flag' => 'warning',
+                    'status' => 0
                 ]);
             }
         } else {
             return response()->json([
-                'message' => 'User not found!',
+                'message' => 'Usuário não encontrado! Caso tenha esquecido a sua senha, clique em "esqueceu a senha ?" para recupera-lá.',
+                'flag' => 'error',
                 'status' => 0
             ]);
         }

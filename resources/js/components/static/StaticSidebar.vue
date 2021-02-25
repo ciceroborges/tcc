@@ -40,14 +40,14 @@
 export default {
   data() {
     return {
-      active_module: "dashboard",
+      active_module: "",
       modules: {
-        dashboard: {
-          name: "dashboard",
+        home: {
+          name: "home",
           title: "Início",
           route: "home",
           icon: "dashboard",
-          active: true,
+          active: false,
         },
         appointments: {
           name: "appointments",
@@ -87,14 +87,18 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    this.active_module = this.$route.name;
+    this.modules[this.$route.name].active = true;
+  },
   methods: {
     setActiveModule(name) {
+      this.$loading(true);
       if (this.active_module !== name) {
         this.modules[this.active_module].active = false;
         this.active_module = name;
         this.modules[name].active = true;
-        this.$loading(true);
+        
         setTimeout(() => {
           this.$loading(false);
         }, 1000);

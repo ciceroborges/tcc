@@ -5,7 +5,7 @@
   >
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <a class="navbar-brand" href="javascript:;">Dashboard</a>
+        <a class="navbar-brand" href="javascript:;">{{ this.$route.meta.title }}</a>
       </div>
       <button
         class="navbar-toggler"

@@ -1,30 +1,28 @@
 //require('./bootstrap');
 //------------------libs--------------------//
-import axios from 'axios'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import VueLoading from 'vuejs-loading-plugin'
-import Swal from 'sweetalert2'
+import axios from 'axios';
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import VueLoading from 'vuejs-loading-plugin';
+import Swal from 'sweetalert2';
 import moment from 'moment';
 //---------------components-----------------//
-import App from './components/App'
-import Home from './components/Home'
+import App from './components/App';
+import Home from './components/Home';
 /*
 componentes de autenticação
 */
-import Login from './components/auth/Login'
-import Register from './components/auth/Register'
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+/*
+componentes de módulos
+*/
+import Users from './components/modules/users/Users';
 //-----------------routes-------------------//
 Vue.use(VueRouter)
 const router = new VueRouter({
     mode: 'history',
     routes: [
-        {
-            path: '/home',
-            alias: '/',
-            name: 'home',
-            component: Home,
-        },
         /*
         componentes de autenticação
         */
@@ -38,8 +36,41 @@ const router = new VueRouter({
             name: 'register',
             component: Register,
         },
+        /*
+        componentes home
+        */
+        {
+            path: '/home',
+            alias: '/',
+            name: 'home',
+            component: Home,
+            meta: { 
+                title: 'Home' 
+            }
+        },
+        /*
+        componentes dos módulos
+        */
+        {
+            path: '/users',
+            name: 'users',
+            title: 'Usuários',
+            component: Users,
+            meta: { 
+                title: 'Usuários' 
+            }
+        },
     ],
 });
+//------------------constants----------------------//
+Vue.prototype.$axios = axios;
+Vue.prototype.$urlBASE = 'http://localhost:8000/';
+Vue.prototype.$urlAPI = 'http://localhost:8000/api/';
+//------------------
+Vue.use(VueLoading, {
+    dark: false,
+    text: '',
+})
 //------------------instance----------------//
 const app = new Vue({
     el: '#app',
@@ -76,15 +107,7 @@ const app = new Vue({
         }
     }
 });
-//------------------constants----------------------//
-Vue.prototype.$axios = axios;
-Vue.prototype.$urlBASE = 'http://localhost:8000/';
-Vue.prototype.$urlAPI = 'http://localhost:8000/api/';
 
-Vue.use(VueLoading, {
-    dark: false,
-    text: '',
-})
 
 
 

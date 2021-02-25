@@ -44,6 +44,9 @@ export default {
     this.verifyClass();
   },
   methods: {
+    setNavbarBrand(){
+      
+    },
     verifyNavigation() {
       if (this.$route.name === "login" || this.$route.name === "register") {
         this.sidebar = false;
