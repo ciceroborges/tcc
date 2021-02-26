@@ -6,6 +6,7 @@ import VueRouter from 'vue-router';
 import VueLoading from 'vuejs-loading-plugin';
 import Swal from 'sweetalert2';
 import moment from 'moment';
+import InfiniteLoading from 'vue-infinite-loading';
 //---------------components-----------------//
 import App from './components/App';
 import Home from './components/Home';
@@ -62,15 +63,19 @@ const router = new VueRouter({
         },
     ],
 });
+
 //------------------constants----------------------//
 Vue.prototype.$axios = axios;
 Vue.prototype.$urlBASE = 'http://localhost:8000/';
 Vue.prototype.$urlAPI = 'http://localhost:8000/api/';
-//------------------
+
+//------------------ libs-------------------------//
 Vue.use(VueLoading, {
     dark: false,
     text: '',
 })
+Vue.use(InfiniteLoading, { /* options */ });
+
 //------------------instance----------------//
 const app = new Vue({
     el: '#app',

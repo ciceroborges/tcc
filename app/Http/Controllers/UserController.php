@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -39,7 +41,7 @@ class UserController extends Controller
                         'email_verified_at' => Auth::user()->email_verified_at,
                         'created_at' => Auth::user()->created_at,
                         'updated_at' => Auth::user()->updated_at,
-                        'token' => Crypt::encryptString(Auth::user()->id.'|'.Auth::user()->name.'|'.Auth::user()->email)
+                        'token' => Crypt::encryptString(Auth::user()->id . '|' . Auth::user()->name . '|' . Auth::user()->email)
                     ]
                 ]);
             } else {
@@ -111,6 +113,59 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'Failure!'
             ]);
+        }
+    }
+
+    public function all(Request $request)
+    {
+        /* validation */
+        $validation = Validator::make($request->all(), [
+            'skip' => 'required|int',
+            'take' => 'required|int',
+        ]);
+
+        if ($validation->fails()) {
+            return response($validation->errors(), 400);
+        }
+        // limite de registros por loading
+        $take = 5;
+        /* method */
+        $users = DB::table('users as u')->join('user_group as ug', 'ug.user_id', 'u.id')
+            ->join('groups as g', 'g.id', 'ug.group_id')
+            ->select(
+                'u.id',
+                'u.name',
+                'u.email',
+                'u.picture',
+                'g.name as group_name',
+                DB::raw(
+                    "(SELECT GROUP_CONCAT(d.name SEPARATOR ', ')
+                      FROM departments d 
+                      INNER JOIN user_department ud ON ud.department_id = d.id 
+                      INNER JOIN users us ON us.id = ud.user_id
+                      WHERE us.id = u.id
+                      AND d.deleted_at is null 
+                      GROUP BY us.id) AS departments_names"
+                )
+            )
+            ->skip($request->skip)
+            ->take($request->take)
+            ->get();
+        /* encrypt */
+        foreach ($users as $row) {
+            $row->token = Crypt::encryptString($row->id);
+        }
+        /* response */
+        if ($users) {
+            return response()->json([
+                'users' => $users,
+                'skip' => $request->skip + $request->take
+            ]);
+        } else {
+            return response()->json([
+                'e' => true,
+                'message' => 'Ocorreu um erro durante a execução, contate o administrador do website.',
+            ], 404);
         }
     }
 }

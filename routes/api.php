@@ -20,10 +20,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 */
 
 Route::prefix('user')->group(function () {
-    //login
+    //
+    
+    /* Auth */
     Route::post('/login', 'UserController@login');
-    //login
     Route::post('/register', 'UserController@register');
+    /* GET */
+    Route::get('/all', 'UserController@all');
     /*
     //update
     Route::put('', 'Admin_ba_groupController@update');

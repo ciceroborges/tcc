@@ -10,6 +10,8 @@ class UserGroup extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $table = "user_group";
     /**
      * The attributes that are mass assignable.
      *

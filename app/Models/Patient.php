@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Patients extends Model
+class Patient extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -36,6 +36,6 @@ class Patients extends Model
      */
     public function appointment()
     {
-        return $this->hasMany(Appointments::class);
+        return $this->hasMany(Appointment::class);
     }
 }

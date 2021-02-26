@@ -10,6 +10,8 @@ class UserDepartment extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $table = 'user_department';
     /**
      * The attributes that are mass assignable.
      *
