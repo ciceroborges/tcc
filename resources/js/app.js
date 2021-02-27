@@ -7,6 +7,8 @@ import VueLoading from 'vuejs-loading-plugin';
 import Swal from 'sweetalert2';
 import moment from 'moment';
 import InfiniteLoading from 'vue-infinite-loading';
+import Multiselect from 'vue-multiselect'
+
 //---------------components-----------------//
 import App from './components/App';
 import Home from './components/Home';
@@ -75,6 +77,8 @@ Vue.use(VueLoading, {
     text: '',
 })
 Vue.use(InfiniteLoading, { /* options */ });
+
+Vue.component('multiselect', Multiselect)
 
 //------------------instance----------------//
 const app = new Vue({

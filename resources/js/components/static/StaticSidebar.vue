@@ -93,8 +93,8 @@ export default {
   },
   methods: {
     setActiveModule(name) {
-      this.$loading(true);
       if (this.active_module !== name) {
+        this.$loading(true);
         this.modules[this.active_module].active = false;
         this.active_module = name;
         this.modules[name].active = true;

@@ -46,6 +46,57 @@
                 </div>
               </div>
             </div>
+            <hr class="hr-header" />
+            <div class="row">
+              <div class="col-md-2">
+                <input
+                  type="text"
+                  value=""
+                  class="form-control input-header"
+                  placeholder="Filtrar por nome..."
+                />
+              </div>
+              <div class="col-md-2">
+                <input
+                  type="text"
+                  value=""
+                  class="form-control input-header"
+                  placeholder="Filtrar por e-mail..."
+                />
+              </div>
+              <div class="col-md-2">
+                <input
+                  type="text"
+                  value=""
+                  class="form-control input-header"
+                  placeholder="Filtrar por grupo..."
+                />
+              </div>
+              <div class="col-md-2">
+                <input
+                  type="text"
+                  value=""
+                  class="form-control input-header"
+                  placeholder="Filtrar por departamento..."
+                />
+              </div>
+              <div class="col-md-2">
+                <button
+                  class="btn btn-round btn-sm btn-white btn-just-icon"
+                  data-toggle="tab"
+                >
+                  <i class="material-icons" style="color: rgb(0, 188, 212) !important;">search</i>
+                  <div class="ripple-container"></div>
+                </button>
+                <button
+                  class="btn btn-round btn-sm btn-white btn-just-icon"
+                  data-toggle="tab"
+                >
+                  <i class="material-icons" style="color: #f44336;">close</i>
+                  <div class="ripple-container"></div>
+                </button>
+              </div>
+            </div>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -65,8 +116,16 @@
                     <td>{{ row.id }}</td>
                     <td>{{ row.name }}</td>
                     <td>{{ row.email }}</td>
-                    <td>{{ row.group_name }}</td>
-                    <td>{{ row.departments_names }}</td>
+                    <td>
+                      {{ row.group_name ? row.group_name : "Indefinido" }}
+                    </td>
+                    <td>
+                      {{
+                        row.departments_names
+                          ? row.departments_names
+                          : "Indefinido"
+                      }}
+                    </td>
                     <td class="td-actions">
                       <button
                         type="button"
@@ -97,12 +156,12 @@
               >
                 <!-- criar chave de tradução -->
                 <div slot="no-more">
-                  <hr>
+                  <hr />
                   <small>Sem mais resultados</small>
                 </div>
                 <!-- criar chave de tradução -->
                 <div slot="no-results">
-                  <hr>
+                  <hr />
                   <small>Nenhum resultado encontrado</small>
                 </div>
               </infinite-loading>
@@ -154,3 +213,26 @@ export default {
   },
 };
 </script>
+<style scoped>
+.hr-header {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+.input-header {
+  color: rgba(255, 255, 255, 0.8);
+  border-color: #aaaaaa;
+  background-image: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.8) 2px,
+      rgba(156, 39, 176, 0) 2px
+    ),
+    linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.8) 1px,
+      rgba(210, 210, 210, 0) 1px
+    );
+}
+.input-header::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
+}
+</style>

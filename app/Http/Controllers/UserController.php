@@ -130,8 +130,8 @@ class UserController extends Controller
         // limite de registros por loading
         $take = 5;
         /* method */
-        $users = DB::table('users as u')->join('user_group as ug', 'ug.user_id', 'u.id')
-            ->join('groups as g', 'g.id', 'ug.group_id')
+        $users = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
+            ->leftJoin('groups as g', 'g.id', 'ug.group_id')
             ->select(
                 'u.id',
                 'u.name',
