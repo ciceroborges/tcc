@@ -118,17 +118,25 @@ class UserController extends Controller
 
     public function all(Request $request)
     {
-        /* validation */
-        $validation = Validator::make($request->all(), [
-            'skip' => 'required|int',
-            'take' => 'required|int',
-        ]);
+        /* validation for infinite loading*/
+        if(isset($request->skip) && isset($request->take)) {
+            $validation = Validator::make($request->all(), [
+                'skip' => 'required|int',
+                'take' => 'required|int',
+            ]);
 
-        if ($validation->fails()) {
-            return response($validation->errors(), 400);
-        }
-        // limite de registros por loading
-        $take = 5;
+            if ($validation->fails()) {
+                return response($validation->errors(), 400);
+            }
+
+            $skip = $request->skip;
+            $take = $request->take;
+            $new_skip = $request->skip + $request->take;
+        }  else {
+            $skip = 0;
+            $take = 99999999999999999999;
+            $new_skip = 0;
+        } 
         /* method */
         $users = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
             ->leftJoin('groups as g', 'g.id', 'ug.group_id')
@@ -148,18 +156,16 @@ class UserController extends Controller
                       GROUP BY us.id) AS departments_names"
                 )
             )
-            ->skip($request->skip)
-            ->take($request->take)
+            ->where('u.deleted_at', '=', NULL)
+            ->skip($skip)
+            ->take($take)
             ->get();
-        /* encrypt */
-        foreach ($users as $row) {
-            $row->token = Crypt::encryptString($row->id);
-        }
         /* response */
         if ($users) {
             return response()->json([
                 'users' => $users,
-                'skip' => $request->skip + $request->take
+                'skip' => $new_skip,
+                'message' => 'success',
             ]);
         } else {
             return response()->json([

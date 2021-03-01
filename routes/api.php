@@ -18,21 +18,37 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 */
-
+/*
+user api routes
+*/    
 Route::prefix('user')->group(function () {
-    //
-    
-    /* Auth */
-    Route::post('/login', 'UserController@login');
-    Route::post('/register', 'UserController@register');
     /* GET */
     Route::get('/all', 'UserController@all');
-    /*
-    //update
-    Route::put('', 'Admin_ba_groupController@update');
-    //edit 
-    Route::get('/{id}', 'Admin_ba_groupController@show');
-    //delete
-    Route::delete('', 'Admin_ba_groupController@delete');
-    */
+    /* POST */
+    Route::post('/login', 'UserController@login');
+    Route::post('/register', 'UserController@register');
+    /* PUT */
+    //Route::put('', 'Admin_ba_groupController@update');
+    /* DELETE */
+    //Route::delete('', 'Admin_ba_groupController@delete');
+});
+/*
+department api routes
+*/
+Route::prefix('department')->group(function () {
+    /* GET */
+    Route::get('/all', 'DepartmentController@all');
+    /* POST */
+    /* PUT */
+    /* DELETE */
+});
+/*
+department api routes
+*/
+Route::prefix('group')->group(function () {
+    /* GET */
+    Route::get('/all', 'GroupController@all');
+    /* POST */
+    /* PUT */
+    /* DELETE */
 });

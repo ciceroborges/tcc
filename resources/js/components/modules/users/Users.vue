@@ -65,20 +65,28 @@
                 />
               </div>
               <div class="col-md-2">
-                <input
-                  type="text"
-                  value=""
-                  class="form-control input-header"
-                  placeholder="Filtrar por grupo..."
-                />
+                <select class="form-control">
+                  <option>Selecione</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                </select>
               </div>
               <div class="col-md-2">
-                <input
-                  type="text"
-                  value=""
-                  class="form-control input-header"
-                  placeholder="Filtrar por departamento..."
-                />
+               <multiselect
+                deselect-label=""
+                selectLabel=""
+                :hide-selected="true"
+                v-model="searched_group"
+                :options="groups"
+                label="name"
+                track-by="name"
+                @select="attachSelected = true"
+                placeholder="Grupo..."
+                :multiple="false"
+                :close-on-select="true"
+              >
+              </multiselect>
               </div>
               <div class="col-md-2">
                 <button
@@ -176,13 +184,24 @@
 export default {
   data() {
     return {
+      //general
       users: [],
+      departments: [],
+      groups: [],
+      //search
+      searched_name: null,
+      searched_email: null,
+      searched_department: null,
+      searched_group: null,
       //infinite loading
       skip: 0,
       take: 5,
     };
   },
-  created() {},
+  created() {
+    this.getDepartments();
+    this.getGroups();
+  },
   methods: {
     getAll($state) {
       setTimeout(() => {
@@ -209,6 +228,30 @@ export default {
             console.log(e.response.data.message);
           });
       }, 1000);
+    },
+    getDepartments() {
+        /* api */
+        const api = `${this.$urlAPI}department/all`;
+        /* request */
+        this.$axios
+          .get(api, {}).then(({ data }) => {
+            this.departments = data.departments;
+          })
+          .catch((e) => {
+            console.log(e.response.data.message);
+          });
+    },
+    getGroups() {
+        /* api */
+        const api = `${this.$urlAPI}group/all`;
+        /* request */
+        this.$axios
+          .get(api, {}).then(({ data }) => {
+            this.groups = data.groups;
+          })
+          .catch((e) => {
+            console.log(e.response.data.message);
+          });
     },
   },
 };

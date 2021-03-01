@@ -2569,16 +2569,35 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      //general
       users: [],
+      departments: [],
+      groups: [],
+      //search
+      searched_name: null,
+      searched_email: null,
+      searched_department: null,
+      searched_group: null,
       //infinite loading
       skip: 0,
       take: 5
     };
   },
-  created: function created() {},
+  created: function created() {
+    this.getDepartments();
+    this.getGroups();
+  },
   methods: {
     getAll: function getAll($state) {
       var _this = this;
@@ -2611,6 +2630,34 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           console.log(e.response.data.message);
         });
       }, 1000);
+    },
+    getDepartments: function getDepartments() {
+      var _this2 = this;
+
+      /* api */
+      var api = "".concat(this.$urlAPI, "department/all");
+      /* request */
+
+      this.$axios.get(api, {}).then(function (_ref2) {
+        var data = _ref2.data;
+        _this2.departments = data.departments;
+      })["catch"](function (e) {
+        console.log(e.response.data.message);
+      });
+    },
+    getGroups: function getGroups() {
+      var _this3 = this;
+
+      /* api */
+      var api = "".concat(this.$urlAPI, "group/all");
+      /* request */
+
+      this.$axios.get(api, {}).then(function (_ref3) {
+        var data = _ref3.data;
+        _this3.groups = data.groups;
+      })["catch"](function (e) {
+        console.log(e.response.data.message);
+      });
     }
   }
 });
@@ -2973,7 +3020,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.hr-header[data-v-c0c963c4] {\r\n  background-color: rgba(255, 255, 255, 0.8) !important;\n}\n.input-header[data-v-c0c963c4] {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  border-color: #aaaaaa;\r\n  background-image: linear-gradient(\r\n      to top,\r\n      rgba(255, 255, 255, 0.8) 2px,\r\n      rgba(156, 39, 176, 0) 2px\r\n    ),\r\n    linear-gradient(\r\n      to top,\r\n      rgba(255, 255, 255, 0.8) 1px,\r\n      rgba(210, 210, 210, 0) 1px\r\n    );\n}\n.input-header[data-v-c0c963c4]::-moz-placeholder {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  opacity: 1;\n}\n.input-header[data-v-c0c963c4]:-ms-input-placeholder {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  opacity: 1;\n}\n.input-header[data-v-c0c963c4]::placeholder {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  opacity: 1;\n}\r\n", ""]);
+exports.push([module.i, "\n.hr-header[data-v-c0c963c4] {\n  background-color: rgba(255, 255, 255, 0.8) !important;\n}\n.input-header[data-v-c0c963c4] {\n  color: rgba(255, 255, 255, 0.8);\n  border-color: #aaaaaa;\n  background-image: linear-gradient(\n      to top,\n      rgba(255, 255, 255, 0.8) 2px,\n      rgba(156, 39, 176, 0) 2px\n    ),\n    linear-gradient(\n      to top,\n      rgba(255, 255, 255, 0.8) 1px,\n      rgba(210, 210, 210, 0) 1px\n    );\n}\n.input-header[data-v-c0c963c4]::-moz-placeholder {\n  color: rgba(255, 255, 255, 0.8);\n  opacity: 1;\n}\n.input-header[data-v-c0c963c4]:-ms-input-placeholder {\n  color: rgba(255, 255, 255, 0.8);\n  opacity: 1;\n}\n.input-header[data-v-c0c963c4]::placeholder {\n  color: rgba(255, 255, 255, 0.8);\n  opacity: 1;\n}\n", ""]);
 
 // exports
 
@@ -30086,7 +30133,58 @@ var render = function() {
     _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-md-12" }, [
         _c("div", { staticClass: "card" }, [
-          _vm._m(0),
+          _c(
+            "div",
+            { staticClass: "card-header card-header-tabs card-header-info" },
+            [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("hr", { staticClass: "hr-header" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _vm._m(2),
+                _vm._v(" "),
+                _vm._m(3),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "col-md-2" },
+                  [
+                    _c("multiselect", {
+                      attrs: {
+                        "deselect-label": "",
+                        selectLabel: "",
+                        "hide-selected": true,
+                        options: _vm.groups,
+                        label: "name",
+                        "track-by": "name",
+                        placeholder: "Grupo...",
+                        multiple: false,
+                        "close-on-select": true
+                      },
+                      on: {
+                        select: function($event) {
+                          _vm.attachSelected = true
+                        }
+                      },
+                      model: {
+                        value: _vm.searched_group,
+                        callback: function($$v) {
+                          _vm.searched_group = $$v
+                        },
+                        expression: "searched_group"
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _vm._m(4)
+              ])
+            ]
+          ),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c(
@@ -30094,7 +30192,7 @@ var render = function() {
               { staticClass: "table-responsive" },
               [
                 _c("table", { staticClass: "table" }, [
-                  _vm._m(1),
+                  _vm._m(5),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -30128,7 +30226,7 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _vm._m(2, true)
+                        _vm._m(6, true)
                       ])
                     }),
                     0
@@ -30174,149 +30272,132 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "card-header card-header-tabs card-header-info" },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-md-10" }, [
-            _c("h4", { staticClass: "card-title" }, [
-              _vm._v("Tabela de Usuários")
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "card-category" }, [
-              _vm._v(
-                "\n                Crie, edite, ou exclua os usuários do sistema\n              "
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c("div", { staticClass: "nav-tabs-navigation" }, [
-              _c("div", { staticClass: "nav-tabs-wrapper float-right" }, [
-                _c(
-                  "ul",
-                  {
-                    staticClass: "nav nav-tabs",
-                    attrs: { "data-tabs": "tabs" }
-                  },
-                  [
-                    _c("li", { staticClass: "nav-item" }, [
-                      _c(
-                        "a",
-                        {
-                          staticClass: "nav-link active",
-                          attrs: { href: "#profile", "data-toggle": "tab" }
-                        },
-                        [
-                          _c("i", { staticClass: "material-icons" }, [
-                            _vm._v("person_add_alt_1")
-                          ]),
-                          _vm._v(
-                            " Novo\n                        Usuário\n                        "
-                          ),
-                          _c("div", { staticClass: "ripple-container" })
-                        ]
-                      )
-                    ])
-                  ]
-                )
-              ])
-            ])
-          ])
-        ]),
+    return _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-10" }, [
+        _c("h4", { staticClass: "card-title" }, [_vm._v("Tabela de Usuários")]),
         _vm._v(" "),
-        _c("hr", { staticClass: "hr-header" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-md-2" }, [
-            _c("input", {
-              staticClass: "form-control input-header",
-              attrs: {
-                type: "text",
-                value: "",
-                placeholder: "Filtrar por nome..."
-              }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c("input", {
-              staticClass: "form-control input-header",
-              attrs: {
-                type: "text",
-                value: "",
-                placeholder: "Filtrar por e-mail..."
-              }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c("input", {
-              staticClass: "form-control input-header",
-              attrs: {
-                type: "text",
-                value: "",
-                placeholder: "Filtrar por grupo..."
-              }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c("input", {
-              staticClass: "form-control input-header",
-              attrs: {
-                type: "text",
-                value: "",
-                placeholder: "Filtrar por departamento..."
-              }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
+        _c("p", { staticClass: "card-category" }, [
+          _vm._v(
+            "\n                Crie, edite, ou exclua os usuários do sistema\n              "
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-2" }, [
+        _c("div", { staticClass: "nav-tabs-navigation" }, [
+          _c("div", { staticClass: "nav-tabs-wrapper float-right" }, [
             _c(
-              "button",
-              {
-                staticClass: "btn btn-round btn-sm btn-white btn-just-icon",
-                attrs: { "data-toggle": "tab" }
-              },
+              "ul",
+              { staticClass: "nav nav-tabs", attrs: { "data-tabs": "tabs" } },
               [
-                _c(
-                  "i",
-                  {
-                    staticClass: "material-icons",
-                    staticStyle: { color: "rgb(0, 188, 212) !important" }
-                  },
-                  [_vm._v("search")]
-                ),
-                _vm._v(" "),
-                _c("div", { staticClass: "ripple-container" })
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-round btn-sm btn-white btn-just-icon",
-                attrs: { "data-toggle": "tab" }
-              },
-              [
-                _c(
-                  "i",
-                  {
-                    staticClass: "material-icons",
-                    staticStyle: { color: "#f44336" }
-                  },
-                  [_vm._v("close")]
-                ),
-                _vm._v(" "),
-                _c("div", { staticClass: "ripple-container" })
+                _c("li", { staticClass: "nav-item" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "nav-link active",
+                      attrs: { href: "#profile", "data-toggle": "tab" }
+                    },
+                    [
+                      _c("i", { staticClass: "material-icons" }, [
+                        _vm._v("person_add_alt_1")
+                      ]),
+                      _vm._v(
+                        " Novo\n                        Usuário\n                        "
+                      ),
+                      _c("div", { staticClass: "ripple-container" })
+                    ]
+                  )
+                ])
               ]
             )
           ])
         ])
-      ]
-    )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c("input", {
+        staticClass: "form-control input-header",
+        attrs: { type: "text", value: "", placeholder: "Filtrar por nome..." }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c("input", {
+        staticClass: "form-control input-header",
+        attrs: { type: "text", value: "", placeholder: "Filtrar por e-mail..." }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c("select", { staticClass: "form-control" }, [
+        _c("option", [_vm._v("Selecione")]),
+        _vm._v(" "),
+        _c("option", [_vm._v("1")]),
+        _vm._v(" "),
+        _c("option", [_vm._v("2")]),
+        _vm._v(" "),
+        _c("option", [_vm._v("3")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-round btn-sm btn-white btn-just-icon",
+          attrs: { "data-toggle": "tab" }
+        },
+        [
+          _c(
+            "i",
+            {
+              staticClass: "material-icons",
+              staticStyle: { color: "rgb(0, 188, 212) !important" }
+            },
+            [_vm._v("search")]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "ripple-container" })
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-round btn-sm btn-white btn-just-icon",
+          attrs: { "data-toggle": "tab" }
+        },
+        [
+          _c(
+            "i",
+            {
+              staticClass: "material-icons",
+              staticStyle: { color: "#f44336" }
+            },
+            [_vm._v("close")]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "ripple-container" })
+        ]
+      )
+    ])
   },
   function() {
     var _vm = this
@@ -46970,8 +47051,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /opt/lampp/htdocs/projects/tcc/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /opt/lampp/htdocs/projects/tcc/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
