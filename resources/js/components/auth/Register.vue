@@ -1,70 +1,75 @@
 <template>
-  <div class="container-fluid">
-    <div class="row d-flex justify-content-center">
-      <div class="col-lg-3 col-md-6 col-sm-12 mt-5">
-        <div class="card">
-          <div class="card-header card-header-danger">
-            <h4 class="card-title">REGISTRO</h4>
-            <p class="card-category">Informe os seus dados:</p>
-          </div>
-          <div class="card-body">
-            <form @submit.prevent="register">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">Nome</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model.trim="name"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">E-mail</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      v-model.trim="email"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">Senha</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      v-model.trim="password"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">Confirme a senha</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      v-model.trim="confirm_password"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-danger pull-right">
-                Entrar
-              </button>
-              <div class="clearfix"></div>
-            </form>
-          </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="#"><b>CH</b> Management</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+      <p class="login-box-msg">Solicitação de acesso.</p>
+      <form @submit.prevent="register">
+        <div class="form-group has-feedback">
+          <input
+            type="text"
+            class="form-control"
+            required
+            placeholder="Nome Completo"
+            v-model.trim="name"
+          />
+          <span
+            class="glyphicon glyphicon-user form-control-feedback"
+          ></span>
         </div>
+        <div class="form-group has-feedback">
+          <input
+            type="email"
+            class="form-control"
+            required
+            placeholder="E-mail"
+            v-model.trim="email"
+          />
+          <span
+            class="glyphicon glyphicon-envelope form-control-feedback"
+          ></span>
+        </div>
+        <div class="form-group has-feedback">
+          <input
+            type="password"
+            class="form-control"
+            required
+            placeholder="Senha"
+            v-model.trim="password"
+          />
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+          <input
+            type="password"
+            class="form-control"
+            required
+            placeholder="Repita a senha"
+            v-model.trim="confirm_password"
+          />
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-xs-12">
+            <button type="submit" class="btn btn-danger btn-block btn-flat">
+              Solicitar
+            </button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+      <div class="social-auth-links">
+        <router-link to="login" class="text-center">Já possuí acesso?</router-link>
+        <br>
+        <router-link to="#" class="text-center">Esqueceu sua senha?</router-link>
       </div>
     </div>
+    <!-- /.login-box-body -->
   </div>
+  <!-- /.login-box -->
 </template>
 <script>
 export default {
@@ -75,9 +80,6 @@ export default {
       password: "",
       confirm_password: "",
     };
-  },
-  mounted() {
-    this.removeClass("main", "main-panel");
   },
   methods: {
     register() {
@@ -94,9 +96,6 @@ export default {
         .catch((e) => {
           console.log(e);
         });
-    },
-    removeClass(id, Class) {
-      document.getElementById(id).classList.remove(Class);
     },
   },
 };

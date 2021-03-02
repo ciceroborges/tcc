@@ -12,7 +12,7 @@ class HomeController extends Controller
      * @return void
      */
     
-
+    // comentario teste
     /**
      * Show the application dashboard.
      *

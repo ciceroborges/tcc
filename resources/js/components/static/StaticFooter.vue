@@ -1,30 +1,11 @@
 <template>
-  <footer class="footer">
-    <div class="container-fluid">
-      <!--
-      <nav class="float-left">
-        <ul>
-          <li>
-            <a href="https://www.creative-tim.com"> Creative Tim </a>
-          </li>
-          <li>
-            <a href="https://creative-tim.com/presentation"> About Us </a>
-          </li>
-          <li>
-            <a href="http://blog.creative-tim.com"> Blog </a>
-          </li>
-          <li>
-            <a href="https://www.creative-tim.com/license"> Licenses </a>
-          </li>
-        </ul>
-      </nav>
-      -->
-      <div class="copyright float-right">
-        &copy;
-        , made with <i class="material-icons">favorite</i> by
-        <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>
-        for a better web.
-      </div>
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right hidden-xs">
+      <strong>Versão: </strong>1.0.0
     </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; {{ new Date().getFullYear() }}<a href="#"> Cícero Palmeira Borges</a>.</strong> Todos os direitos reservados.
   </footer>
 </template>

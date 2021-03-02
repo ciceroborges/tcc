@@ -24,8 +24,9 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@sweetalert2/theme-bootstrap-4": "^4.0.3",
         "moment": "^2.29.1",
-        "sweetalert2": "^10.13.1",
+        "sweetalert2": "^10.15.5",
         "vue-infinite-loading": "^2.4.5",
         "vue-multiselect": "^2.1.6",
         "vue-router": "^3.4.9",

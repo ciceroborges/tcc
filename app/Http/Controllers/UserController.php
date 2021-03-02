@@ -18,11 +18,16 @@ class UserController extends Controller
     {
         $validation = Validator::make($request->all(), [
             'email' => 'required|string|email|max:25',
-            'password' => 'required|string|min:5',
+            'password' => 'required|string|max:1',
         ]);
 
         if ($validation->fails()) {
-            return response($validation->errors(), 400);
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Um ou mais campos foram informados de maneira errada, verifique e tente novamente.',
+                'status' => 0
+            ], 400);
         }
 
         $user = User::where('email', ($request->email))->first();
@@ -31,9 +36,6 @@ class UserController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'message' => 'Login efetuado com sucesso!',
-                    'flag' => 'success',
-                    'status' => 1,
                     'user' => [
                         'id' => Crypt::encryptString(Auth::user()->id),
                         'name' => Auth::user()->name,
@@ -42,63 +44,81 @@ class UserController extends Controller
                         'created_at' => Auth::user()->created_at,
                         'updated_at' => Auth::user()->updated_at,
                         'token' => Crypt::encryptString(Auth::user()->id . '|' . Auth::user()->name . '|' . Auth::user()->email)
-                    ]
+                    ],
+                    'flag' => 'success',
+                    'message' => 'Login efetuado com sucesso!',
+                    'status' => 1,
                 ]);
             } else {
                 return response()->json([
+                    'e' => true,
+                    'flag' => 'info',
                     'message' => 'Senha inválida! Verifique as informações enviadas.',
-                    'flag' => 'warning',
                     'status' => 0
-                ]);
+                ], 404);
             }
         } else {
             return response()->json([
-                'message' => 'Usuário não encontrado! Caso tenha esquecido a sua senha, clique em "esqueceu a senha ?" para recupera-lá.',
-                'flag' => 'error',
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Usuário não encontrado! Caso ainda não tenha se cadastrado, clique em "Deseja solicitar acesso?" para cadastrar-se.',
                 'status' => 0
-            ]);
+            ], 404);
         }
     }
 
     public function register(Request $request)
     {
         $validation = Validator::make($request->all(), [
+            'name' => 'required|string|min:10',
             'email' => 'required|string|email|max:25',
             'password' => 'required|string|min:5',
             'confirm_password' => 'required|string|min:5',
         ]);
 
         if ($validation->fails()) {
-            return response($validation->errors(), 400);
+            return response()->json([
+                'e' => true,
+                'flag' => 'error',
+                'message' => 'Um ou mais campos foram informados de maneira errada, verifique e tente novamente.',
+                'status' => 0
+            ], 400);
         }
 
         $user = User::where('email', ($request->email))->first();
 
         if ($user) {
             return response()->json([
-                'status' => 'User already exists!'
-            ]);
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'O E-mail informado já pertence a um usuário! Caso tenha esquecido a sua senha, clique em "Esqueceu sua senha ?" para recupera-lá.',
+                'status' => 0
+            ], 404);
         } else {
             if ($request->password === $request->confirm_password) {
                 $result = User::create([
-                    'name' => trim(strip_tags($request->name)),
-                    'email' => trim(strip_tags($request->email)),
+                    'name' => $request->name,
+                    'email' => $request->email,
                     'password' => Hash::make($request->password)
                 ]);
 
                 if ($result) {
-                    return response()->json([
-                        'status' => 'Success!'
-                    ]);
+                    $this->login($request);
                 } else {
                     return response()->json([
-                        'status' => 'Failure!'
-                    ]);
+                        'e' => true,
+                        'flag' => 'error',
+                        'message' => 'Ocorreu um erro durante a execução, tente novamente. Caso o erro persista, contate o administrador do website.',
+                        'status' => 0
+                    ], 404);
                 }
             } else {
                 return response()->json([
-                    'status' => 'The passwords do not match!'
-                ]);
+                    'e' => true,
+                    'flag' => 'error',
+                    'message' => 'Ocorreu um erro durante a execução, tente novamente. Caso o erro persista, contate o administrador do website.',
+                    'status' => 0
+                ], 404);
             }
         }
     }
@@ -107,36 +127,46 @@ class UserController extends Controller
     {
         if (Auth::logout()) {
             return response()->json([
-                'status' => 'Success!'
+                'flag' => 'success',
+                'message' => 'Logout efetuado com sucesso! Você será redirecionado para a tela de login.',
+                'status' => 1
             ]);
         } else {
             return response()->json([
-                'status' => 'Failure!'
-            ]);
+                'e' => true,
+                'flag' => 'error',
+                'message' => 'Ocorreu um erro durante a execução, tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
+            ], 404);
         }
     }
 
     public function all(Request $request)
     {
         /* validation for infinite loading*/
-        if(isset($request->skip) && isset($request->take)) {
+        if (isset($request->skip) && isset($request->take)) {
             $validation = Validator::make($request->all(), [
                 'skip' => 'required|int',
                 'take' => 'required|int',
             ]);
 
             if ($validation->fails()) {
-                return response($validation->errors(), 400);
+                return response([
+                    'e' => true,
+                    'flag' => 'error',
+                    'message' => 'Um ou mais campos foram informados de maneira errada, verifique e tente novamente.',
+                    'status' => 0
+                ], 400);
             }
 
             $skip = $request->skip;
             $take = $request->take;
             $new_skip = $request->skip + $request->take;
-        }  else {
+        } else {
             $skip = 0;
             $take = 99999999999999999999;
             $new_skip = 0;
-        } 
+        }
         /* method */
         $users = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
             ->leftJoin('groups as g', 'g.id', 'ug.group_id')
@@ -165,12 +195,16 @@ class UserController extends Controller
             return response()->json([
                 'users' => $users,
                 'skip' => $new_skip,
-                'message' => 'success',
+                'flag' => 'success',
+                'message' => count($users) . ' usuário(s) encontrado(s).',
+                'status' => 1
             ]);
         } else {
             return response()->json([
                 'e' => true,
-                'message' => 'Ocorreu um erro durante a execução, contate o administrador do website.',
+                'flag' => 'error',
+                'message' => 'Ocorreu um erro durante a execução, tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
             ], 404);
         }
     }

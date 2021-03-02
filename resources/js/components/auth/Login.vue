@@ -1,48 +1,58 @@
 <template>
-  <div class="container-fluid">
-    <div class="row d-flex justify-content-center">
-      <div class="col-lg-3 col-md-6 col-sm-12 mt-5">
-        <div class="card">
-          <div class="card-header card-header-info">
-            <h4 class="card-title">LOGIN</h4>
-            <p class="card-category">Informe os seus dados:</p>
-          </div>
-          <div class="card-body">
-            <form @submit.prevent="login">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">E-mail</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model.trim="email"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="form-group bmd-form-group">
-                    <label class="bmd-label-floating">Senha</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      v-model.trim="password"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-info pull-right">
-                Entrar
-              </button>
-              <div class="clearfix"></div>
-            </form>
-          </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="#"><b>CH</b> Management</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+      <p class="login-box-msg">Faça login para continuar.</p>
+
+      <form @submit.prevent="login">
+        <div class="form-group has-feedback">
+          <input
+            type="email"
+            class="form-control"
+            required
+            placeholder="E-mail"
+            v-model="email"
+          />
+          <span
+            class="glyphicon glyphicon-envelope form-control-feedback"
+          ></span>
         </div>
+        <div class="form-group has-feedback">
+          <input
+            type="password"
+            class="form-control"
+            required
+            placeholder="Senha"
+            v-model="password"
+          />
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-xs-12">
+            <button type="submit" class="btn btn-success btn-block btn-flat">
+              Login
+            </button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+      <div class="social-auth-links">
+        <router-link to="register" class="text-center"
+          >Deseja solicitar acesso?</router-link
+        >
+        <br />
+        <router-link to="#" class="text-center"
+          >Esqueceu sua senha?</router-link
+        >
       </div>
     </div>
+    <!-- /.login-box-body -->
   </div>
+  <!-- /.login-box -->
 </template>
 <script>
 export default {
@@ -53,37 +63,43 @@ export default {
       password: "",
     };
   },
-  created(){
-  },
+  created() {},
   methods: {
     login() {
+      // start loading spinner
       this.$loading(true);
-      if (this.email && this.password) {
-        const api = `${this.$urlAPI}user/login`; 
-        this.$axios
-          .post(api, {
-            email: this.email,
-            password: this.password,
+      // api
+      const api = `${this.$urlAPI}user/login`;
+      // request
+      this.$axios
+        .post(api, {
+          email: this.email,
+          password: this.password,
+        })
+        .then(({ data }) => {
+          if (data.status) {
+            // save the logged user on localStorage
+            localStorage.setItem("user", JSON.stringify(data.user));
+            // create session cookie
+            document.cookie = `app_session=${
+              JSON.parse(localStorage.getItem("user")).token
+            }`;
+            setTimeout(() => {
+              this.$router.push("/home");
+              // stop loading spinner
+              this.$loading(false);
+            }, 1000);
+          }
+        })
+        .catch((e) => {
+          this.$swal.fire({
+            icon: e.response.data.flag,
+            text: e.response.data.message
           })
-          .then(({data}) => {
-            if (data.status) {
-              localStorage.setItem("user", JSON.stringify(data.user));
-              document.cookie = `app_session=${JSON.parse(localStorage.getItem('user')).token}`;
-              setTimeout(() => {
-                this.$loading(false);
-                this.$router.push("/home");
-              }, 1000);
-            }
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      } else {
-        console.log("erro");
-      }
+          // stop loading spinner
+          this.$loading(false);
+        });
     },
   },
 };
 </script>
-<style scoped>
-</style>

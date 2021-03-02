@@ -1,3 +1,4 @@
+console.log('até aqui ok');
 //require('./bootstrap');
 //------------------libs--------------------//
 import axios from 'axios';
@@ -47,8 +48,8 @@ const router = new VueRouter({
             alias: '/',
             name: 'home',
             component: Home,
-            meta: { 
-                title: 'Home' 
+            meta: {
+                title: 'Home'
             }
         },
         /*
@@ -59,8 +60,8 @@ const router = new VueRouter({
             name: 'users',
             title: 'Usuários',
             component: Users,
-            meta: { 
-                title: 'Usuários' 
+            meta: {
+                title: 'Usuários'
             }
         },
     ],
@@ -68,6 +69,19 @@ const router = new VueRouter({
 
 //------------------constants----------------------//
 Vue.prototype.$axios = axios;
+Vue.prototype.$swal = Swal;
+Vue.prototype.$moment = moment;
+Vue.prototype.$toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
 Vue.prototype.$urlBASE = 'http://localhost:8000/';
 Vue.prototype.$urlAPI = 'http://localhost:8000/api/';
 
@@ -78,7 +92,8 @@ Vue.use(VueLoading, {
 })
 Vue.use(InfiniteLoading, { /* options */ });
 
-Vue.component('multiselect', Multiselect)
+Vue.component('multiselect', Multiselect);
+
 
 //------------------instance----------------//
 const app = new Vue({
@@ -112,7 +127,7 @@ const app = new Vue({
                 }
             } else if (this.$route.name !== 'login' && this.$route.name !== 'register') {
                 this.$router.push('/login');
-            }          
+            }
         }
     }
 });

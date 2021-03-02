@@ -1,40 +1,36 @@
 <template>
-  <!-- div pai -->
   <div>
-    <!-- sidebar do sistema -->
-    <static-sidebar v-if="sidebar" />
-    <!-- div main -->
-    <div id="main" class="main-panel">
-      <!-- navbar do sistema -->
-      <static-navbar v-if="navbar" />
-      <!-- componente principal -->
+      <!-- header do sistema -->
+      <static-header v-if="header"/>
+      <!-- sidebar do sistema -->
+      <static-sidebar v-if="sidebar"/>
+      <!-- content do sistema -->
       <static-content />
       <!-- footer do sistema -->
-      <static-footer v-if="footer" />
-    </div>
+      <static-footer v-if="footer"/>
   </div>
 </template>
 <script>
 // componentes importados
-import StaticSidebar from "./static/StaticSidebar";
-import StaticNavbar from "./static/StaticNavbar";
-import StaticContent from "./static/StaticContent";
-import StaticFooter from "./static/StaticFooter";
+import StaticContent from "./static/StaticContent.vue";
+import StaticFooter from "./static/StaticFooter.vue";
+import StaticHeader from "./static/StaticHeader";
+import StaticSidebar from "./static/StaticSidebar.vue";
 
 export default {
   name: "App",
   components: {
+    StaticHeader,
     StaticSidebar,
-    StaticNavbar,
     StaticContent,
     StaticFooter,
   },
   data() {
     return {
-      //routes: ["login", "register"],
+      /* navigation */
+      header:  true,
       sidebar: true,
-      navbar: true,
-      footer: true,
+      footer:  true,
     };
   },
   created() {
@@ -44,53 +40,24 @@ export default {
     this.verifyClass();
   },
   methods: {
-    setNavbarBrand(){
-      
-    },
     verifyNavigation() {
       if (this.$route.name === "login" || this.$route.name === "register") {
+        this.header  = false,
         this.sidebar = false;
-        this.navbar = false;
-        this.footer = false;
-      } else if (
-        this.$route.name !== "login" &&
-        this.$route.name !== "register"
-      ) {
+        this.footer  = false;
+      } else if (this.$route.name !== "login" && this.$route.name !== "register") {
+        this.header  = true,
         this.sidebar = true;
-        this.navbar = true;
-        this.footer = true;
+        this.footer  = true;
       }
-      /*
-      this.routes.forEach((route) => {
-        if (this.$route.name === route) {
-          this.sidebar = false;
-          this.navbar = false;
-          this.footer = false;
-        } 
-      });
-      */
     },
-    verifyClass() {
+     verifyClass() {
       if (this.$route.name === "login" || this.$route.name === "register") {
-        this.handleClass("main", "remove", "main-panel");
-      } else if (
-        this.$route.name !== "login" &&
-        this.$route.name !== "register"
-      ) {
-        this.handleClass("main", "add", "main-panel");
-      }
-    },
-    handleClass(id, action, Class) {
-      switch (action) {
-        case "add":
-          document.getElementById(id).classList.add(Class);
-          break;
-        case "remove":
-          document.getElementById(id).classList.remove(Class);
-          break;
-        case "contains":
-          document.getElementById(id).classList.contains(Class);
-          break;
+        $(`#body`).addClass("login-page");
+        $(`#body`).removeClass("skin-blue sidebar-mini");
+      } else if (this.$route.name !== "login" && this.$route.name !== "register") {
+        $(`#body`).addClass("skin-blue sidebar-mini");
+        $(`#body`).removeClass("login-page");
       }
     },
   },
@@ -98,11 +65,6 @@ export default {
     $route: function (to, from) {
       this.verifyNavigation();
       this.verifyClass();
-      /*
-      this.routes.forEach((route) => {
-        this.verifyNavigation();
-      });
-      */
     },
   },
 };
