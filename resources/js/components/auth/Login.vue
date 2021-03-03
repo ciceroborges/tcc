@@ -92,7 +92,7 @@ export default {
           }
         })
         .catch((e) => {
-          this.$swal.fire({
+          Swal.fire({
             icon: e.response.data.flag,
             text: e.response.data.message
           })

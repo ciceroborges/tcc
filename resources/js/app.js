@@ -1,5 +1,3 @@
-console.log('até aqui ok');
-//require('./bootstrap');
 //------------------libs--------------------//
 import axios from 'axios';
 import Vue from 'vue';
@@ -21,7 +19,7 @@ import Register from './components/auth/Register';
 /*
 componentes de módulos
 */
-import Users from './components/modules/users/Users';
+import Users from './components/modules/users/Index';
 //-----------------routes-------------------//
 Vue.use(VueRouter)
 const router = new VueRouter({

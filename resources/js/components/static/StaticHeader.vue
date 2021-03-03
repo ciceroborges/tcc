@@ -65,7 +65,10 @@
           </li>
           <!-- Control Sidebar Toggle Button -->
           <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-search"></i></a>
+          </li>
+          <li>
+            <a href="#"><i class="fa fa-sign-out"></i></a>
           </li>
         </ul>
       </div>
