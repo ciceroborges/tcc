@@ -2605,68 +2605,139 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      active_module: "",
-      modules: {
+      active_link: "",
+      link: {
         home: {
           name: "home",
-          title: "Início",
+          title: "Home",
           route: "home",
-          icon: "dashboard",
+          icon: "fa-home",
+          active: false
+        },
+        modules: {
+          name: 'modules',
+          title: "MÓDULOS",
+          separator: true
+        },
+        calendar: {
+          name: "calendar",
+          title: "Calendário",
+          route: "calendar",
+          icon: "fa-calendar",
           active: false
         },
         appointments: {
           name: "appointments",
           title: "Atendimentos",
           route: "appointments",
-          icon: "assignment",
-          active: false
-        },
-        calendar: {
-          name: "calendar",
-          title: "Calendário",
-          route: "calendar",
-          icon: "date_range",
-          active: false
-        },
-        departments: {
-          name: "departments",
-          title: "Departamentos",
-          route: "departments",
-          icon: "workspaces",
+          icon: "fa-bars",
           active: false
         },
         patients: {
           name: "patients",
           title: "Pacientes",
           route: "patients",
-          icon: "accessible",
+          icon: "fa-venus-mars",
+          active: false
+        },
+        inventory: {
+          name: "inventory",
+          title: "Estoque",
+          route: "inventory",
+          icon: "fa-cubes",
+          active: false
+        },
+        invoices: {
+          name: "invoices",
+          title: "Faturas",
+          route: "invoices",
+          icon: "fa-money",
+          active: false
+        },
+        reports: {
+          name: "reports",
+          title: "Relatórios",
+          route: "reports",
+          icon: "fa-file-text",
+          active: false
+        },
+        others: {
+          name: 'others',
+          title: "OUTROS",
+          separator: true
+        },
+        settings: {
+          name: "settings",
+          title: "Configurações",
+          route: "settings",
+          icon: "fa-cogs",
+          active: false
+        },
+        logout: {
+          name: "logout",
+          title: "Logout",
+          route: "#",
+          icon: "fa-sign-out",
           active: false
         },
         users: {
           name: "users",
           title: "Usuários",
           route: "users",
-          icon: "groups",
+          icon: "fa-users",
           active: false
         }
       }
     };
   },
-  created: function created() {//this.active_module = this.$route.name;
-    //this.modules[this.$route.name].active = true;
+  created: function created() {
+    this.active_link = this.$route.name;
+    this.link[this.$route.name].active = true;
   },
   methods: {
     setActiveModule: function setActiveModule(name) {
       var _this = this;
 
-      if (this.active_module !== name) {
+      if (name === 'logout') {
+        this.logout();
+      } else if (this.active_link !== name && name !== 'modules' && name !== 'others') {
         this.$loading(true);
-        this.modules[this.active_module].active = false;
-        this.active_module = name;
-        this.modules[name].active = true;
+        this.link[this.active_link].active = false;
+        this.active_link = name;
+        this.link[this.active_link].active = true;
+        this.$router.push(name);
         setTimeout(function () {
           _this.$loading(false);
         }, 1000);
@@ -2719,7 +2790,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\ntr.clickable[data-v-2b506af8] {\n  cursor: pointer;\n}\ntr.clickable[data-v-2b506af8]:hover {\n  color: white;\n  background-color: #72afd2 !important;\n}\n", ""]);
+exports.push([module.i, "\ntr.clickable[data-v-2b506af8] {\r\n  cursor: pointer;\n}\ntr.clickable[data-v-2b506af8]:hover {\r\n  color: white;\r\n  background-color: #72afd2 !important;\n}\r\n", ""]);
 
 // exports
 
@@ -30273,7 +30344,7 @@ var staticRenderFns = [
                     _vm._v(" "),
                     _c("p", [
                       _vm._v(
-                        "\n                  Alexander Pierce - Web Developer\n                  "
+                        "\r\n                  Alexander Pierce - Web Developer\r\n                  "
                       ),
                       _c("small", [_vm._v("Member since Nov. 2012")])
                     ])
@@ -30362,107 +30433,104 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("aside", { staticClass: "main-sidebar" }, [
+    _c("section", { staticClass: "sidebar" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._m(1),
+      _vm._v(" "),
+      _c(
+        "ul",
+        { staticClass: "sidebar-menu", attrs: { "data-widget": "tree" } },
+        [
+          _vm._l(_vm.link, function(row, index) {
+            return [
+              _c(
+                "li",
+                {
+                  key: index,
+                  class: !row.separator ? { active: row.active } : "header",
+                  on: {
+                    click: function($event) {
+                      return _vm.setActiveModule(row.name)
+                    }
+                  }
+                },
+                [
+                  !row.separator
+                    ? [
+                        _c("a", { attrs: { href: "#" } }, [
+                          _c("i", { class: "fa " + row.icon }),
+                          _vm._v(" "),
+                          _c("span", [_vm._v(_vm._s(row.title))])
+                        ])
+                      ]
+                    : [
+                        _vm._v(
+                          "\n            " + _vm._s(row.title) + "\n          "
+                        )
+                      ]
+                ],
+                2
+              )
+            ]
+          })
+        ],
+        2
+      )
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("aside", { staticClass: "main-sidebar" }, [
-      _c("section", { staticClass: "sidebar" }, [
-        _c("div", { staticClass: "user-panel" }, [
-          _c("div", { staticClass: "pull-left image" }, [
-            _c("img", {
-              staticClass: "img-circle",
-              attrs: { src: "dist/img/user2-160x160.jpg", alt: "User Image" }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "pull-left info" }, [
-            _c("p", [_vm._v("Alexander Pierce")]),
-            _vm._v(" "),
-            _c("a", { attrs: { href: "#" } }, [
-              _c("i", { staticClass: "fa fa-circle text-success" }),
-              _vm._v(" Online")
-            ])
-          ])
-        ]),
+    return _c("div", { staticClass: "user-panel" }, [
+      _c("div", { staticClass: "pull-left image" }, [
+        _c("img", {
+          staticClass: "img-circle",
+          attrs: { src: "dist/img/user2-160x160.jpg", alt: "User Image" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "pull-left info" }, [
+        _c("p", [_vm._v("Alexander Pierce")]),
         _vm._v(" "),
-        _c(
-          "form",
-          {
-            staticClass: "sidebar-form",
-            attrs: { action: "#", method: "get" }
-          },
-          [
-            _c("div", { staticClass: "input-group" }, [
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "text", name: "q", placeholder: "Search..." }
-              }),
-              _vm._v(" "),
-              _c("span", { staticClass: "input-group-btn" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-flat",
-                    attrs: { type: "submit", name: "search", id: "search-btn" }
-                  },
-                  [_c("i", { staticClass: "fa fa-search" })]
-                )
-              ])
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "ul",
-          { staticClass: "sidebar-menu", attrs: { "data-widget": "tree" } },
-          [
-            _c("li", { staticClass: "header" }, [_vm._v("HEADER")]),
-            _vm._v(" "),
-            _c("li", { staticClass: "active" }, [
-              _c("a", { attrs: { href: "#" } }, [
-                _c("i", { staticClass: "fa fa-link" }),
-                _vm._v(" "),
-                _c("span", [_vm._v("Link")])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("li", [
-              _c("a", { attrs: { href: "#" } }, [
-                _c("i", { staticClass: "fa fa-link" }),
-                _vm._v(" "),
-                _c("span", [_vm._v("Another Link")])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "treeview" }, [
-              _c("a", { attrs: { href: "#" } }, [
-                _c("i", { staticClass: "fa fa-link" }),
-                _vm._v(" "),
-                _c("span", [_vm._v("Multilevel")]),
-                _vm._v(" "),
-                _c("span", { staticClass: "pull-right-container" }, [
-                  _c("i", { staticClass: "fa fa-angle-left pull-right" })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("ul", { staticClass: "treeview-menu" }, [
-                _c("li", [
-                  _c("a", { attrs: { href: "#" } }, [_vm._v("Link in level 2")])
-                ]),
-                _vm._v(" "),
-                _c("li", [
-                  _c("a", { attrs: { href: "#" } }, [_vm._v("Link in level 2")])
-                ])
-              ])
-            ])
-          ]
-        )
+        _c("a", { attrs: { href: "#" } }, [
+          _c("i", { staticClass: "fa fa-circle text-success" }),
+          _vm._v(" Online")
+        ])
       ])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "form",
+      { staticClass: "sidebar-form", attrs: { action: "#", method: "get" } },
+      [
+        _c("div", { staticClass: "input-group" }, [
+          _c("input", {
+            staticClass: "form-control",
+            attrs: { type: "text", name: "q", placeholder: "Search..." }
+          }),
+          _vm._v(" "),
+          _c("span", { staticClass: "input-group-btn" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-flat",
+                attrs: { type: "submit", name: "search", id: "search-btn" }
+              },
+              [_c("i", { staticClass: "fa fa-search" })]
+            )
+          ])
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -46808,8 +46876,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /opt/lampp/htdocs/projects/tcc/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /opt/lampp/htdocs/projects/tcc/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
