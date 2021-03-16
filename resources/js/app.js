@@ -19,7 +19,8 @@ import Register from './components/auth/Register';
 /*
 componentes de módulos
 */
-import Users from './components/modules/users/Index';
+//import Users from './components/modules/users/Index';
+import Settings from './components/modules/settings/Index';
 //-----------------routes-------------------//
 Vue.use(VueRouter)
 const router = new VueRouter({
@@ -54,6 +55,16 @@ const router = new VueRouter({
         componentes dos módulos
         */
         {
+            path: '/settings',
+            name: 'settings',
+            title: 'Configurações',
+            component: Settings,
+            meta: {
+                title: 'Configurações'
+            }
+        },
+        /*
+        {
             path: '/users',
             name: 'users',
             title: 'Usuários',
@@ -62,6 +73,8 @@ const router = new VueRouter({
                 title: 'Usuários'
             }
         },
+        */
+
     ],
 });
 

@@ -14,7 +14,7 @@
           <h4 class="modal-title">Default Modal</h4>
         </div>
         <div class="modal-body">
-          <p>One fine body…</p>
+          <p>{{ target }}</p>
         </div>
         <div class="modal-footer">
           <button
@@ -32,3 +32,10 @@
     <!-- /.modal-dialog -->
   </div>
 </template>
+<script>
+export default {
+  props:{
+    target: Object,
+  },
+}
+</script>

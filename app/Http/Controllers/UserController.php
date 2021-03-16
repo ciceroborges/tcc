@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Department;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
-
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -45,6 +45,7 @@ class UserController extends Controller
             ->leftJoin('groups as g', 'g.id', 'ug.group_id')
             ->select(
                 'u.id',
+                'u.uuid',
                 'u.name',
                 'u.email',
                 'u.picture',
@@ -59,7 +60,7 @@ class UserController extends Controller
                       GROUP BY us.id) AS departments_names"
                 )
             )
-            ->where('u.deleted_at', '=', NULL)
+            ->whereNull('u.deleted_at')
             ->skip($skip)
             ->take($take)
             ->get();
@@ -81,6 +82,60 @@ class UserController extends Controller
             ], 404);
         }
     }
+    public function find(Request $request) {
+        /** validation */
+        $validation = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Erro na validação dos parâmetros passados para a consulta. Tente novamente.',
+                'status' => 0
+            ], 400);
+        }
+        /** method */
+        $user = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
+        ->leftJoin('groups as g', 'g.id', 'ug.group_id')
+        ->select(
+            'u.id',
+            'u.uuid',
+            'u.name',
+            'u.email',
+            'u.picture',
+            'g.name as group_name',
+            DB::raw(
+                "(SELECT GROUP_CONCAT(d.id SEPARATOR ', ')
+                  FROM departments d 
+                  INNER JOIN user_department ud ON ud.department_id = d.id 
+                  INNER JOIN users us ON us.id = ud.user_id
+                  WHERE us.id = u.id
+                  AND d.deleted_at is null 
+                  GROUP BY us.id) AS departments_ids"
+            )
+        )
+        ->where('u.uuid', $request->uuid)
+        ->first();
+        /* response */
+        if ($user) {
+            return response()->json([
+                'user' => $user,
+                'flag' => 'success',
+                'message' => 'Usuário(s) encontrado(s).',
+                'status' => 1
+            ]);
+        } else {
+            return response()->json([
+                'e' => true,
+                'flag' => 'error',
+                'message' => 'Ocorreu um erro durante a consulta, tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
+            ], 404);
+        }
+    }
+
     public function login(Request $request)
     {
         $validation = Validator::make($request->all(), [
@@ -103,15 +158,7 @@ class UserController extends Controller
             if (Hash::check($request->password, $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'user' => [
-                        'id' => Crypt::encryptString(Auth::user()->id),
-                        'name' => Auth::user()->name,
-                        'email' => Auth::user()->email,
-                        'email_verified_at' => Auth::user()->email_verified_at,
-                        'created_at' => Auth::user()->created_at,
-                        'updated_at' => Auth::user()->updated_at,
-                        'token' => Crypt::encryptString(Auth::user()->id . '|' . Auth::user()->name . '|' . Auth::user()->email)
-                    ],
+                    'user' => Auth::user(),
                     'flag' => 'success',
                     'message' => 'Login efetuado com sucesso!',
                     'status' => 1,
@@ -164,13 +211,14 @@ class UserController extends Controller
         } else {
             if ($request->password === $request->confirm_password) {
                 $result = User::create([
+                    'uuid' => Str::orderedUuid(),
                     'name' => $request->name,
                     'email' => $request->email,
                     'password' => Hash::make($request->password)
                 ]);
 
                 if ($result) {
-                    $this->login($request);
+                    //$this->login($request);
                 } else {
                     return response()->json([
                         'e' => true,

@@ -19,7 +19,7 @@
         </div>
       </div>
 
-      <!-- search form (Optional) -->
+      <!-- search form (Optional)
       <form action="#" method="get" class="sidebar-form">
         <div class="input-group">
           <input
@@ -40,7 +40,7 @@
           </span>
         </div>
       </form>
-      <!-- /.search form -->
+       /.search form -->
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
@@ -87,6 +87,11 @@ export default {
     return {
       active_link: "",
       link: {
+        begin: {
+          name: 'begin',
+          title: "INÍCIO",
+          separator: true,
+        },
         home: {
           name: "home",
           title: "Home",
@@ -158,13 +163,6 @@ export default {
           title: "Logout",
           route: "#",
           icon: "fa-sign-out",
-          active: false,
-        },
-        users: {
-          name: "users",
-          title: "Usuários",
-          route: "users",
-          icon: "fa-users",
           active: false,
         },
       },

@@ -24,6 +24,7 @@ user api routes
 Route::prefix('user')->group(function () {
     /* GET */
     Route::get('/index', 'UserController@index');
+    Route::get('/find', 'UserController@find');
     /* POST */
     Route::post('/login', 'UserController@login');
     Route::post('/register', 'UserController@register');

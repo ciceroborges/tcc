@@ -1,19 +1,21 @@
 <template>
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div>
     <!-- list table -->
-    <list :users="users">
+    <list :users="users" :count="count" :edit="edit">
       <infinite-loading @infinite="index" spinner="spiral" ref="infinite">
-        <div slot="no-more">Sem mais resultados</div>
+        <div slot="no-more">
+          <small>{{ `${count} registros encontrados` }}</small>
+        </div>
         <div slot="no-results">Nenhum resultado encontrado</div>
       </infinite-loading>
     </list>
     <!-- search aside -->
-    <search />
+    <!--<search /> -->
     <!-- This div must be placed immediately after the control sidebar -->
-    <div class="control-sidebar-bg"></div>
+    <!--<div class="control-sidebar-bg"></div>-->
     <!-- edit modal -->
-    <edit />
+    <edit :target="target"/>
   </div>
   <!-- /.content-wrapper -->
 </template>
@@ -36,6 +38,8 @@ export default {
       users: [],
       departments: [],
       groups: [],
+      //edit
+      target: null,
       //search
       searched_name: null,
       searched_email: null,
@@ -44,6 +48,8 @@ export default {
       //infinite loading
       skip: 0,
       take: 5,
+      //count
+      count: 0,
     };
   },
   created() {
@@ -69,6 +75,7 @@ export default {
           .then(({ data }) => {
             if (data.users.length) {
               this.skip = data.skip;
+              this.count = this.users.length + data.users.length;
               this.users.push(...data.users);
               $state.loaded();
             } else {
@@ -88,6 +95,7 @@ export default {
     /** @update */
     /*----------*/
     update($id) {
+      this.user = $id;
       $("#edit-modal").modal("show");
     },
     /*----------*/
@@ -130,6 +138,24 @@ export default {
     /*----------*/
     /** @others */
     /*----------*/
+    edit($uuid) {
+      /* api */
+      const api = `${this.$urlAPI}user/find`;
+      /* request */
+      this.$axios
+        .get(api, {
+          params: {
+            uuid: $uuid
+          }  
+        })
+        .then(({ data }) => {
+          this.target = data.user;
+          $("#edit-modal").modal("show");
+        })
+        .catch((e) => {
+          console.log(e.response.data.message);
+        });
+    },
   },
 };
 </script>
