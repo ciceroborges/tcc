@@ -86,8 +86,8 @@ export default {
     };
   },
   created() {
-    this.getDepartments();
-    this.getGroups();
+    //this.getDepartments();
+    //this.getGroups();
   },
   mounted() {
     //this.$refs.users.update(1);

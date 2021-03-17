@@ -15,7 +15,7 @@
     <!-- This div must be placed immediately after the control sidebar -->
     <!--<div class="control-sidebar-bg"></div>-->
     <!-- edit modal -->
-    <edit :target="target"/>
+    <edit :target="target" :groups="groups" :departments="departments" :update="update"/>
   </div>
   <!-- /.content-wrapper -->
 </template>
@@ -94,9 +94,11 @@ export default {
     /*----------*/
     /** @update */
     /*----------*/
-    update($id) {
-      this.user = $id;
-      $("#edit-modal").modal("show");
+    update($target) {
+      console.log('update function');
+      console.log($target);
+      //this.user = $id;
+      //$("#edit-modal").modal("show");
     },
     /*----------*/
     /** @delete */
@@ -106,6 +108,8 @@ export default {
     /** @get */
     /*-------*/
     getDepartments() {
+      /* begin loading spinner*/
+      this.$loading(true);
       /* api */
       const api = `${this.$urlAPI}department/all`;
       /* request */
@@ -113,12 +117,16 @@ export default {
         .get(api, {})
         .then(({ data }) => {
           this.departments = data.departments;
+          this.$loading(false);
         })
         .catch((e) => {
           console.log(e.response.data.message);
+          this.$loading(false);
         });
     },
     getGroups() {
+      /* begin loading spinner*/
+      this.$loading(true);
       /* api */
       const api = `${this.$urlAPI}group/all`;
       /* request */
@@ -126,9 +134,11 @@ export default {
         .get(api, {})
         .then(({ data }) => {
           this.groups = data.groups;
+          this.$loading(false);
         })
         .catch((e) => {
           console.log(e.response.data.message);
+          this.$loading(false);
         });
     },
     /*--------*/
