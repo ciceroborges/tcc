@@ -15,7 +15,7 @@
     <!-- This div must be placed immediately after the control sidebar -->
     <!--<div class="control-sidebar-bg"></div>-->
     <!-- edit modal -->
-    <edit :target="target" :groups="groups" :departments="departments" :update="update"/>
+    <edit :target="target" :target_group="target_group" :target_departments="target_departments" :groups="groups" :departments="departments" :update="update"/>
   </div>
   <!-- /.content-wrapper -->
 </template>
@@ -40,6 +40,8 @@ export default {
       groups: [],
       //edit
       target: null,
+      target_group: [],
+      target_departments: [],
       //search
       searched_name: null,
       searched_email: null,
@@ -52,10 +54,7 @@ export default {
       count: 0,
     };
   },
-  created() {
-    this.getDepartments();
-    this.getGroups();
-  },
+  created() {},
   methods: {
     /*--------*/
     /** @read */
@@ -149,6 +148,10 @@ export default {
     /** @others */
     /*----------*/
     edit($uuid) {
+      // start loading spinner
+      this.$loading(true);
+      this.getDepartments();
+      this.getGroups();
       /* api */
       const api = `${this.$urlAPI}user/find`;
       /* request */
@@ -159,10 +162,33 @@ export default {
           }  
         })
         .then(({ data }) => {
+          // get target data
           this.target = data.user;
+          // get target departments
+          let departments = data.user.departments_ids.split(",");
+          departments.forEach(element => {
+            let index = this.departments.findIndex(
+              (item) => item.id === parseInt(element)
+            );
+            if (index !== -1) {
+              this.target_departments.push(this.departments[index]);
+            }  
+          });
+          // get target group
+          let index = this.groups.findIndex(
+            (item) => item.id === data.user.group_id
+          );
+          if(index !== -1) {
+            this.target_group.push(this.groups[index]); 
+          }
+          // show edit modal
           $("#edit-modal").modal("show");
+          // stop loading spinner
+          this.$loading(false);
         })
         .catch((e) => {
+          // stop loading spinner
+          this.$loading(false);
           console.log(e.response.data.message);
         });
     },

@@ -35,10 +35,6 @@
     background: #3c8dbc !important;
 }
 
-.multiselect__tag-icon:after {
-    color: white !important;
-}
-
 .multiselect__tag-icon:hover {
     background: #3c8dbc !important;
 }

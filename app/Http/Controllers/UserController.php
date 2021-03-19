@@ -105,7 +105,7 @@ class UserController extends Controller
             'u.name',
             'u.email',
             'u.picture',
-            'g.name as group_name',
+            'g.id as group_id',
             DB::raw(
                 "(SELECT GROUP_CONCAT(d.id SEPARATOR ', ')
                   FROM departments d 

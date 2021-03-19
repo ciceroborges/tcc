@@ -2610,10 +2610,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     /** @Objects */
     target: Object,
+
+    /** @Arrays */
+    target_group: Array,
+    target_departments: Array,
     departments: Array,
     groups: Array,
 
@@ -2622,12 +2629,18 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selected_group: null,
-      selected_department: null
+      vm_target_group: this.target_group !== null ? this.target_group : null,
+      vm_target_departments: this.target_departments !== null ? this.target_departments : null
     };
   },
-  created: function created() {
-    console.log(this.$props);
+  created: function created() {},
+  methods: {
+    consoleee: function consoleee() {
+      console.log(this.groups);
+      console.log(this.target_group);
+      console.log(this.departments);
+      console.log(this.target_departments);
+    }
   }
 });
 
@@ -2697,6 +2710,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       groups: [],
       //edit
       target: null,
+      target_group: [],
+      target_departments: [],
       //search
       searched_name: null,
       searched_email: null,
@@ -2709,10 +2724,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       count: 0
     };
   },
-  created: function created() {
-    this.getDepartments();
-    this.getGroups();
-  },
+  created: function created() {},
   methods: {
     /*--------*/
 
@@ -2840,7 +2852,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     edit: function edit($uuid) {
       var _this4 = this;
 
+      // start loading spinner
+      this.$loading(true);
+      this.getDepartments();
+      this.getGroups();
       /* api */
+
       var api = "".concat(this.$urlAPI, "user/find");
       /* request */
 
@@ -2850,9 +2867,36 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }).then(function (_ref4) {
         var data = _ref4.data;
-        _this4.target = data.user;
-        $("#edit-modal").modal("show");
+        // get target data
+        _this4.target = data.user; // get target departments
+
+        var departments = data.user.departments_ids.split(",");
+        departments.forEach(function (element) {
+          var index = _this4.departments.findIndex(function (item) {
+            return item.id === parseInt(element);
+          });
+
+          if (index !== -1) {
+            _this4.target_departments.push(_this4.departments[index]);
+          }
+        }); // get target group
+
+        var index = _this4.groups.findIndex(function (item) {
+          return item.id === data.user.group_id;
+        });
+
+        if (index !== -1) {
+          _this4.target_group.push(_this4.groups[index]);
+        } // show edit modal
+
+
+        $("#edit-modal").modal("show"); // stop loading spinner
+
+        _this4.$loading(false);
       })["catch"](function (e) {
+        // stop loading spinner
+        _this4.$loading(false);
+
         console.log(e.response.data.message);
       });
     }
@@ -30394,7 +30438,7 @@ var render = function() {
             on: {
               submit: function($event) {
                 $event.preventDefault()
-                return _vm.update(_vm.target)
+                return _vm.consoleee($event)
               }
             }
           },
@@ -30405,9 +30449,43 @@ var render = function() {
                 { staticClass: "box", staticStyle: { border: "none" } },
                 [
                   _c("div", { staticClass: "box-body" }, [
-                    _vm._m(1),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
+                        _vm._v("Nome completo:")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "name",
+                          id: "exampleInputEmail1",
+                          placeholder: "Enter email"
+                        },
+                        domProps: {
+                          value:
+                            "" + (_vm.target !== null ? _vm.target.name : "")
+                        }
+                      })
+                    ]),
                     _vm._v(" "),
-                    _vm._m(2),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
+                        _vm._v("E-mail:")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "email",
+                          id: "exampleInputEmail1",
+                          placeholder: "Enter email"
+                        },
+                        domProps: {
+                          value:
+                            "" + (_vm.target !== null ? _vm.target.email : "")
+                        }
+                      })
+                    ]),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -30430,11 +30508,11 @@ var render = function() {
                             placeholder: "Selecione..."
                           },
                           model: {
-                            value: _vm.selected_group,
+                            value: _vm.vm_target_group,
                             callback: function($$v) {
-                              _vm.selected_group = $$v
+                              _vm.vm_target_group = $$v
                             },
-                            expression: "selected_group"
+                            expression: "vm_target_group"
                           }
                         })
                       ],
@@ -30464,22 +30542,24 @@ var render = function() {
                             placeholder: "Selecione..."
                           },
                           model: {
-                            value: _vm.selected_department,
+                            value: _vm.vm_target_departments,
                             callback: function($$v) {
-                              _vm.selected_department = $$v
+                              _vm.vm_target_departments = $$v
                             },
-                            expression: "selected_department"
+                            expression: "vm_target_departments"
                           }
                         })
                       ],
                       1
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("p", [_vm._v(_vm._s(_vm.target))])
                   ])
                 ]
               )
             ]),
             _vm._v(" "),
-            _vm._m(3)
+            _vm._m(1)
           ]
         )
       ])
@@ -30506,44 +30586,6 @@ var staticRenderFns = [
       ),
       _vm._v(" "),
       _c("h4", { staticClass: "modal-title" }, [_vm._v("Editar usuário")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
-        _vm._v("Nome completo:")
-      ]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: {
-          type: "name",
-          id: "exampleInputEmail1",
-          placeholder: "Enter email"
-        }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
-        _vm._v("E-mail:")
-      ]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: {
-          type: "email",
-          id: "exampleInputEmail1",
-          placeholder: "Enter email"
-        }
-      })
     ])
   },
   function() {
@@ -30622,6 +30664,8 @@ var render = function() {
       _c("edit", {
         attrs: {
           target: _vm.target,
+          target_group: _vm.target_group,
+          target_departments: _vm.target_departments,
           groups: _vm.groups,
           departments: _vm.departments,
           update: _vm.update

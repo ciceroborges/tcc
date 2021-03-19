@@ -14,7 +14,7 @@
           <h4 class="modal-title">Editar usuário</h4>
         </div>
         <!-- form start -->
-        <form role="form" @submit.prevent="update(target)">
+        <form role="form" @submit.prevent="consoleee">
           <div class="modal-body">
             <div class="box" style="border: none">
               <!-- /.box-header -->
@@ -22,6 +22,7 @@
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome completo:</label>
                   <input
+                    :value="`${target !== null ? target.name : ''}`"
                     type="name"
                     class="form-control"
                     id="exampleInputEmail1"
@@ -31,6 +32,7 @@
                 <div class="form-group">
                   <label for="exampleInputEmail1">E-mail:</label>
                   <input
+                    :value="`${target !== null ? target.email : ''}`"
                     type="email"
                     class="form-control"
                     id="exampleInputEmail1"
@@ -48,7 +50,7 @@
                     :close-on-select="true"
                     :multiple="false"
                     :options="groups"
-                    v-model="selected_group"
+                    v-model="vm_target_group"
                     label="name"
                     track-by="name"
                     placeholder="Selecione..."
@@ -66,13 +68,14 @@
                     :close-on-select="true"
                     :multiple="true"
                     :options="departments"
-                    v-model="selected_department"
+                    v-model="vm_target_departments"
                     label="name"
                     track-by="name"
                     placeholder="Selecione..."
                   >
                   </multiselect>
                 </div>
+                <p>{{ target }}</p>
               </div>
             </div>
           </div>
@@ -98,6 +101,9 @@ export default {
   props: {
     /** @Objects */
     target: Object,
+    /** @Arrays */
+    target_group: Array,
+    target_departments: Array,
     departments: Array,
     groups: Array,
     /** @Functions */
@@ -105,13 +111,21 @@ export default {
   },
   data() {
     return {
-      selected_group: null,
-      selected_department: null,
+      vm_target_group: this.target_group !== null ? this.target_group : null,
+      vm_target_departments: this.target_departments !== null ? this.target_departments : null,
     };
   },
   created() {
-    console.log(this.$props);
+    
   },
+  methods: {
+    consoleee(){
+      console.log(this.groups);
+      console.log(this.target_group);
+      console.log(this.departments);
+      console.log(this.target_departments);
+    }
+  }
 };
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
