@@ -2,12 +2,13 @@
   <div class="content-wrapper" style="min-height: 1136px">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>Configurações</h1>
+      <h1>Configurações | {{ title }}</h1>
       <ol class="breadcrumb">
         <li>
           <a href="#"><i class="fa fa-home"></i> Home</a>
         </li>
-        <li class="active">Configurações</li>
+        <li>Configurações</li>
+        <li class="active">{{ title }}</li>
       </ol>
     </section>
     <!-- Main content -->
@@ -71,6 +72,7 @@ export default {
   data() {
     return {
       //general
+      title: 'Usuários',
       // tabs
       users_tab: true,
       group_tab: true,
@@ -176,6 +178,7 @@ export default {
       switch ($tab) {
         case "users":
           if(!this.users_tab){
+            this.title = 'Usuários';
             this.users_tab = true;
             this.department_tab = false;
             this.group_tab = false;
@@ -183,6 +186,7 @@ export default {
           break;
         case "departments":
           if(!this.department_tab){
+            this.title = 'Departamentos';
             this.users_tab = false;
             this.department_tab = true;
             this.group_tab = false;
@@ -190,6 +194,7 @@ export default {
           break;
         case "groups":
           if(!this.groups_tab){
+            this.title = 'Grupos';
             this.users_tab = false;
             this.department_tab = false;
             this.group_tab = true;

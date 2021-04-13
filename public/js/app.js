@@ -2129,10 +2129,7 @@ __webpack_require__.r(__webpack_exports__);
           }, 1000);
         }
       })["catch"](function (e) {
-        Swal.fire({
-          icon: e.response.data.flag,
-          text: e.response.data.message
-        }); // stop loading spinner
+        alert(e.response.data.message); // stop loading spinner
 
         _this.$loading(false);
       });
@@ -2328,6 +2325,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
 // componentes importados
 
  //import List from "../users/List.vue";
@@ -2345,6 +2343,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   data: function data() {
     return {
       //general
+      title: 'Usuários',
       // tabs
       users_tab: true,
       group_tab: true,
@@ -2475,6 +2474,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       switch ($tab) {
         case "users":
           if (!this.users_tab) {
+            this.title = 'Usuários';
             this.users_tab = true;
             this.department_tab = false;
             this.group_tab = false;
@@ -2484,6 +2484,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
         case "departments":
           if (!this.department_tab) {
+            this.title = 'Departamentos';
             this.users_tab = false;
             this.department_tab = true;
             this.group_tab = false;
@@ -2493,6 +2494,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
         case "groups":
           if (!this.groups_tab) {
+            this.title = 'Grupos';
             this.users_tab = false;
             this.department_tab = false;
             this.group_tab = true;
@@ -2613,6 +2615,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     /** @Objects */
@@ -2629,17 +2635,34 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      vm_target_group: this.target_group !== null ? this.target_group : null,
-      vm_target_departments: this.target_departments !== null ? this.target_departments : null
+      vm_target_name: null,
+      vm_target_email: null,
+      vm_target_group: null,
+      vm_target_departments: null
     };
   },
-  created: function created() {},
   methods: {
-    consoleee: function consoleee() {
-      console.log(this.groups);
-      console.log(this.target_group);
-      console.log(this.departments);
-      console.log(this.target_departments);
+    callUpdate: function callUpdate() {
+      var target = {
+        uuid: this.target.uuid,
+        name: this.vm_target_name,
+        email: this.vm_target_email,
+        group: this.vm_target_group,
+        departments: this.vm_target_departments
+      };
+      this.update(target);
+    }
+  },
+  watch: {
+    target: function target() {
+      this.vm_target_name = this.target.name;
+      this.vm_target_email = this.target.email;
+    },
+    target_group: function target_group() {
+      this.vm_target_group = this.target_group;
+    },
+    target_departments: function target_departments() {
+      this.vm_target_departments = this.target_departments;
     }
   }
 });
@@ -2709,7 +2732,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       departments: [],
       groups: [],
       //edit
-      target: null,
+      target: {},
       target_group: [],
       target_departments: [],
       //search
@@ -2719,7 +2742,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       searched_group: null,
       //infinite loading
       skip: 0,
-      take: 5,
+      take: 30,
       //count
       count: 0
     };
@@ -2734,35 +2757,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     index: function index($state) {
       var _this = this;
 
-      setTimeout(function () {
-        /* api */
-        var api = "".concat(_this.$urlAPI, "user/index");
-        /* request */
+      /* api */
+      var api = "".concat(this.$urlAPI, "user/index");
+      /* request */
 
-        _this.$axios.get(api, {
-          params: {
-            skip: _this.skip,
-            take: _this.take
-          }
-        }).then(function (_ref) {
-          var data = _ref.data;
+      this.$axios.get(api, {
+        params: {
+          skip: this.skip,
+          take: this.take
+        }
+      }).then(function (_ref) {
+        var data = _ref.data;
 
-          if (data.users.length) {
-            var _this$users;
+        if (data.users.length) {
+          var _this$users;
 
-            _this.skip = data.skip;
-            _this.count = _this.users.length + data.users.length;
+          _this.skip = data.skip;
+          _this.count = _this.users.length + data.users.length;
 
-            (_this$users = _this.users).push.apply(_this$users, _toConsumableArray(data.users));
+          (_this$users = _this.users).push.apply(_this$users, _toConsumableArray(data.users));
 
+          if (data.users.length === _this.take) {
             $state.loaded();
           } else {
             $state.complete();
           }
-        })["catch"](function (e) {
-          console.log(e.response.data.message);
-        });
-      }, 1000);
+        } else {
+          $state.complete();
+        }
+      })["catch"](function (e) {
+        console.log(e.response.data.message);
+      });
     },
 
     /*----------*/
@@ -2778,9 +2803,41 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*----------*/
     update: function update($target) {
-      console.log('update function');
-      console.log($target); //this.user = $id;
-      //$("#edit-modal").modal("show");
+      var _this2 = this;
+
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+
+      var api = "".concat(this.$urlAPI, "user/update");
+      /* request */
+
+      this.$axios.put(api, {
+        uuid: $target.uuid,
+        name: $target.name,
+        email: $target.email,
+        group: $target.group,
+        departments: $target.departments
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        console.log(data);
+        /* close edit modal */
+
+        $("#edit-user").modal("hide");
+        /* stop loading spinner */
+
+        _this2.$loading(false);
+      })["catch"](function (e) {
+        if (e.response.data) {
+          alert(e.response.data.message);
+        } else {
+          alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+        }
+        /* stop loading spinner */
+
+
+        _this2.$loading(false);
+      });
     },
 
     /*----------*/
@@ -2796,7 +2853,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*-------*/
     getDepartments: function getDepartments() {
-      var _this2 = this;
+      var _this3 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -2805,19 +2862,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "department/all");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref2) {
-        var data = _ref2.data;
-        _this2.departments = data.departments;
+      this.$axios.get(api, {}).then(function (_ref3) {
+        var data = _ref3.data;
+        _this3.departments = data.departments;
 
-        _this2.$loading(false);
+        _this3.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this2.$loading(false);
+        _this3.$loading(false);
       });
     },
     getGroups: function getGroups() {
-      var _this3 = this;
+      var _this4 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -2826,15 +2883,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "group/all");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref3) {
-        var data = _ref3.data;
-        _this3.groups = data.groups;
+      this.$axios.get(api, {}).then(function (_ref4) {
+        var data = _ref4.data;
+        _this4.groups = data.groups;
 
-        _this3.$loading(false);
+        _this4.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this3.$loading(false);
+        _this4.$loading(false);
       });
     },
 
@@ -2850,10 +2907,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*----------*/
     edit: function edit($uuid) {
-      var _this4 = this;
+      var _this5 = this;
 
       // start loading spinner
       this.$loading(true);
+      this.target = {};
+      this.target_group = [];
+      this.target_departments = [];
       this.getDepartments();
       this.getGroups();
       /* api */
@@ -2865,39 +2925,48 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         params: {
           uuid: $uuid
         }
-      }).then(function (_ref4) {
-        var data = _ref4.data;
+      }).then(function (_ref5) {
+        var data = _ref5.data;
         // get target data
-        _this4.target = data.user; // get target departments
+        _this5.target = data.user; // get target departments
 
-        var departments = data.user.departments_ids.split(",");
-        departments.forEach(function (element) {
-          var index = _this4.departments.findIndex(function (item) {
-            return item.id === parseInt(element);
+        if (data.user.departments_ids) {
+          var departments = data.user.departments_ids.split(",");
+          departments.forEach(function (element) {
+            var index = _this5.departments.findIndex(function (item) {
+              return item.id === parseInt(element);
+            });
+
+            if (index !== -1) {
+              _this5.target_departments.push(_this5.departments[index]);
+            }
+          });
+        }
+
+        if (data.user.group_id) {
+          // get target group
+          var index = _this5.groups.findIndex(function (item) {
+            return item.id === data.user.group_id;
           });
 
           if (index !== -1) {
-            _this4.target_departments.push(_this4.departments[index]);
+            _this5.target_group.push(_this5.groups[index]);
           }
-        }); // get target group
-
-        var index = _this4.groups.findIndex(function (item) {
-          return item.id === data.user.group_id;
-        });
-
-        if (index !== -1) {
-          _this4.target_group.push(_this4.groups[index]);
         } // show edit modal
 
 
-        $("#edit-modal").modal("show"); // stop loading spinner
+        $("#edit-user").modal("show"); // stop loading spinner
 
-        _this4.$loading(false);
+        _this5.$loading(false);
       })["catch"](function (e) {
-        // stop loading spinner
-        _this4.$loading(false);
+        if (e.response.data) {
+          alert(e.response.data.message);
+        } else {
+          alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+        } // stop loading spinner
 
-        console.log(e.response.data.message);
+
+        _this5.$loading(false);
       });
     }
   }
@@ -2992,11 +3061,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     users: Array,
     count: Number,
     //methods
+    index: Function,
     edit: Function
   }
 });
@@ -29986,8 +30069,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "login-logo" }, [
       _c("a", { attrs: { href: "#" } }, [
-        _c("b", [_vm._v("CH")]),
-        _vm._v(" Management")
+        _c("b", [_vm._v("ZEN")]),
+        _vm._v(" HEALTCARE")
       ])
     ])
   },
@@ -30219,8 +30302,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "login-logo" }, [
       _c("a", { attrs: { href: "#" } }, [
-        _c("b", [_vm._v("CH")]),
-        _vm._v(" Management")
+        _c("b", [_vm._v("ZEN")]),
+        _vm._v(" HEALTCARE")
       ])
     ])
   },
@@ -30267,7 +30350,17 @@ var render = function() {
     "div",
     { staticClass: "content-wrapper", staticStyle: { "min-height": "1136px" } },
     [
-      _vm._m(0),
+      _c("section", { staticClass: "content-header" }, [
+        _c("h1", [_vm._v("Configurações | " + _vm._s(_vm.title))]),
+        _vm._v(" "),
+        _c("ol", { staticClass: "breadcrumb" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("li", [_vm._v("Configurações")]),
+          _vm._v(" "),
+          _c("li", { staticClass: "active" }, [_vm._v(_vm._s(_vm.title))])
+        ])
+      ]),
       _vm._v(" "),
       _c("section", { staticClass: "content container-fluid" }, [
         _c("div", { staticClass: "row" }, [
@@ -30389,18 +30482,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("section", { staticClass: "content-header" }, [
-      _c("h1", [_vm._v("Configurações")]),
-      _vm._v(" "),
-      _c("ol", { staticClass: "breadcrumb" }, [
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _c("i", { staticClass: "fa fa-home" }),
-            _vm._v(" Home")
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "active" }, [_vm._v("Configurações")])
+    return _c("li", [
+      _c("a", { attrs: { href: "#" } }, [
+        _c("i", { staticClass: "fa fa-home" }),
+        _vm._v(" Home")
       ])
     ])
   }
@@ -30426,7 +30511,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "modal fade", attrs: { id: "edit-modal" } }, [
+  return _c("div", { staticClass: "modal fade", attrs: { id: "edit-user" } }, [
     _c("div", { staticClass: "modal-dialog" }, [
       _c("div", { staticClass: "modal-content" }, [
         _vm._m(0),
@@ -30438,7 +30523,7 @@ var render = function() {
             on: {
               submit: function($event) {
                 $event.preventDefault()
-                return _vm.consoleee($event)
+                return _vm.callUpdate()
               }
             }
           },
@@ -30455,15 +30540,29 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.vm_target_name,
+                            expression: "vm_target_name"
+                          }
+                        ],
                         staticClass: "form-control",
                         attrs: {
                           type: "name",
                           id: "exampleInputEmail1",
-                          placeholder: "Enter email"
+                          placeholder: "Enter email",
+                          required: ""
                         },
-                        domProps: {
-                          value:
-                            "" + (_vm.target !== null ? _vm.target.name : "")
+                        domProps: { value: _vm.vm_target_name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.vm_target_name = $event.target.value
+                          }
                         }
                       })
                     ]),
@@ -30474,15 +30573,29 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.vm_target_email,
+                            expression: "vm_target_email"
+                          }
+                        ],
                         staticClass: "form-control",
                         attrs: {
                           type: "email",
                           id: "exampleInputEmail1",
-                          placeholder: "Enter email"
+                          placeholder: "Enter email",
+                          required: ""
                         },
-                        domProps: {
-                          value:
-                            "" + (_vm.target !== null ? _vm.target.email : "")
+                        domProps: { value: _vm.vm_target_email },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.vm_target_email = $event.target.value
+                          }
                         }
                       })
                     ]),
@@ -30502,10 +30615,12 @@ var render = function() {
                             "hide-selected": false,
                             "close-on-select": true,
                             multiple: false,
+                            allowEmpty: false,
                             options: _vm.groups,
                             label: "name",
                             "track-by": "name",
-                            placeholder: "Selecione..."
+                            placeholder: "Selecione...",
+                            required: ""
                           },
                           model: {
                             value: _vm.vm_target_group,
@@ -30536,6 +30651,7 @@ var render = function() {
                             "hide-selected": true,
                             "close-on-select": true,
                             multiple: true,
+                            allowEmpty: false,
                             options: _vm.departments,
                             label: "name",
                             "track-by": "name",
@@ -30551,9 +30667,7 @@ var render = function() {
                         })
                       ],
                       1
-                    ),
-                    _vm._v(" "),
-                    _c("p", [_vm._v(_vm._s(_vm.target))])
+                    )
                   ])
                 ]
               )
@@ -30599,13 +30713,13 @@ var staticRenderFns = [
           staticClass: "btn btn-default pull-left",
           attrs: { type: "button", "data-dismiss": "modal" }
         },
-        [_vm._v("\n            Close\n          ")]
+        [_vm._v("\n            Fechar\n          ")]
       ),
       _vm._v(" "),
       _c(
         "button",
         { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-        [_vm._v("Save changes")]
+        [_vm._v("Gravar")]
       )
     ])
   }
@@ -30634,32 +30748,14 @@ var render = function() {
   return _c(
     "div",
     [
-      _c(
-        "list",
-        { attrs: { users: _vm.users, count: _vm.count, edit: _vm.edit } },
-        [
-          _c(
-            "infinite-loading",
-            {
-              ref: "infinite",
-              attrs: { spinner: "spiral" },
-              on: { infinite: _vm.index }
-            },
-            [
-              _c("div", { attrs: { slot: "no-more" }, slot: "no-more" }, [
-                _c("small", [
-                  _vm._v(_vm._s(_vm.count + " registros encontrados"))
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { attrs: { slot: "no-results" }, slot: "no-results" }, [
-                _vm._v("Nenhum resultado encontrado")
-              ])
-            ]
-          )
-        ],
-        1
-      ),
+      _c("list", {
+        attrs: {
+          users: _vm.users,
+          count: _vm.count,
+          index: _vm.index,
+          edit: _vm.edit
+        }
+      }),
       _vm._v(" "),
       _c("edit", {
         attrs: {
@@ -30700,7 +30796,7 @@ var render = function() {
   return _c("section", { staticClass: "content container-fluid" }, [
     _c("div", { staticClass: "col-xs-12" }, [
       _c("div", { staticClass: "box box-primary" }, [
-        _vm._m(0),
+        _c("div", { staticClass: "box-header with-border" }),
         _vm._v(" "),
         _c("div", { staticClass: "box-body" }, [
           _c(
@@ -30713,7 +30809,7 @@ var render = function() {
               _c(
                 "tbody",
                 [
-                  _vm._m(1),
+                  _vm._m(0),
                   _vm._v(" "),
                   _vm._l(_vm.users, function(row, index) {
                     return _c(
@@ -30730,7 +30826,7 @@ var render = function() {
                       [
                         _c("td", [_vm._v(_vm._s("#" + row.id))]),
                         _vm._v(" "),
-                        _vm._m(2, true),
+                        _vm._m(1, true),
                         _vm._v(" "),
                         _c("td", [_vm._v(_vm._s(row.name))]),
                         _vm._v(" "),
@@ -30746,13 +30842,13 @@ var render = function() {
                         _vm._v(" "),
                         _c("td", [
                           _vm._v(
-                            "\n                  " +
+                            "\n                " +
                               _vm._s(
                                 row.departments_names
                                   ? row.departments_names
                                   : "Indefinido"
                               ) +
-                              "\n                "
+                              "\n              "
                           )
                         ])
                       ]
@@ -30768,31 +30864,40 @@ var render = function() {
         _c(
           "div",
           { staticClass: "box-footer clearfix" },
-          [_vm._t("default")],
-          2
+          [
+            _c(
+              "infinite-loading",
+              {
+                ref: "infinite",
+                attrs: { spinner: "spiral" },
+                on: { infinite: _vm.index }
+              },
+              [
+                _c("div", { attrs: { slot: "no-more" }, slot: "no-more" }, [
+                  _c("small", [
+                    _vm._v(_vm._s(_vm.count + " registro(s) encontrado(s)."))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { attrs: { slot: "no-results" }, slot: "no-results" },
+                  [
+                    _c("small", [
+                      _vm._v(_vm._s(_vm.count + " registro(s) encontrado(s)."))
+                    ])
+                  ]
+                )
+              ]
+            )
+          ],
+          1
         )
       ])
     ])
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "box-header with-border" }, [
-      _c("h3", { staticClass: "box-title" }, [
-        _vm._v("Simple Full Width Table")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "box-tools" }, [
-        _c("button", { staticClass: "btn btn-sm btn-primary" }, [
-          _c("i", { staticClass: "fa fa-plus" }),
-          _vm._v(" NOVO")
-        ])
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -31091,13 +31196,10 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("header", { staticClass: "main-header" }, [
       _c("a", { staticClass: "logo", attrs: { href: "index2.html" } }, [
-        _c("span", { staticClass: "logo-mini" }, [
-          _c("b", [_vm._v("HC")]),
-          _vm._v("M")
-        ]),
+        _c("span", { staticClass: "logo-mini" }, [_c("b", [_vm._v("ZEN")])]),
         _vm._v(" "),
         _c("span", { staticClass: "logo-lg" }, [
-          _c("b", [_vm._v("HC Management")])
+          _c("b", [_vm._v("ZEN HEALTCARE")])
         ])
       ]),
       _vm._v(" "),

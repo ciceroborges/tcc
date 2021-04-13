@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Department;
-
+use App\Models\UserDepartment;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -82,7 +83,8 @@ class UserController extends Controller
             ], 404);
         }
     }
-    public function find(Request $request) {
+    public function find(Request $request)
+    {
         /** validation */
         $validation = Validator::make($request->all(), [
             'uuid' => 'required|string',
@@ -98,26 +100,27 @@ class UserController extends Controller
         }
         /** method */
         $user = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
-        ->leftJoin('groups as g', 'g.id', 'ug.group_id')
-        ->select(
-            'u.id',
-            'u.uuid',
-            'u.name',
-            'u.email',
-            'u.picture',
-            'g.id as group_id',
-            DB::raw(
-                "(SELECT GROUP_CONCAT(d.id SEPARATOR ', ')
+            ->leftJoin('groups as g', 'g.id', 'ug.group_id')
+            ->select(
+                'u.id',
+                'u.uuid',
+                'u.name',
+                'u.email',
+                'u.picture',
+                'g.id as group_id',
+                DB::raw(
+                    "(SELECT GROUP_CONCAT(d.id SEPARATOR ', ')
                   FROM departments d 
                   INNER JOIN user_department ud ON ud.department_id = d.id 
                   INNER JOIN users us ON us.id = ud.user_id
                   WHERE us.id = u.id
                   AND d.deleted_at is null 
+                  AND ud.deleted_at is null
                   GROUP BY us.id) AS departments_ids"
+                )
             )
-        )
-        ->where('u.uuid', $request->uuid)
-        ->first();
+            ->where('u.uuid', $request->uuid)
+            ->first();
         /* response */
         if ($user) {
             return response()->json([
@@ -131,6 +134,90 @@ class UserController extends Controller
                 'e' => true,
                 'flag' => 'error',
                 'message' => 'Ocorreu um erro durante a consulta, tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
+            ], 404);
+        }
+    }
+    public function update(Request $request)
+    {
+        /** validation */
+        //$request->validate([
+        $validation = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'group' => 'required|array',
+            'departments' => 'required|array',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Erro na validação dos parâmetros enviados! Tente novamente. Codigo de erro: ' . $validation->errors(),
+                'status' => 0
+            ], 400);
+        }
+
+        $user = User::select('id')->where('uuid', $request->uuid)->first();
+
+        if ($user) {
+            $u = User::where('id', $user->id)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
+            
+            $user_group = UserGroup::select('id')->where('user_id', $user->id)->first();
+            $group_id = isset($request->group[0]) ? $request->group[0]['id'] : $request->group['id'];
+
+            if (!$user_group) {
+                UserGroup::create([
+                    'user_id' => $user->id,
+                    'group_id' => $group_id,
+                ]);
+            } else {
+                UserGroup::where('id', $user_group->id)->update([
+                    'group_id' => $group_id,
+                ]);
+            }
+            
+            $user_departments_ids = [];
+
+            foreach ($request->departments as $row) {
+                $user_department = UserDepartment::withTrashed()->firstOrCreate([
+                    'user_id' => $user->id, 
+                    'department_id' => $row['id']
+                ], []);
+
+                if(!$user_department->wasRecentlyCreated) {
+                    if($user_department->trashed()) {
+                        $user_department->restore();
+                    } 
+                } 
+
+                array_push($user_departments_ids, $row['id']);
+            }
+
+            UserDepartment::whereNotIn('department_id', $user_departments_ids)->delete();
+        }
+        /* response */
+        if ($user) {
+            return response()->json([
+                'user' => [
+                    'name' => ,
+                    'email' => ,
+                    'group_id' => ,
+                    'departments_ids' =>
+                ],
+                'flag' => 'success',
+                'message' => 'Usuário atualizado com successo.',
+                'status' => 1
+            ]);
+        } else {
+            return response()->json([
+                'e' => true,
+                'flag' => 'error',
+                'message' => 'Ocorreu um erro durante a atualização, tente novamente. Caso o erro persista, contate o administrador do website.',
                 'status' => 0
             ], 404);
         }

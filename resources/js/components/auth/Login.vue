@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div class="login-logo">
-      <a href="#"><b>CH</b> Management</a>
+      <a href="#"><b>ZEN</b> HEALTCARE</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -92,10 +92,7 @@ export default {
           }
         })
         .catch((e) => {
-          Swal.fire({
-            icon: e.response.data.flag,
-            text: e.response.data.message
-          })
+          alert(e.response.data.message);
           // stop loading spinner
           this.$loading(false);
         });

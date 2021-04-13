@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="edit-modal">
+  <div class="modal fade" id="edit-user">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -14,7 +14,7 @@
           <h4 class="modal-title">Editar usuário</h4>
         </div>
         <!-- form start -->
-        <form role="form" @submit.prevent="consoleee">
+        <form role="form" @submit.prevent="callUpdate()">
           <div class="modal-body">
             <div class="box" style="border: none">
               <!-- /.box-header -->
@@ -22,21 +22,23 @@
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome completo:</label>
                   <input
-                    :value="`${target !== null ? target.name : ''}`"
+                    v-model="vm_target_name"
                     type="name"
                     class="form-control"
                     id="exampleInputEmail1"
                     placeholder="Enter email"
+                    required
                   />
                 </div>
                 <div class="form-group">
                   <label for="exampleInputEmail1">E-mail:</label>
                   <input
-                    :value="`${target !== null ? target.email : ''}`"
+                    v-model="vm_target_email"
                     type="email"
                     class="form-control"
                     id="exampleInputEmail1"
                     placeholder="Enter email"
+                    required
                   />
                 </div>
                 <div class="form-group">
@@ -49,11 +51,13 @@
                     :hide-selected="false"
                     :close-on-select="true"
                     :multiple="false"
+                    :allowEmpty="false"
                     :options="groups"
                     v-model="vm_target_group"
                     label="name"
                     track-by="name"
                     placeholder="Selecione..."
+                    required
                   >
                   </multiselect>
                 </div>
@@ -67,6 +71,7 @@
                     :hide-selected="true"
                     :close-on-select="true"
                     :multiple="true"
+                    :allowEmpty="false"
                     :options="departments"
                     v-model="vm_target_departments"
                     label="name"
@@ -75,7 +80,6 @@
                   >
                   </multiselect>
                 </div>
-                <p>{{ target }}</p>
               </div>
             </div>
           </div>
@@ -85,9 +89,9 @@
               class="btn btn-default pull-left"
               data-dismiss="modal"
             >
-              Close
+              Fechar
             </button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-primary">Gravar</button>
           </div>
         </form>
       </div>
@@ -111,19 +115,34 @@ export default {
   },
   data() {
     return {
-      vm_target_group: this.target_group !== null ? this.target_group : null,
-      vm_target_departments: this.target_departments !== null ? this.target_departments : null,
+      vm_target_name: null,
+      vm_target_email: null,
+      vm_target_group: null,
+      vm_target_departments: null,
     };
   },
-  created() {
-    
+  methods:{
+    callUpdate(){
+      let target = {
+        uuid: this.target.uuid,
+        name: this.vm_target_name,
+        email: this.vm_target_email,
+        group: this.vm_target_group,
+        departments: this.vm_target_departments,
+      };
+      this.update(target);
+    }
   },
-  methods: {
-    consoleee(){
-      console.log(this.groups);
-      console.log(this.target_group);
-      console.log(this.departments);
-      console.log(this.target_departments);
+  watch: {
+    target(){
+      this.vm_target_name = this.target.name;
+      this.vm_target_email = this.target.email;
+    },
+    target_group(){
+      this.vm_target_group = this.target_group;
+    },
+    target_departments(){
+      this.vm_target_departments = this.target_departments;
     }
   }
 };

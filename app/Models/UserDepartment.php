@@ -19,7 +19,7 @@ class UserDepartment extends Model
      */
     protected $fillable = [
         'user_id',
-        'department_id'
+        'department_id',
     ];
     
     /**

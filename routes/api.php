@@ -29,9 +29,9 @@ Route::prefix('user')->group(function () {
     Route::post('/login', 'UserController@login');
     Route::post('/register', 'UserController@register');
     /* PUT */
-    //Route::put('', 'Admin_ba_groupController@update');
+    Route::put('/update', 'UserController@update');
     /* DELETE */
-    //Route::delete('', 'Admin_ba_groupController@delete');
+    Route::delete('/delete', 'UserController@delete');
 });
 /*
 department api routes
