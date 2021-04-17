@@ -31,7 +31,7 @@ Route::prefix('user')->group(function () {
     /* PUT */
     Route::put('/update', 'UserController@update');
     /* DELETE */
-    Route::delete('/delete', 'UserController@delete');
+    Route::delete('/destroy', 'UserController@destroy');
 });
 /*
 department api routes

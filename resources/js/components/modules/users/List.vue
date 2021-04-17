@@ -30,7 +30,7 @@
               -->
         </div>
         <!-- /.box-header -->
-        <div class="box-body">
+        <div class="box-body table-responsive no-padding">
           <table
             class="table table-bordered table-hover table-condensed table-striped"
           >
@@ -44,6 +44,7 @@
                 <th>Departamentos</th>
               </tr>
               <tr
+                :title="`Clique para gerenciar o usuário: ${row.name}`"
                 v-for="(row, index) in users"
                 :key="index"
                 class="clickable"

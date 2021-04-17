@@ -2619,6 +2619,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     /** @Objects */
@@ -2631,14 +2636,16 @@ __webpack_require__.r(__webpack_exports__);
     groups: Array,
 
     /** @Functions */
-    update: Function
+    update: Function,
+    destroy: Function
   },
   data: function data() {
     return {
       vm_target_name: null,
       vm_target_email: null,
       vm_target_group: null,
-      vm_target_departments: null
+      vm_target_departments: null,
+      vm_target_destroy: false
     };
   },
   methods: {
@@ -2650,13 +2657,19 @@ __webpack_require__.r(__webpack_exports__);
         group: this.vm_target_group,
         departments: this.vm_target_departments
       };
-      this.update(target);
+
+      if (!this.vm_target_destroy) {
+        this.update(target);
+      } else {
+        this.destroy(target);
+      }
     }
   },
   watch: {
     target: function target() {
       this.vm_target_name = this.target.name;
       this.vm_target_email = this.target.email;
+      this.vm_target_destroy = false;
     },
     target_group: function target_group() {
       this.vm_target_group = this.target_group;
@@ -2693,6 +2706,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
 //
 //
 //
@@ -2807,6 +2821,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       /* begin loading spinner*/
       this.$loading(true);
+      /* close edit modal */
+
+      $("#edit-user").modal("hide");
       /* api */
 
       var api = "".concat(this.$urlAPI, "user/update");
@@ -2820,11 +2837,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         departments: $target.departments
       }).then(function (_ref2) {
         var data = _ref2.data;
-        console.log(data);
-        /* close edit modal */
 
-        $("#edit-user").modal("hide");
+        if (data.status) {
+          var index = _this2.users.findIndex(function (item) {
+            return item.uuid === data.user.uuid;
+          });
+
+          if (index !== -1) {
+            _this2.users[index].name = data.user.name;
+            _this2.users[index].email = data.user.email;
+            _this2.users[index].group_name = data.user.group_name;
+            _this2.users[index].departments_names = data.user.departments_names;
+          }
+
+          alert(data.message);
+        } else {
+          alert(data.message);
+          $("#edit-user").modal("show");
+        }
         /* stop loading spinner */
+
 
         _this2.$loading(false);
       })["catch"](function (e) {
@@ -2845,7 +2877,64 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     /** @delete */
 
     /*----------*/
-    destroy: function destroy() {},
+    destroy: function destroy($target) {
+      var _this3 = this;
+
+      var $confirm = confirm("Voc\xEA tem certeza? O usu\xE1rio ".concat($target.name, " ser\xE1 exclu\xEDdo. Est\xE1 a\xE7\xE3o n\xE3o poder\xE1 ser desfeita."));
+
+      if ($confirm) {
+        /* begin loading spinner*/
+        this.$loading(true);
+        /* close edit modal */
+
+        $("#edit-user").modal("hide");
+        /* api */
+
+        var api = "".concat(this.$urlAPI, "user/destroy");
+        /* request */
+
+        this.$axios["delete"](api, {
+          params: {
+            uuid: $target.uuid
+          }
+        }).then(function (_ref3) {
+          var data = _ref3.data;
+
+          if (data.status) {
+            var index = _this3.users.findIndex(function (item) {
+              return item.uuid === data.user.uuid;
+            });
+
+            if (index !== -1) {
+              _this3.users.splice(index, 1);
+
+              if (_this3.count > 0) {
+                _this3.count--;
+              }
+            }
+
+            alert(data.message);
+          } else {
+            alert(data.message);
+            $("#edit-user").modal("hide");
+          }
+          /* stop loading spinner */
+
+
+          _this3.$loading(false);
+        })["catch"](function (e) {
+          if (e.response.data) {
+            alert(e.response.data.message);
+          } else {
+            alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+          }
+          /* stop loading spinner */
+
+
+          _this3.$loading(false);
+        });
+      }
+    },
 
     /*-------*/
 
@@ -2853,7 +2942,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*-------*/
     getDepartments: function getDepartments() {
-      var _this3 = this;
+      var _this4 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -2862,19 +2951,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "department/all");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref3) {
-        var data = _ref3.data;
-        _this3.departments = data.departments;
+      this.$axios.get(api, {}).then(function (_ref4) {
+        var data = _ref4.data;
+        _this4.departments = data.departments;
 
-        _this3.$loading(false);
+        _this4.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this3.$loading(false);
+        _this4.$loading(false);
       });
     },
     getGroups: function getGroups() {
-      var _this4 = this;
+      var _this5 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -2883,15 +2972,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "group/all");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref4) {
-        var data = _ref4.data;
-        _this4.groups = data.groups;
+      this.$axios.get(api, {}).then(function (_ref5) {
+        var data = _ref5.data;
+        _this5.groups = data.groups;
 
-        _this4.$loading(false);
+        _this5.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this4.$loading(false);
+        _this5.$loading(false);
       });
     },
 
@@ -2907,7 +2996,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*----------*/
     edit: function edit($uuid) {
-      var _this5 = this;
+      var _this6 = this;
 
       // start loading spinner
       this.$loading(true);
@@ -2925,39 +3014,39 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         params: {
           uuid: $uuid
         }
-      }).then(function (_ref5) {
-        var data = _ref5.data;
+      }).then(function (_ref6) {
+        var data = _ref6.data;
         // get target data
-        _this5.target = data.user; // get target departments
+        _this6.target = data.user; // get target departments
 
         if (data.user.departments_ids) {
           var departments = data.user.departments_ids.split(",");
           departments.forEach(function (element) {
-            var index = _this5.departments.findIndex(function (item) {
+            var index = _this6.departments.findIndex(function (item) {
               return item.id === parseInt(element);
             });
 
             if (index !== -1) {
-              _this5.target_departments.push(_this5.departments[index]);
+              _this6.target_departments.push(_this6.departments[index]);
             }
           });
         }
 
         if (data.user.group_id) {
           // get target group
-          var index = _this5.groups.findIndex(function (item) {
+          var index = _this6.groups.findIndex(function (item) {
             return item.id === data.user.group_id;
           });
 
           if (index !== -1) {
-            _this5.target_group.push(_this5.groups[index]);
+            _this6.target_group.push(_this6.groups[index]);
           }
         } // show edit modal
 
 
         $("#edit-user").modal("show"); // stop loading spinner
 
-        _this5.$loading(false);
+        _this6.$loading(false);
       })["catch"](function (e) {
         if (e.response.data) {
           alert(e.response.data.message);
@@ -2966,7 +3055,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } // stop loading spinner
 
 
-        _this5.$loading(false);
+        _this6.$loading(false);
       });
     }
   }
@@ -2983,6 +3072,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -30667,7 +30757,51 @@ var render = function() {
                         })
                       ],
                       1
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "checkbox" }, [
+                      _c("label", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.vm_target_destroy,
+                              expression: "vm_target_destroy"
+                            }
+                          ],
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(_vm.vm_target_destroy)
+                              ? _vm._i(_vm.vm_target_destroy, null) > -1
+                              : _vm.vm_target_destroy
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$a = _vm.vm_target_destroy,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    (_vm.vm_target_destroy = $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    (_vm.vm_target_destroy = $$a
+                                      .slice(0, $$i)
+                                      .concat($$a.slice($$i + 1)))
+                                }
+                              } else {
+                                _vm.vm_target_destroy = $$c
+                              }
+                            }
+                          }
+                        }),
+                        _vm._v(" Excluir usuário\n                ")
+                      ])
+                    ])
                   ])
                 ]
               )
@@ -30699,7 +30833,7 @@ var staticRenderFns = [
         [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
       ),
       _vm._v(" "),
-      _c("h4", { staticClass: "modal-title" }, [_vm._v("Editar usuário")])
+      _c("h4", { staticClass: "modal-title" }, [_vm._v("Gerenciar usuário:")])
     ])
   },
   function() {
@@ -30764,7 +30898,8 @@ var render = function() {
           target_departments: _vm.target_departments,
           groups: _vm.groups,
           departments: _vm.departments,
-          update: _vm.update
+          update: _vm.update,
+          destroy: _vm.destroy
         }
       })
     ],
@@ -30798,7 +30933,7 @@ var render = function() {
       _c("div", { staticClass: "box box-primary" }, [
         _c("div", { staticClass: "box-header with-border" }),
         _vm._v(" "),
-        _c("div", { staticClass: "box-body" }, [
+        _c("div", { staticClass: "box-body table-responsive no-padding" }, [
           _c(
             "table",
             {
@@ -30817,6 +30952,9 @@ var render = function() {
                       {
                         key: index,
                         staticClass: "clickable",
+                        attrs: {
+                          title: "Clique para gerenciar o usuário: " + row.name
+                        },
                         on: {
                           click: function($event) {
                             return _vm.edit(row.uuid)
@@ -31002,7 +31140,7 @@ var staticRenderFns = [
             },
             [
               _c("h3", { staticClass: "control-sidebar-heading" }, [
-                _vm._v("Recent Activity")
+                _vm._v("Filtrar usuários:")
               ]),
               _vm._v(" "),
               _c("ul", { staticClass: "control-sidebar-menu" }, [
@@ -47877,8 +48015,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\projects\tcc\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp\htdocs\pessoal\tcc\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\pessoal\tcc\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

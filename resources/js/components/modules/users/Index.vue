@@ -15,6 +15,7 @@
       :groups="groups"
       :departments="departments"
       :update="update"
+      :destroy="destroy"
     />
   </div>
   <!-- /.content-wrapper -->
@@ -60,34 +61,34 @@ export default {
     /** @read */
     /*--------*/
     index($state) {
-        /* api */
-        const api = `${this.$urlAPI}user/index`;
-        /* request */
-        this.$axios
-          .get(api, {
-            params: {
-              skip: this.skip,
-              take: this.take,
-            },
-          })
-          .then(({ data }) => {
-            if (data.users.length) {
-              this.skip = data.skip;
-              this.count = this.users.length + data.users.length;
-              this.users.push(...data.users);
+      /* api */
+      const api = `${this.$urlAPI}user/index`;
+      /* request */
+      this.$axios
+        .get(api, {
+          params: {
+            skip: this.skip,
+            take: this.take,
+          },
+        })
+        .then(({ data }) => {
+          if (data.users.length) {
+            this.skip = data.skip;
+            this.count = this.users.length + data.users.length;
+            this.users.push(...data.users);
 
-              if(data.users.length === this.take) {
-                $state.loaded();
-              } else {
-                $state.complete();
-              }
+            if (data.users.length === this.take) {
+              $state.loaded();
             } else {
               $state.complete();
             }
-          })
-          .catch((e) => {
-            console.log(e.response.data.message);
-          });
+          } else {
+            $state.complete();
+          }
+        })
+        .catch((e) => {
+          console.log(e.response.data.message);
+        });
     },
     /*----------*/
     /** @create */
@@ -99,21 +100,35 @@ export default {
     update($target) {
       /* begin loading spinner*/
       this.$loading(true);
+      /* close edit modal */
+      $("#edit-user").modal("hide");
       /* api */
       const api = `${this.$urlAPI}user/update`;
       /* request */
       this.$axios
         .put(api, {
-            uuid: $target.uuid,
-            name: $target.name,
-            email: $target.email,
-            group: $target.group,
-            departments: $target.departments,
+          uuid: $target.uuid,
+          name: $target.name,
+          email: $target.email,
+          group: $target.group,
+          departments: $target.departments,
         })
         .then(({ data }) => {
-          console.log(data);
-          /* close edit modal */
-          $("#edit-user").modal("hide");
+          if (data.status) {
+            let index = this.users.findIndex(
+              (item) => item.uuid === data.user.uuid
+            );
+            if (index !== -1) {
+              this.users[index].name = data.user.name;
+              this.users[index].email = data.user.email;
+              this.users[index].group_name = data.user.group_name;
+              this.users[index].departments_names = data.user.departments_names;
+            }
+            alert(data.message);
+          } else {
+            alert(data.message);
+            $("#edit-user").modal("show");
+          }
           /* stop loading spinner */
           this.$loading(false);
         })
@@ -132,7 +147,56 @@ export default {
     /*----------*/
     /** @delete */
     /*----------*/
-    destroy() {},
+    destroy($target) {
+      let $confirm = confirm(
+        `Você tem certeza? O usuário ${$target.name} será excluído. Está ação não poderá ser desfeita.`
+      );
+      if ($confirm) {
+        /* begin loading spinner*/
+        this.$loading(true);
+        /* close edit modal */
+        $("#edit-user").modal("hide");
+        /* api */
+        const api = `${this.$urlAPI}user/destroy`;
+        /* request */
+        this.$axios
+          .delete(api, {
+            params: {
+              uuid: $target.uuid,
+            },
+          })
+          .then(({ data }) => {
+            if (data.status) {
+              let index = this.users.findIndex(
+                (item) => item.uuid === data.user.uuid
+              );
+              if (index !== -1) {
+                this.users.splice(index, 1);
+                if(this.count > 0) {
+                  this.count --;
+                }
+              }
+              alert(data.message);
+            } else {
+              alert(data.message);
+              $("#edit-user").modal("hide");
+            }
+            /* stop loading spinner */
+            this.$loading(false);
+          })
+          .catch((e) => {
+            if (e.response.data) {
+              alert(e.response.data.message);
+            } else {
+              alert(
+                `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
+              );
+            }
+            /* stop loading spinner */
+            this.$loading(false);
+          });
+      }
+    },
     /*-------*/
     /** @get */
     /*-------*/

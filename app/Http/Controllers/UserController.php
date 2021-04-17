@@ -57,7 +57,8 @@ class UserController extends Controller
                       INNER JOIN user_department ud ON ud.department_id = d.id 
                       INNER JOIN users us ON us.id = ud.user_id
                       WHERE us.id = u.id
-                      AND d.deleted_at is null 
+                      AND d.deleted_at is null
+                      AND ud.deleted_at is null 
                       GROUP BY us.id) AS departments_names"
                 )
             )
@@ -141,7 +142,6 @@ class UserController extends Controller
     public function update(Request $request)
     {
         /** validation */
-        //$request->validate([
         $validation = Validator::make($request->all(), [
             'uuid' => 'required|string',
             'name' => 'required|string',
@@ -162,13 +162,20 @@ class UserController extends Controller
         $user = User::select('id')->where('uuid', $request->uuid)->first();
 
         if ($user) {
-            $u = User::where('id', $user->id)->update([
+            User::where('id', $user->id)->update([
                 'name' => $request->name,
                 'email' => $request->email,
             ]);
-            
+
             $user_group = UserGroup::select('id')->where('user_id', $user->id)->first();
-            $group_id = isset($request->group[0]) ? $request->group[0]['id'] : $request->group['id'];
+
+            if (isset($request->group[0])) {
+                $group_id = $request->group[0]['id'];
+                $group_name = $request->group[0]['name'];
+            } else {
+                $group_id = $request->group['id'];
+                $group_name = $request->group['name'];
+            }
 
             if (!$user_group) {
                 UserGroup::create([
@@ -180,34 +187,35 @@ class UserController extends Controller
                     'group_id' => $group_id,
                 ]);
             }
-            
+
             $user_departments_ids = [];
+            $user_departments_names = [];
 
             foreach ($request->departments as $row) {
                 $user_department = UserDepartment::withTrashed()->firstOrCreate([
-                    'user_id' => $user->id, 
+                    'user_id' => $user->id,
                     'department_id' => $row['id']
                 ], []);
 
-                if(!$user_department->wasRecentlyCreated) {
-                    if($user_department->trashed()) {
+                if (!$user_department->wasRecentlyCreated) {
+                    if ($user_department->trashed()) {
                         $user_department->restore();
-                    } 
-                } 
+                    }
+                }
 
                 array_push($user_departments_ids, $row['id']);
+                array_push($user_departments_names, $row['name']);
             }
 
             UserDepartment::whereNotIn('department_id', $user_departments_ids)->delete();
-        }
-        /* response */
-        if ($user) {
+
             return response()->json([
                 'user' => [
-                    'name' => ,
-                    'email' => ,
-                    'group_id' => ,
-                    'departments_ids' =>
+                    'uuid' => $request->uuid,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'group_name' => $group_name,
+                    'departments_names' => implode(', ', $user_departments_names),
                 ],
                 'flag' => 'success',
                 'message' => 'Usuário atualizado com successo.',
@@ -216,13 +224,49 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'e' => true,
-                'flag' => 'error',
-                'message' => 'Ocorreu um erro durante a atualização, tente novamente. Caso o erro persista, contate o administrador do website.',
+                'flag' => 'info',
+                'message' => 'Usuário não encontrado! Tente novamente. Caso o erro persista, contate o administrador do website.',
                 'status' => 0
             ], 404);
         }
     }
+    public function destroy(Request $request)
+    {
+        /** validation */
+        $validation = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+        ]);
 
+        if ($validation->fails()) {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Erro na validação dos parâmetros enviados! Tente novamente. Codigo de erro: ' . $validation->errors(),
+                'status' => 0
+            ], 400);
+        }
+
+        $user = User::where('uuid', $request->uuid)->delete();
+
+        if ($user) {
+            return response()->json([
+                'user' => [
+                    'uuid' => $request->uuid,
+                ],
+                'flag' => 'success',
+                'message' => 'Usuário removido com successo.',
+                'status' => 1
+            ]);
+        } else {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Erro ao remover o registro! Tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
+            ], 404);
+        }
+    }
+    
     public function login(Request $request)
     {
         $validation = Validator::make($request->all(), [
