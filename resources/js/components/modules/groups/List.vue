@@ -100,6 +100,7 @@ export default {
     edit: Function,
   },
   created(){
+    console.log(this.$root)
   }
 };
 </script>

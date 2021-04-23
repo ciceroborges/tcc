@@ -64,8 +64,14 @@ class UserController extends Controller
             )
             ->whereNull('u.deleted_at')
             ->skip($skip)
-            ->take($take)
-            ->get();
+            ->take($take);
+        
+        if($request->filter){
+            $users->where('u.name', 'like', '%'.trim(strip_tags($request->filter)).'%');
+        }
+        
+        $users = $users->get();
+      
         /* response */
         if ($users) {
             return response()->json([

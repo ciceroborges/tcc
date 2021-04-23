@@ -34,7 +34,7 @@ export default {
     //Search,
   },
   props: {
-    searched_user: String,
+    searched_name: String,
   },
   data() {
     return {
@@ -47,7 +47,7 @@ export default {
       target_group: [],
       target_departments: [],
       //search
-      filter: this.searched_user,
+      filter: this.searched_name,
       //infinite loading
       skip: 0,
       take: 30,
@@ -67,7 +67,7 @@ export default {
       this.$axios
         .get(api, {
           params: {
-            filter: this.searched_user,
+            filter: this.searched_name,
             skip: this.skip,
             take: this.take,
           },
@@ -303,8 +303,8 @@ export default {
     },
   },
   watch: {
-    searched_user(){
-      this.filter = this.searched_user;
+    searched_name(){
+      this.filter = this.searched_name;
       this.users = [];
       this.skip = 0;
       this.count = 0;

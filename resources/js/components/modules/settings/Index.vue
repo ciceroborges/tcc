@@ -35,9 +35,11 @@
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="users">
-                <users-index ref="users" v-if="users_tab"/>
+                <users-index ref="users" v-if="users_tab" :searched_user="searched_user"/>
               </div>
-              <div class="tab-pane" id="groups">groups</div>
+              <div class="tab-pane" id="groups">
+                <groups-index ref="groups" v-if="groups_tab" :searched_group="searched_group"/>
+              </div>
               <div class="tab-pane" id="departments">departments</div>
             </div>
             <!-- /.tab-content -->
@@ -48,7 +50,7 @@
       </div>
       <!-- /.row -->
     </section>
-    <users-search/>
+    <users-search @search="searchUser($event)" />
     <div class="control-sidebar-bg"></div>
     <!-- /.content -->
   </div>
@@ -57,150 +59,89 @@
 // componentes importados
 import UsersIndex from "../users/Index.vue";
 import UsersSearch from "../users/Search.vue";
-//import List from "../users/List.vue";
-//import Search from "../users/Search.vue";
+import GroupsIndex from "../groups/Index.vue";
+import GroupsSearch from "../groups/Search.vue";
 
 export default {
   name: "Settings",
   components: {
     UsersIndex,
-    UsersSearch
-    //Edit,
-    //List,
-    //Search,
+    UsersSearch,
+    GroupsIndex,
+    GroupsSearch,
   },
   data() {
     return {
       //general
-      title: 'Usuários',
+      title: "Usuários",
       // tabs
       users_tab: true,
-      group_tab: true,
-      department_tab: true,
+      groups_tab: false,
+      departments_tab: false,
       //search
-      searched_name: null,
-      searched_email: null,
-      searched_department: null,
+      searched_user: null,
       searched_group: null,
-      //infinite loading
-      skip: 0,
-      take: 5,
+      searched_department: null,
     };
-  },
-  created() {
-    //this.getDepartments();
-    //this.getGroups();
-  },
-  mounted() {
-    //this.$refs.users.update(1);
   },
   methods: {
     /*--------*/
     /** @read */
     /*--------*/
-    index($state) {
-      setTimeout(() => {
-        /* api */
-        const api = `${this.$urlAPI}user/index`;
-        /* request */
-        this.$axios
-          .get(api, {
-            params: {
-              skip: this.skip,
-              take: this.take,
-            },
-          })
-          .then(({ data }) => {
-            if (data.users.length) {
-              this.skip = data.skip;
-              this.users.push(...data.users);
-              $state.loaded();
-            } else {
-              $state.complete();
-            }
-          })
-          .catch((e) => {
-            console.log(e.response.data.message);
-          });
-      }, 1000);
-    },
     /*----------*/
     /** @create */
     /*----------*/
-    store() {},
     /*----------*/
     /** @update */
     /*----------*/
-    update($id) {
-      $("#edit-modal").modal("show");
-    },
     /*----------*/
     /** @delete */
     /*----------*/
-    destroy() {},
     /*-------*/
     /** @get */
     /*-------*/
-    getDepartments() {
-      /* api */
-      const api = `${this.$urlAPI}department/all`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.departments = data.departments;
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-        });
-    },
-    getGroups() {
-      /* api */
-      const api = `${this.$urlAPI}group/all`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.groups = data.groups;
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-        });
-    },
     /*--------*/
     /** @post */
     /*--------*/
-
     /*----------*/
     /** @others */
     /*----------*/
     activeTab($tab) {
       switch ($tab) {
         case "users":
-          if(!this.users_tab){
-            this.title = 'Usuários';
+          if (!this.users_tab) {
+            this.title = "Usuários";
             this.users_tab = true;
-            this.department_tab = false;
-            this.group_tab = false;
+            this.departments_tab = false;
+            this.groups_tab = false;
           }
           break;
         case "departments":
-          if(!this.department_tab){
-            this.title = 'Departamentos';
+          if (!this.departments_tab) {
+            this.title = "Departamentos";
             this.users_tab = false;
-            this.department_tab = true;
-            this.group_tab = false;
-          }  
+            this.departments_tab = true;
+            this.groups_tab = false;
+          }
           break;
         case "groups":
-          if(!this.groups_tab){
-            this.title = 'Grupos';
+          if (!this.groups_tab) {
+            this.title = "Grupos";
             this.users_tab = false;
-            this.department_tab = false;
-            this.group_tab = true;
+            this.departments_tab = false;
+            this.groups_tab = true;
           }
           break;
       }
+    },
+    searchUser(name) {
+      this.searched_user = name;
+    },
+    searchGroup(name) {
+      this.searched_group = name;
+    },
+    searchDepartment(name) {
+      this.searched_department = name;
     },
   },
 };

@@ -40,7 +40,7 @@
                     <button type="submit" class="btn btn-primary">
                       <i class="fa fa-search"></i> Buscar
                     </button>
-                    <button type="button" class="btn btn-default pull-right" @click="clear()">
+                    <button type="button" class="btn btn-default pull-right" @click="clear2()">
                       <i class="fa fa-trash-o"></i> Limpar
                     </button>
                   </div>
@@ -113,17 +113,25 @@ export default {
       vm_searched_name: null,
     };
   },
+  created(){
+    console.log('oi');
+  },
   methods: {
     search(){
+      console.log('oi');
       this.vm_searched_name = this.vm_searched_name.trim();
       if(this.vm_searched_name.length >= 3) {
-        console.log('foi')
-        this.$emit('search', this.vm_searched_name);
+        console.log('emitou')
+        this.$emit('searchUser', this.vm_searched_name);
       }
     },
     clear() {
+      console.log('exlcui')
       this.vm_searched_name = null;
-      this.$emit('search', this.vm_searched_name);
+      this.$emit('searchUser', this.vm_searched_name);
+    },
+    clear2(){
+      console.log('FUNCIONA PORRA');
     }
   }
 };
