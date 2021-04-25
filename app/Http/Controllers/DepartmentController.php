@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Validator;
 
 class DepartmentController extends Controller
 {
-    public function all(Request $request)
+    public function index(Request $request)
     {   
+        /* method */
+        $departments = Department::select('*');
         /* validation for infinite loading*/
         if(isset($request->skip) && isset($request->take)) {
             $validation = Validator::make($request->all(), [
@@ -21,16 +23,13 @@ class DepartmentController extends Controller
                 return response($validation->errors(), 400);
             }
 
-            $skip = $request->skip;
-            $take = $request->take;
             $new_skip = $request->skip + $request->take;
+            $departments->skip($request->skip)->take($request->take);
         }  else {
-            $skip = 0;
-            $take = 99999999999999999999;
             $new_skip = 0;
         }  
         /* method */
-        $departments = Department::skip($skip)->take($take)->get();
+        $departments = $departments->get();
         /* response */
         if ($departments) {
             return response()->json([

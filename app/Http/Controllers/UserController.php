@@ -17,30 +17,6 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        /* validation for infinite loading*/
-        if (isset($request->skip) && isset($request->take)) {
-            $validation = Validator::make($request->all(), [
-                'skip' => 'required|int',
-                'take' => 'required|int',
-            ]);
-
-            if ($validation->fails()) {
-                return response([
-                    'e' => true,
-                    'flag' => 'error',
-                    'message' => 'Um ou mais campos foram informados de maneira errada, verifique e tente novamente.',
-                    'status' => 0
-                ], 400);
-            }
-
-            $skip = $request->skip;
-            $take = $request->take;
-            $new_skip = $request->skip + $request->take;
-        } else {
-            $skip = 0;
-            $take = 99999999999999999999;
-            $new_skip = 0;
-        }
         /* method */
         $users = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
             ->leftJoin('groups as g', 'g.id', 'ug.group_id')
@@ -62,16 +38,34 @@ class UserController extends Controller
                       GROUP BY us.id) AS departments_names"
                 )
             )
-            ->whereNull('u.deleted_at')
-            ->skip($skip)
-            ->take($take);
-        
-        if($request->filter){
-            $users->where('u.name', 'like', '%'.trim(strip_tags($request->filter)).'%');
+            ->whereNull('u.deleted_at');
+                    
+        if ($request->filter) {
+            $users->where('u.name', 'like', '%' . trim(strip_tags($request->filter)) . '%');
         }
-        
+        /* validation for infinite loading*/
+        if (isset($request->skip) && isset($request->take)) {
+            $validation = Validator::make($request->all(), [
+                'skip' => 'required|int',
+                'take' => 'required|int',
+            ]);
+
+            if ($validation->fails()) {
+                return response([
+                    'e' => true,
+                    'flag' => 'error',
+                    'message' => 'Um ou mais campos foram informados de maneira errada, verifique e tente novamente.',
+                    'status' => 0
+                ], 400);
+            }
+
+            $new_skip = $request->skip + $request->take;
+            $users->skip($request->skip)->take($request->take);
+        } else {
+            $new_skip = 0;
+        }
+
         $users = $users->get();
-      
         /* response */
         if ($users) {
             return response()->json([
@@ -272,7 +266,7 @@ class UserController extends Controller
             ], 404);
         }
     }
-    
+
     public function login(Request $request)
     {
         $validation = Validator::make($request->all(), [

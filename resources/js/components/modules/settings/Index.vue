@@ -50,7 +50,8 @@
       </div>
       <!-- /.row -->
     </section>
-    <users-search @search="searchUser($event)" />
+    <users-search @search="searchUser($event)" v-if="users_tab"/>
+    <groups-search @search="searchGroup($event)" v-if="groups_tab"/>
     <div class="control-sidebar-bg"></div>
     <!-- /.content -->
   </div>

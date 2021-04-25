@@ -38,17 +38,22 @@ department api routes
 */
 Route::prefix('department')->group(function () {
     /* GET */
-    Route::get('/all', 'DepartmentController@all');
+    Route::get('/index', 'DepartmentController@index');
+    Route::get('/find', 'DepartmentController@find');
     /* POST */
+    Route::post('/store', 'DepartmentController@store');
     /* PUT */
+    Route::put('/update', 'DepartmentController@update');
     /* DELETE */
+    Route::delete('/destroy', 'DepartmentController@destroy');
 });
 /*
 department api routes
 */
 Route::prefix('group')->group(function () {
     /* GET */
-    Route::get('/all', 'GroupController@all');
+    Route::get('/index', 'GroupController@index');
+    Route::get('/find', 'GroupController@find');
     /* POST */
     /* PUT */
     /* DELETE */

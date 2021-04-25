@@ -2,7 +2,7 @@
   <!-- Content Wrapper. Contains page content -->
   <div>
     <!-- list table -->
-    <list :users="users" :count="count" :index="index" :edit="edit" ref="UserList" />
+    <list :groups="groups" :count="count" :index="index" :edit="edit" ref="GroupList"/>
     <!-- search aside -->
     <!--<search /> -->
     <!-- This div must be placed immediately after the control sidebar -->
@@ -10,10 +10,6 @@
     <!-- edit modal -->
     <edit
       :target="target"
-      :target_group="target_group"
-      :target_departments="target_departments"
-      :groups="groups"
-      :departments="departments"
       :update="update"
       :destroy="destroy"
     />
@@ -22,32 +18,28 @@
 </template>
 <script>
 // componentes importados
-import Edit from "../users/Edit.vue";
-import List from "../users/List.vue";
+import Edit from "../groups/Edit.vue";
+import List from "../groups/List.vue";
 //import Search from "../users/Search.vue";
 
 export default {
-  name: "Users",
+  name: "Groups",
   components: {
     Edit,
     List,
     //Search,
   },
   props: {
-    searched_name: String,
+    searched_group: String,
   },
   data() {
     return {
       //general
-      users: [],
-      departments: [],
       groups: [],
       //edit
       target: {},
-      target_group: [],
-      target_departments: [],
       //search
-      filter: this.searched_name,
+      filter: this.searched_group,
       //infinite loading
       skip: 0,
       take: 30,
@@ -62,23 +54,23 @@ export default {
     /*--------*/
     index($state) {
       /* api */
-      const api = `${this.$urlAPI}user/index`;
+      const api = `${this.$urlAPI}group/index`;
       /* request */
       this.$axios
         .get(api, {
           params: {
-            filter: this.searched_name,
+            filter: this.searched_group,
             skip: this.skip,
             take: this.take,
           },
         })
         .then(({ data }) => {
-          if (data.users.length) {
+          if (data.groups.length) {
             this.skip = data.skip;
-            this.count = this.users.length + data.users.length;
-            this.users.push(...data.users);
+            this.count = this.groups.length + data.groups.length;
+            this.groups.push(...data.groups);
 
-            if (data.users.length === this.take) {
+            if (data.groups.length === this.take) {
               $state.loaded();
             } else {
               $state.complete();
@@ -102,33 +94,27 @@ export default {
       /* begin loading spinner*/
       this.$loading(true);
       /* close edit modal */
-      $("#edit-user").modal("hide");
+      $("#edit-group").modal("hide");
       /* api */
-      const api = `${this.$urlAPI}user/update`;
+      const api = `${this.$urlAPI}group/update`;
       /* request */
       this.$axios
         .put(api, {
-          uuid: $target.uuid,
+          id: $target.id,
           name: $target.name,
-          email: $target.email,
-          group: $target.group,
-          departments: $target.departments,
         })
         .then(({ data }) => {
           if (data.status) {
-            let index = this.users.findIndex(
-              (item) => item.uuid === data.user.uuid
+            let index = this.groups.findIndex(
+              (item) => item.id === data.group.id
             );
             if (index !== -1) {
-              this.users[index].name = data.user.name;
-              this.users[index].email = data.user.email;
-              this.users[index].group_name = data.user.group_name;
-              this.users[index].departments_names = data.user.departments_names;
+              this.groups[index].name = data.group.name;
             }
             alert(data.message);
           } else {
             alert(data.message);
-            $("#edit-user").modal("show");
+            $("#edit-group").modal("show");
           }
           /* stop loading spinner */
           this.$loading(false);
@@ -150,29 +136,29 @@ export default {
     /*----------*/
     destroy($target) {
       let $confirm = confirm(
-        `Você tem certeza? O usuário ${$target.name} será excluído. Está ação não poderá ser desfeita.`
+        `Você tem certeza? O grupo ${$target.name} será excluído. Está ação não poderá ser desfeita.`
       );
       if ($confirm) {
         /* begin loading spinner*/
         this.$loading(true);
         /* close edit modal */
-        $("#edit-user").modal("hide");
+        $("#edit-group").modal("hide");
         /* api */
-        const api = `${this.$urlAPI}user/destroy`;
+        const api = `${this.$urlAPI}group/destroy`;
         /* request */
         this.$axios
           .delete(api, {
             params: {
-              uuid: $target.uuid,
+              id: $target.id,
             },
           })
           .then(({ data }) => {
             if (data.status) {
-              let index = this.users.findIndex(
-                (item) => item.uuid === data.user.uuid
+              let index = this.groups.findIndex(
+                (item) => item.id === data.group.uuid
               );
               if (index !== -1) {
-                this.users.splice(index, 1);
+                this.groups.splice(index, 1);
                 if(this.count > 0) {
                   this.count --;
                 }
@@ -180,7 +166,7 @@ export default {
               alert(data.message);
             } else {
               alert(data.message);
-              $("#edit-user").modal("hide");
+              $("#edit-group").modal("hide");
             }
             /* stop loading spinner */
             this.$loading(false);
@@ -201,91 +187,31 @@ export default {
     /*-------*/
     /** @get */
     /*-------*/
-    getDepartments() {
-      /* begin loading spinner*/
-      this.$loading(true);
-      /* api */
-      const api = `${this.$urlAPI}department/all`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.departments = data.departments;
-          this.$loading(false);
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-          this.$loading(false);
-        });
-    },
-    getGroups() {
-      /* begin loading spinner*/
-      this.$loading(true);
-      /* api */
-      const api = `${this.$urlAPI}group/all`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.groups = data.groups;
-          this.$loading(false);
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-          this.$loading(false);
-        });
-    },
     /*--------*/
     /** @post */
     /*--------*/
-
     /*----------*/
     /** @others */
     /*----------*/
-    edit($uuid) {
+    edit($id) {
       // start loading spinner
       this.$loading(true);
       this.target = {};
-      this.target_group = [];
-      this.target_departments = [];
 
-      this.getDepartments();
-      this.getGroups();
       /* api */
-      const api = `${this.$urlAPI}user/find`;
+      const api = `${this.$urlAPI}group/find`;
       /* request */
       this.$axios
         .get(api, {
           params: {
-            uuid: $uuid,
+            id: $id,
           },
         })
         .then(({ data }) => {
           // get target data
-          this.target = data.user;
-          // get target departments
-          if (data.user.departments_ids) {
-            let departments = data.user.departments_ids.split(",");
-            departments.forEach((element) => {
-              let index = this.departments.findIndex(
-                (item) => item.id === parseInt(element)
-              );
-              if (index !== -1) {
-                this.target_departments.push(this.departments[index]);
-              }
-            });
-          }
-          if (data.user.group_id) {
-            // get target group
-            let index = this.groups.findIndex(
-              (item) => item.id === data.user.group_id
-            );
-            if (index !== -1) {
-              this.target_group.push(this.groups[index]);
-            }
-          }
+          this.target = data.group;
           // show edit modal
-          $("#edit-user").modal("show");
+          $("#edit-group").modal("show");
           // stop loading spinner
           this.$loading(false);
         })
@@ -303,12 +229,12 @@ export default {
     },
   },
   watch: {
-    searched_name(){
-      this.filter = this.searched_name;
-      this.users = [];
+    searched_group(){
+      this.filter = this.searched_group;
+      this.groups = [];
       this.skip = 0;
       this.count = 0;
-      this.$refs.UserList.$refs.infiniteUsersTable.stateChanger.reset();
+      this.$refs.GroupList.$refs.infiniteGroupsTable.stateChanger.reset();
     }
   }
 };

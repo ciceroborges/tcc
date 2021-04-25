@@ -37,24 +37,43 @@
             <tbody>
               <tr>
                 <th>#ID</th>
+                <th width="25">#AV</th>
                 <th>Nome</th>
+                <th>E-mail</th>
+                <th>Grupo</th>
+                <th>Departamentos</th>
               </tr>
               <tr
-                :title="`Clique para gerenciar o grupo: ${row.name}`"
-                v-for="(row, index) in groups"
+                :title="`Clique para gerenciar o usuário: ${row.name}`"
+                v-for="(row, index) in users"
                 :key="index"
                 class="clickable"
-                @click="edit(row.id)"
+                @click="edit(row.uuid)"
               >
                 <td>{{ `#${row.id}` }}</td>
+                <td>
+                  <img
+                    src="dist/img/user2-160x160.jpg"
+                    alt="User Image"
+                    class="img-circle"
+                    style="width: 25px; height: 25px"
+                  />
+                </td>
                 <td>{{ row.name }}</td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.group_name ? row.group_name : "Indefinido" }}</td>
+                <td>
+                  {{
+                    row.departments_names ? row.departments_names : "Indefinido"
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <!-- /.box-body -->
         <div class="box-footer clearfix">
-          <infinite-loading @infinite="index" spinner="spiral" ref="infiniteGroupsTable">
+          <infinite-loading @infinite="index" spinner="spiral" ref="infiniteUsersTable">
             <div slot="no-more">
               <small>{{ `${count} registro(s) encontrado(s).` }}</small>
             </div>
@@ -74,14 +93,13 @@
 <script>
 export default {
   props: {
-    groups: Array,
+    users: Array,
     count: Number,
     //methods
     index: Function,
     edit: Function,
   },
   created(){
-    //console.log(this.$root)
   }
 };
 </script>

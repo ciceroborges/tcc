@@ -32,7 +32,7 @@
                       minlength="3"
                       class="form-control"
                       id="exampleInputEmail1"
-                      placeholder="Ex: Administradores"
+                      placeholder="Ex: Leonardo da Silva"
                       required
                     />
                   </div>
@@ -117,14 +117,14 @@ export default {
     search(){
       this.vm_searched_name = this.vm_searched_name.trim();
       if(this.vm_searched_name.length >= 3) {
+        console.log('foi')
         this.$emit('search', this.vm_searched_name);
       }
     },
     clear() {
-      //console.log('exlcui')
       this.vm_searched_name = null;
       this.$emit('search', this.vm_searched_name);
-    },
+    }
   }
 };
 </script>
