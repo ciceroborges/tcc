@@ -40,7 +40,7 @@
               class="btn btn-default pull-left"
               data-dismiss="modal"
             >
-              Fechar
+              <i class="fa fa-close" /> FECHAR
             </button>
           </div>
         </form>
@@ -62,6 +62,7 @@ export default {
   },
   data() {
     return {
+      vm_target_id: null,
       vm_target_name: null,
       vm_target_destroy: false,
     };
@@ -83,6 +84,7 @@ export default {
   },
   watch: {
     target(){
+      this.vm_target_id = this.target.id;
       this.vm_target_name = this.target.name;
       this.vm_target_destroy = false;
     },

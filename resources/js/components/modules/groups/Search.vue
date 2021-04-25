@@ -37,11 +37,11 @@
                     />
                   </div>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fa fa-search"></i> Buscar
+                    <button type="button" class="btn btn-default" @click="clear()">
+                      <i class="fa fa-trash-o"></i> LIMPAR
                     </button>
-                    <button type="button" class="btn btn-default pull-right" @click="clear()">
-                      <i class="fa fa-trash-o"></i> Limpar
+                    <button type="submit" class="btn btn-primary pull-right">
+                      <i class="fa fa-search"></i> BUSCAR
                     </button>
                   </div>
                 </div>

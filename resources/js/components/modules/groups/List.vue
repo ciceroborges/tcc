@@ -22,7 +22,7 @@
     <div class="col-xs-12">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <!--<h3 class="box-title">Lista de usuários</h3>-->
+          <h3 class="box-title">Lista de registros:</h3>
           <!--
               <div class="box-tools">
                 <button class="btn btn-sm btn-primary"><i class="fa fa-plus"/> NOVO</button>

@@ -94,9 +94,9 @@
               class="btn btn-default pull-left"
               data-dismiss="modal"
             >
-              Fechar
+              <i class="fa fa-close"/> FECHAR
             </button>
-            <button type="submit" class="btn btn-primary">Gravar</button>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-check"/> GRAVAR</button>
           </div>
         </form>
       </div>
@@ -121,6 +121,7 @@ export default {
   },
   data() {
     return {
+      vm_target_uuid: null,
       vm_target_name: null,
       vm_target_email: null,
       vm_target_group: null,
@@ -146,6 +147,7 @@ export default {
   },
   watch: {
     target(){
+      this.vm_target_uuid = this.target.uuid,
       this.vm_target_name = this.target.name;
       this.vm_target_email = this.target.email;
       this.vm_target_destroy = false;

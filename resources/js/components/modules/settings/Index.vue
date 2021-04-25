@@ -40,7 +40,9 @@
               <div class="tab-pane" id="groups">
                 <groups-index ref="groups" v-if="groups_tab" :searched_group="searched_group"/>
               </div>
-              <div class="tab-pane" id="departments">departments</div>
+              <div class="tab-pane" id="departments">
+                <departments-index ref="departments" v-if="departments_tab" :searched_department="searched_department"/>
+              </div>
             </div>
             <!-- /.tab-content -->
           </div>
@@ -52,6 +54,7 @@
     </section>
     <users-search @search="searchUser($event)" v-if="users_tab"/>
     <groups-search @search="searchGroup($event)" v-if="groups_tab"/>
+    <departments-search @search="searchDepartment($event)" v-if="departments_tab"/>
     <div class="control-sidebar-bg"></div>
     <!-- /.content -->
   </div>
@@ -62,6 +65,8 @@ import UsersIndex from "../users/Index.vue";
 import UsersSearch from "../users/Search.vue";
 import GroupsIndex from "../groups/Index.vue";
 import GroupsSearch from "../groups/Search.vue";
+import DepartmentsIndex from "../departments/Index.vue";
+import DepartmentsSearch from "../departments/Search.vue";
 
 export default {
   name: "Settings",
@@ -70,6 +75,8 @@ export default {
     UsersSearch,
     GroupsIndex,
     GroupsSearch,
+    DepartmentsIndex,
+    DepartmentsSearch
   },
   data() {
     return {

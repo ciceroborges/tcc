@@ -104,6 +104,7 @@ export default {
           title: "MÓDULOS",
           separator: true,
         },
+        /*
         calendar: {
           name: "calendar",
           title: "Calendário",
@@ -111,6 +112,7 @@ export default {
           icon: "fa-calendar",
           active: false,
         },
+        */
         appointments: {
           name: "appointments",
           title: "Atendimentos",
@@ -125,6 +127,7 @@ export default {
           icon: "fa-venus-mars",
           active: false,
         },
+        /*
         inventory: {
           name: "inventory",
           title: "Estoque",
@@ -139,6 +142,7 @@ export default {
           icon: "fa-money",
           active: false,
         },
+        */
         reports: {
           name: "reports",
           title: "Relatórios",
