@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div class="login-logo">
-      <a href="#"><b>ZEN</b> HEALTCARE</a>
+      <a href="#"><b><i class="fa fa-heartbeat"/> TCC</b>LINIC</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">

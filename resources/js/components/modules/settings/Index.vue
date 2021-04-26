@@ -2,7 +2,7 @@
   <div class="content-wrapper" style="min-height: 1136px">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>Configurações | {{ title }}</h1>
+      <h1><i class="fa fa-cogs"></i> Configurações <small>| Gerencie os usuários, grupos e departamentos do sistema.</small></h1>
       <ol class="breadcrumb">
         <li>
           <a href="#"><i class="fa fa-home"></i> Home</a>

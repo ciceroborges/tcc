@@ -20,6 +20,7 @@ import Register from './components/auth/Register';
 componentes de módulos
 */
 //import Users from './components/modules/users/Index';
+import Patients from './components/modules/patients/Index';
 import Settings from './components/modules/settings/Index';
 //-----------------routes-------------------//
 Vue.use(VueRouter)
@@ -54,6 +55,15 @@ const router = new VueRouter({
         /*
         componentes dos módulos
         */
+        {
+            path: '/patients',
+            name: 'patients',
+            title: 'Pacientes',
+            component: Patients,
+            meta: {
+                title: 'Pacientes'
+            }
+        },
         {
             path: '/settings',
             name: 'settings',
@@ -109,7 +119,7 @@ Vue.component('multiselect', Multiselect);
 //------------------instance----------------//
 const app = new Vue({
     el: '#app',
-    components: { App },
+    components: { App },    
     router,
     beforeCreate: function () {
         let storagedUser = localStorage.getItem("user");

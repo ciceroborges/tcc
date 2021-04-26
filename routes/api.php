@@ -48,7 +48,7 @@ Route::prefix('department')->group(function () {
     Route::delete('/destroy', 'DepartmentController@destroy');
 });
 /*
-department api routes
+group api routes
 */
 Route::prefix('group')->group(function () {
     /* GET */
@@ -57,4 +57,18 @@ Route::prefix('group')->group(function () {
     /* POST */
     /* PUT */
     /* DELETE */
+});
+/*
+patient api routes
+*/
+Route::prefix('patient')->group(function () {
+    /* GET */
+    Route::get('/index', 'PatientController@index');
+    Route::get('/find', 'PatientController@find');
+    /* POST */
+    Route::post('/store', 'PatientController@store');
+    /* PUT */
+    Route::put('/update', 'PatientController@update');
+    /* DELETE */
+    Route::delete('/destroy', 'PatientController@destroy');
 });
