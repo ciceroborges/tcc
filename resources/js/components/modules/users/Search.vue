@@ -117,7 +117,6 @@ export default {
     search(){
       this.vm_searched_name = this.vm_searched_name.trim();
       if(this.vm_searched_name.length >= 3) {
-        console.log('foi')
         this.$emit('search', this.vm_searched_name);
       }
     },

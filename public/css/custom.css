@@ -1,10 +1,14 @@
 .multiselect {
-   min-height: 34px !important;
-   max-height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
 }
-.multiselect, .multiselect__input, .multiselect__single {
+
+.multiselect,
+.multiselect__input,
+.multiselect__single {
     font-size: 14px !important;
 }
+
 .multiselect__tags {
     display: block !important;
     width: 100% !important;
@@ -20,17 +24,21 @@
     max-height: 34px !important;
     border-radius: 0px !important;
 }
+
 .multiselect--active {
     height: 34px !important;
     min-height: 34px !important;
     max-height: 34px !important;
 }
+
 .multiselect__placeholder {
     padding-top: 0px !important;
 }
+
 .multiselect__select:before {
     top: 53% !important;
-}    
+}
+
 .multiselect__tag {
     background: #3c8dbc !important;
 }
@@ -38,12 +46,19 @@
 .multiselect__tag-icon:hover {
     background: #3c8dbc !important;
 }
+
 .multiselect__option--highlight {
     background: #3c8dbc !important;
 }
+
 .multiselect__option--highlight:after {
     background: #3c8dbc !important;
 }
+
 .multiselect__tag-icon:after {
     color: white !important;
+}
+
+textarea {
+    resize: vertical; 
 }

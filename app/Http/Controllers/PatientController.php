@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PatientController extends Controller
 {
@@ -12,12 +13,27 @@ class PatientController extends Controller
     {
         /* method */
         $patients = Patient::select(
-            'name','nickname','cpf','birth_date','gender','blood_type','allergy',
-            'address','email','phone_number','picture','contact_name','contact_phone_number',
+            'id',
+            'name',
+            'nickname',
+            'cpf',
+            'birth_date',
+            'gender',
+            'blood_type',
+            'allergy',
+            'address',
+            'email',
+            'phone_number',
+            'picture',
+            'contact_name',
+            'contact_phone_number',
         );
 
         if ($request->filter) {
-            $patients->where('name', 'like', '%' . trim(strip_tags($request->filter)) . '%');
+            $patients = Patient::where(function ($query) use ($request) {
+                $query->where('name', 'like', '%' . trim(strip_tags($request->filter)) . '%')
+                    ->orWhere('nickname', 'like', '%' . trim(strip_tags($request->filter)) . '%');
+            });
         }
         /* validation for infinite loading*/
         if (isset($request->skip) && isset($request->take)) {
@@ -45,7 +61,7 @@ class PatientController extends Controller
         /* response */
         if ($patients) {
             return response()->json([
-                'users' => $patients,
+                'patients' => $patients,
                 'skip' => $new_skip,
                 'flag' => 'success',
                 'message' => count($patients) . ' paciente(s) encontrado(s).',
@@ -64,7 +80,7 @@ class PatientController extends Controller
     {
         /** validation */
         $validation = Validator::make($request->all(), [
-            'uuid' => 'required|string',
+            'id' => 'required|int',
         ]);
 
         if ($validation->fails()) {
@@ -76,34 +92,30 @@ class PatientController extends Controller
             ], 400);
         }
         /** method */
-        $user = DB::table('users as u')->leftJoin('user_group as ug', 'ug.user_id', 'u.id')
-            ->leftJoin('groups as g', 'g.id', 'ug.group_id')
-            ->select(
-                'u.id',
-                'u.uuid',
-                'u.name',
-                'u.email',
-                'u.picture',
-                'g.id as group_id',
-                DB::raw(
-                    "(SELECT GROUP_CONCAT(d.id SEPARATOR ', ')
-                  FROM departments d 
-                  INNER JOIN user_department ud ON ud.department_id = d.id 
-                  INNER JOIN users us ON us.id = ud.user_id
-                  WHERE us.id = u.id
-                  AND d.deleted_at is null 
-                  AND ud.deleted_at is null
-                  GROUP BY us.id) AS departments_ids"
-                )
-            )
-            ->where('u.uuid', $request->uuid)
+        $patient = Patient::select(
+            'id',
+            'name',
+            'nickname',
+            'cpf',
+            'birth_date',
+            'gender',
+            'blood_type',
+            'allergy',
+            'address',
+            'email',
+            'phone_number',
+            'picture',
+            'contact_name',
+            'contact_phone_number',
+        )
+            ->where('id', $request->id)
             ->first();
         /* response */
-        if ($user) {
+        if ($patient) {
             return response()->json([
-                'user' => $user,
+                'patient' => $patient,
                 'flag' => 'success',
-                'message' => 'Usuário(s) encontrado(s).',
+                'message' => 'Paciente(s) encontrado(s).',
                 'status' => 1
             ]);
         } else {
@@ -119,7 +131,19 @@ class PatientController extends Controller
     {
         /** validation */
         $validation = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|min:5',
+            'nickname' => 'nullable|string',
+            'cpf' => 'required|string|min:14|max:14',
+            'birth_date' => 'required|date',
+            'gender' => 'required|string|min:1|max:1',
+            'blood_type' => ['required', 'string', 'min:2', 'max:3', Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])],
+            'allergy' => 'nullable|string',
+            'address' => 'nullable|string',
+            'email' => 'nullable|email',
+            'phone_number' => 'required|string|min:11|max:11',
+            'picture' => 'nullable|string',
+            'contact_name' => 'nullable|string|min:5',
+            'contact_phone_number' => 'nullable|string|min:11|max:11',
         ]);
 
         if ($validation->fails()) {
@@ -131,28 +155,57 @@ class PatientController extends Controller
             ], 400);
         }
 
-        $department = Department::where('name', 'like', '%' . $request->name . '%')->first();
+        $patient = Patient::where(function ($query) use ($request) {
+            $query->where('cpf', $request->cpf)
+                ->orWhere(function ($query) use ($request) {
+                    $query->whereNotNull('email')->where('email', $request->email);
+                });
+        })->first();
 
-        if (!$department) {
-            $store = Department::create([
+        if (!$patient) {
+            $store = Patient::create([
                 'name' => $request->name,
+                'nickname' => $request->nickname,
+                'cpf' => $request->cpf,
+                'birth_date' => $request->birth_date,
+                'gender' => $request->gender,
+                'blood_type' => $request->blood_type,
+                'allergy' => $request->allergy,
+                'address' => $request->address,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'picture' => $request->picture,
+                'contact_name' => $request->contact_name,
+                'contact_phone_number' => $request->contact_phone_number,
             ]);
 
             if ($store) {
                 return response()->json([
-                    'department' => [
+                    'patient' => [
                         'id' => $store->id,
                         'name' => $store->name,
+                        'nickname' => $store->nickname,
+                        'cpf' => $store->cpf,
+                        'birth_date' => $store->birth_date,
+                        'gender' => $store->gender,
+                        'blood_type' => $store->blood_type,
+                        'allergy' => $store->allergy,
+                        'address' => $store->address,
+                        'email' => $store->email,
+                        'phone_number' => $store->phone_number,
+                        'picture' => $store->picture,
+                        'contact_name' => $store->contact_name,
+                        'contact_phone_number' => $store->contact_phone_number,
                     ],
                     'flag' => 'success',
-                    'message' => 'Departamento criado com successo!',
+                    'message' => 'Paciente criado com successo!',
                     'status' => 1
                 ]);
             } else {
                 return response()->json([
                     'e' => true,
                     'flag' => 'info',
-                    'message' => 'Erro ao criar o departamento! Tente novamente. Caso o erro persista, contate o administrador do website.',
+                    'message' => 'Erro ao adicionar o paciente! Tente novamente. Caso o erro persista, contate o administrador do website.',
                     'status' => 0
                 ], 404);
             }
@@ -160,7 +213,7 @@ class PatientController extends Controller
             return response()->json([
                 'e' => true,
                 'flag' => 'info',
-                'message' => 'Já existe um departamento com este nome! Escolha outro e tente novamente.',
+                'message' => 'Já existe um paciente cadastrado com o cpf ou o e-mail informado! Verifique as informações e tente novamente.',
                 'status' => 0
             ]);
         }
@@ -169,11 +222,20 @@ class PatientController extends Controller
     {
         /** validation */
         $validation = Validator::make($request->all(), [
-            'uuid' => 'required|string',
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'group' => 'required|array',
-            'departments' => 'required|array',
+            'id' => 'required|int',
+            'name' => 'required|string|min:5',
+            'nickname' => 'nullable|string',
+            'cpf' => 'required|string|min:14|max:14',
+            'birth_date' => 'required|date',
+            'gender' => 'required|string|min:1|max:1',
+            'blood_type' => ['required', 'string', 'min:2', 'max:3', Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])],
+            'allergy' => 'nullable|string',
+            'address' => 'nullable|string',
+            'email' => 'nullable|email',
+            'phone_number' => 'required|string|min:11|max:11',
+            'picture' => 'nullable|string',
+            'contact_name' => 'nullable|string|min:5',
+            'contact_phone_number' => 'nullable|string|min:11|max:11',
         ]);
 
         if ($validation->fails()) {
@@ -185,73 +247,51 @@ class PatientController extends Controller
             ], 400);
         }
 
-        $user = User::select('id')->where('uuid', $request->uuid)->first();
+        $patient = Patient::select('id')->where('id', $request->id)->first();
 
-        if ($user) {
-            User::where('id', $user->id)->update([
+        if ($patient) {
+            Patient::where('id', $patient->id)->update([
                 'name' => $request->name,
+                'nickname' => $request->nickname,
+                'cpf' => $request->cpf,
+                'birth_date' => $request->birth_date,
+                'gender' => $request->gender,
+                'blood_type' => $request->blood_type,
+                'allergy' => $request->allergy,
+                'address' => $request->address,
                 'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'picture' => $request->picture,
+                'contact_name' => $request->contact_name,
+                'contact_phone_number' => $request->contact_phone_number,
             ]);
 
-            $user_group = UserGroup::select('id')->where('user_id', $user->id)->first();
-
-            if (isset($request->group[0])) {
-                $group_id = $request->group[0]['id'];
-                $group_name = $request->group[0]['name'];
-            } else {
-                $group_id = $request->group['id'];
-                $group_name = $request->group['name'];
-            }
-
-            if (!$user_group) {
-                UserGroup::create([
-                    'user_id' => $user->id,
-                    'group_id' => $group_id,
-                ]);
-            } else {
-                UserGroup::where('id', $user_group->id)->update([
-                    'group_id' => $group_id,
-                ]);
-            }
-
-            $user_departments_ids = [];
-            $user_departments_names = [];
-
-            foreach ($request->departments as $row) {
-                $user_department = UserDepartment::withTrashed()->firstOrCreate([
-                    'user_id' => $user->id,
-                    'department_id' => $row['id']
-                ], []);
-
-                if (!$user_department->wasRecentlyCreated) {
-                    if ($user_department->trashed()) {
-                        $user_department->restore();
-                    }
-                }
-
-                array_push($user_departments_ids, $row['id']);
-                array_push($user_departments_names, $row['name']);
-            }
-
-            UserDepartment::whereNotIn('department_id', $user_departments_ids)->delete();
-
             return response()->json([
-                'user' => [
-                    'uuid' => $request->uuid,
+                'patient' => [
+                    'id' => $request->id,
                     'name' => $request->name,
+                    'nickname' => $request->nickname,
+                    'cpf' => $request->cpf,
+                    'birth_date' => $request->birth_date,
+                    'gender' => $request->gender,
+                    'blood_type' => $request->blood_type,
+                    'allergy' => $request->allergy,
+                    'address' => $request->address,
                     'email' => $request->email,
-                    'group_name' => $group_name,
-                    'departments_names' => implode(', ', $user_departments_names),
+                    'phone_number' => $request->phone_numeber,
+                    'picture' => $request->picture,
+                    'contact_name' => $request->contact_name,
+                    'contact_phone_number' => $request->contact_phone_number,
                 ],
                 'flag' => 'success',
-                'message' => 'Usuário atualizado com successo.',
+                'message' => 'Paciente atualizado com successo.',
                 'status' => 1
             ]);
         } else {
             return response()->json([
                 'e' => true,
                 'flag' => 'info',
-                'message' => 'Usuário não encontrado! Tente novamente. Caso o erro persista, contate o administrador do website.',
+                'message' => 'Paciente não encontrado! Tente novamente. Caso o erro persista, contate o administrador do website.',
                 'status' => 0
             ], 404);
         }
@@ -260,7 +300,7 @@ class PatientController extends Controller
     {
         /** validation */
         $validation = Validator::make($request->all(), [
-            'uuid' => 'required|string',
+            'id' => 'required|int',
         ]);
 
         if ($validation->fails()) {
@@ -272,15 +312,15 @@ class PatientController extends Controller
             ], 400);
         }
 
-        $user = User::where('uuid', $request->uuid)->delete();
+        $patient = Patient::where('id', $request->id)->delete();
 
-        if ($user) {
+        if ($patient) {
             return response()->json([
-                'user' => [
-                    'uuid' => $request->uuid,
+                'patient' => [
+                    'id' => $request->id,
                 ],
                 'flag' => 'success',
-                'message' => 'Usuário removido com successo.',
+                'message' => 'Paciente removido com successo.',
                 'status' => 1
             ]);
         } else {

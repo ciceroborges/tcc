@@ -4,9 +4,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueLoading from 'vuejs-loading-plugin';
 import Swal from 'sweetalert2';
-import moment from 'moment';
 import InfiniteLoading from 'vue-infinite-loading';
 import Multiselect from 'vue-multiselect'
+import moment from 'moment'
 
 //---------------components-----------------//
 import App from './components/App';
@@ -91,7 +91,6 @@ const router = new VueRouter({
 //------------------constants----------------------//
 Vue.prototype.$axios = axios;
 Vue.prototype.$swal = Swal;
-Vue.prototype.$moment = moment;
 Vue.prototype.$toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -112,10 +111,18 @@ Vue.use(VueLoading, {
     text: '',
 })
 Vue.use(InfiniteLoading, { /* options */ });
-
 Vue.component('multiselect', Multiselect);
+//----------------- functions ----------------//
 
-
+Vue.prototype.$moment = {
+    convert: ($date, $format) => {
+       return moment($date).format($format);
+       //moment('22/09/2020 10:45:00', 'DD-MM-YYYY HH:mm:ss');
+    },
+    convertFromFormat: ($date, $from, $to) => {
+        return moment($date, $from).format($to);
+    }
+ };
 //------------------instance----------------//
 const app = new Vue({
     el: '#app',

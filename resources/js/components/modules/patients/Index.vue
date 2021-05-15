@@ -2,18 +2,19 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- list table -->
-    <list :patients="patients" :count="count" :index="index" :edit="edit" ref="PatientList" />
+    <list
+      :patients="patients"
+      :count="count"
+      :index="index"
+      :edit="edit"
+      ref="PatientList"
+    />
     <!-- search aside -->
-    <search />
+    <search @search="search($event)" />
     <!-- This div must be placed immediately after the control sidebar -->
     <div class="control-sidebar-bg"></div>
     <!-- edit modal -->
-    <edit
-      :target="target"
-      :store="store"
-      :update="update"
-      :destroy="destroy"
-    />
+    <edit :target="target" :store="store" :update="update" :destroy="destroy" />
   </div>
   <!-- /.content-wrapper -->
 </template>
@@ -38,6 +39,7 @@ export default {
       target: {},
       //search
       filter: null,
+      searched_patient: null,
       //infinite loading
       skip: 0,
       take: 30,
@@ -84,7 +86,54 @@ export default {
     /*----------*/
     /** @create */
     /*----------*/
-    store() {},
+    store($target) {
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* close edit modal */
+      $("#edit-patient").modal("hide");
+      /* api */
+      const api = `${this.$urlAPI}patient/store`;
+      /* request */
+      this.$axios
+        .post(api, {
+          name: $target.name,
+          nickname: $target.nickname,
+          cpf: $target.cpf,
+          birth_date: $target.birth_date,
+          gender: $target.gender,
+          blood_type: $target.blood_type,
+          allergy: $target.allergy,
+          address: $target.address,
+          email: $target.email,
+          phone_number: $target.phone_number,
+          picture: $target.picture,
+          contact_name: $target.contact_name,
+          contact_phone_number: $target.contact_phone_number,
+        })
+        .then(({ data }) => {
+          if (data.status) {
+            //this.patients.push(data.patient);
+            this.reset();
+            alert(data.message);
+          } else {
+            alert(data.message);
+            $("#edit-patient").modal("show");
+          }
+          /* stop loading spinner */
+          this.$loading(false);
+        })
+        .catch((e) => {
+          if (e.response.data) {
+            alert(e.response.data.message);
+          } else {
+            alert(
+              `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
+            );
+          }
+          /* stop loading spinner */
+          this.$loading(false);
+        });
+    },
     /*----------*/
     /** @update */
     /*----------*/
@@ -92,33 +141,52 @@ export default {
       /* begin loading spinner*/
       this.$loading(true);
       /* close edit modal */
-      $("#edit-user").modal("hide");
+      $("#edit-patient").modal("hide");
       /* api */
-      const api = `${this.$urlAPI}user/update`;
+      const api = `${this.$urlAPI}patient/update`;
       /* request */
       this.$axios
         .put(api, {
-          uuid: $target.uuid,
+          id: $target.id,
           name: $target.name,
+          nickname: $target.nickname,
+          cpf: $target.cpf,
+          birth_date: $target.birth_date,
+          gender: $target.gender,
+          blood_type: $target.blood_type,
+          allergy: $target.allergy,
+          address: $target.address,
           email: $target.email,
-          group: $target.group,
-          departments: $target.departments,
+          phone_number: $target.phone_number,
+          picture: $target.picture,
+          contact_name: $target.contact_name,
+          contact_phone_number: $target.contact_phone_number,
         })
         .then(({ data }) => {
           if (data.status) {
-            let index = this.users.findIndex(
-              (item) => item.uuid === data.user.uuid
+            let index = this.patients.findIndex(
+              (item) => item.id === data.patient.id
             );
             if (index !== -1) {
-              this.users[index].name = data.user.name;
-              this.users[index].email = data.user.email;
-              this.users[index].group_name = data.user.group_name;
-              this.users[index].departments_names = data.user.departments_names;
+              this.patients[index].name = data.patient.name;
+              this.patients[index].nickname = data.patient.nickname;
+              this.patients[index].cpf = data.patient.cpf;
+              this.patients[index].birth_date = data.patient.birth_date;
+              this.patients[index].gender = data.patient.gender;
+              this.patients[index].blood_type = data.patient.blood_type;
+              this.patients[index].allergy = data.patient.allergy;
+              this.patients[index].address = data.patient.address;
+              this.patients[index].email = data.patient.email;
+              this.patients[index].phone_number = data.patient.phone_number;
+              this.patients[index].picture = data.patient.picture;
+              this.patients[index].contact_name = data.patient.contact_name;
+              this.patients[index].contact_phone_number =
+                data.patient.contact_phone_number;
             }
             alert(data.message);
           } else {
             alert(data.message);
-            $("#edit-user").modal("show");
+            $("#edit-patient").modal("show");
           }
           /* stop loading spinner */
           this.$loading(false);
@@ -140,37 +208,40 @@ export default {
     /*----------*/
     destroy($target) {
       let $confirm = confirm(
-        `Você tem certeza? O usuário ${$target.name} será excluído. Está ação não poderá ser desfeita.`
+        `Você tem certeza? O paciente ${$target.name} será excluído. Está ação não poderá ser desfeita.`
       );
       if ($confirm) {
         /* begin loading spinner*/
         this.$loading(true);
         /* close edit modal */
-        $("#edit-user").modal("hide");
+        $("#edit-patient").modal("hide");
         /* api */
-        const api = `${this.$urlAPI}user/destroy`;
+        const api = `${this.$urlAPI}patient/destroy`;
         /* request */
         this.$axios
           .delete(api, {
             params: {
-              uuid: $target.uuid,
+              id: $target.id,
             },
           })
           .then(({ data }) => {
             if (data.status) {
+              this.reset();
+              /*
               let index = this.users.findIndex(
-                (item) => item.uuid === data.user.uuid
+                (item) => item.id === data.patient.id
               );
               if (index !== -1) {
                 this.users.splice(index, 1);
-                if(this.count > 0) {
-                  this.count --;
+                if (this.count > 0) {
+                  this.count--;
                 }
               }
+              */
               alert(data.message);
             } else {
               alert(data.message);
-              $("#edit-user").modal("hide");
+              $("#edit-patient").modal("hide");
             }
             /* stop loading spinner */
             this.$loading(false);
@@ -191,40 +262,7 @@ export default {
     /*-------*/
     /** @get */
     /*-------*/
-    getDepartments() {
-      /* begin loading spinner*/
-      this.$loading(true);
-      /* api */
-      const api = `${this.$urlAPI}department/index`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.departments = data.departments;
-          this.$loading(false);
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-          this.$loading(false);
-        });
-    },
-    getGroups() {
-      /* begin loading spinner*/
-      this.$loading(true);
-      /* api */
-      const api = `${this.$urlAPI}group/index`;
-      /* request */
-      this.$axios
-        .get(api, {})
-        .then(({ data }) => {
-          this.groups = data.groups;
-          this.$loading(false);
-        })
-        .catch((e) => {
-          console.log(e.response.data.message);
-          this.$loading(false);
-        });
-    },
+
     /*--------*/
     /** @post */
     /*--------*/
@@ -232,74 +270,76 @@ export default {
     /*----------*/
     /** @others */
     /*----------*/
-    edit($uuid) {
+    edit($id) {
       // start loading spinner
       this.$loading(true);
       this.target = {};
-      this.target_group = [];
-      this.target_departments = [];
 
-      this.getDepartments();
-      this.getGroups();
-      /* api */
-      const api = `${this.$urlAPI}user/find`;
-      /* request */
-      this.$axios
-        .get(api, {
-          params: {
-            uuid: $uuid,
-          },
-        })
-        .then(({ data }) => {
-          // get target data
-          this.target = data.user;
-          // get target departments
-          if (data.user.departments_ids) {
-            let departments = data.user.departments_ids.split(",");
-            departments.forEach((element) => {
-              let index = this.departments.findIndex(
-                (item) => item.id === parseInt(element)
+      if ($id === 0) {
+        this.target.id = null;
+        this.target.name = null;
+        this.target.nickname = null;
+        this.target.cpf = null;
+        this.target.birth_date = null;
+        this.target.gender = null;
+        this.target.blood_type = null;
+        this.target.allergy = null;
+        this.target.address = null;
+        this.target.email = null;
+        this.target.phone_number = null;
+        this.target.contact_name = null;
+        this.target.contact_phone_number = null;
+        this.target.new_record = true;
+        // show edit modal
+        $("#edit-patient").modal("show");
+        // stop loading spinner
+        this.$loading(false);
+      } else {
+        /* api */
+        const api = `${this.$urlAPI}patient/find`;
+        /* request */
+        this.$axios
+          .get(api, {
+            params: {
+              id: $id,
+            },
+          })
+          .then(({ data }) => {
+            // get target data
+            this.target = data.patient;
+            // show edit modal
+            $("#edit-patient").modal("show");
+            // stop loading spinner
+            this.$loading(false);
+          })
+          .catch((e) => {
+            if (e.response.data) {
+              alert(e.response.data.message);
+            } else {
+              alert(
+                `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
               );
-              if (index !== -1) {
-                this.target_departments.push(this.departments[index]);
-              }
-            });
-          }
-          if (data.user.group_id) {
-            // get target group
-            let index = this.groups.findIndex(
-              (item) => item.id === data.user.group_id
-            );
-            if (index !== -1) {
-              this.target_group.push(this.groups[index]);
             }
-          }
-          // show edit modal
-          $("#edit-user").modal("show");
-          // stop loading spinner
-          this.$loading(false);
-        })
-        .catch((e) => {
-          if (e.response.data) {
-            alert(e.response.data.message);
-          } else {
-            alert(
-              `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
-            );
-          }
-          // stop loading spinner
-          this.$loading(false);
-        });
+            // stop loading spinner
+            this.$loading(false);
+          });
+      }
     },
-  },
-  watch: {
-    searched_user(){
-      this.filter = this.searched_user;
-      this.users = [];
+    search($e) {
+      this.searched_patient = $e;
+    },
+    reset() {
+      this.filter = this.searched_patient;
+      this.patients = [];
       this.skip = 0;
       this.count = 0;
-      this.$refs.UserList.$refs.infiniteUsersTable.stateChanger.reset();
+      this.$refs.PatientList.$refs.infinitePatientsTable.stateChanger.reset();
     }
-  }
+  },
+  watch: {
+    searched_patient() {
+      this.reset();
+    },
+  },
 };
 </script>

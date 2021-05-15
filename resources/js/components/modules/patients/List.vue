@@ -28,7 +28,9 @@
                       <div class="box-header with-border">
                         <h3 class="box-title">Lista de registros:</h3>
                         <div class="box-tools">
-                          <button class="btn btn-sm btn-primary"><i class="fa fa-plus"/> NOVO</button>
+                          <button class="btn btn-sm btn-primary" @click="edit(0)">
+                            <i class="fa fa-plus" /> NOVO
+                          </button>
                         </div>
                       </div>
                       <!-- /.box-header -->
@@ -48,7 +50,7 @@
                               <th>Contato</th>
                             </tr>
                             <tr
-                              :title="`Clique para gerenciar o usuário: ${row.name}`"
+                              :title="`Clique para gerenciar o paciente: ${row.name}`"
                               v-for="(row, index) in patients"
                               :key="index"
                               class="clickable"
@@ -57,16 +59,16 @@
                               <td>{{ `#${row.id}` }}</td>
                               <td>
                                 <img
-                                  src="dist/img/user2-160x160.jpg"
-                                  alt="User Image"
+                                  :src="row.picture ? row.picture : 'img/user-injured.png'"
                                   class="img-circle"
                                   style="width: 25px; height: 25px"
+                                  onerror="this.src='img/user-injured.png';"
                                 />
                               </td>
                               <td>{{ row.name }} {{ row.nickname ? `(${ row.nickname })` : ''}}</td>
                               <td>{{ row.cpf }}</td>
-                              <td>{{ row.birth_date }}</td>
-                              <td>{{ row.gender }}</td>
+                              <td>{{ $moment.convert(row.birth_date, 'DD/MM/YYYY') }}</td>
+                              <td>{{ row.gender === 'M' ? 'Masculino' : (row.gender === 'F' ? 'Feminino' : 'Indefinido') }}</td>
                               <td>{{ row.blood_type }}</td>
                               <td>{{ row.phone_number }}</td>
                             </tr>
@@ -78,7 +80,7 @@
                         <infinite-loading
                           @infinite="index"
                           spinner="spiral"
-                          ref="infiniteUsersTable"
+                          ref="infinitePatientsTable"
                         >
                           <div slot="no-more">
                             <small>{{
@@ -107,13 +109,14 @@
 <script>
 export default {
   props: {
-    users: Array,
+    patients: Array,
     count: Number,
     //methods
     index: Function,
     edit: Function,
   },
-  created() {},
+  created() {
+  },
 };
 </script>
 <style scoped>

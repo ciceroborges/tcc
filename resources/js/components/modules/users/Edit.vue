@@ -151,6 +151,8 @@ export default {
       this.vm_target_name = this.target.name;
       this.vm_target_email = this.target.email;
       this.vm_target_destroy = false;
+
+      console.log(this.groups);
     },
     target_group(){
       this.vm_target_group = this.target_group;
