@@ -20,6 +20,7 @@ import Register from './components/auth/Register';
 componentes de módulos
 */
 //import Users from './components/modules/users/Index';
+import Appointments from './components/modules/appointments/Index';
 import Patients from './components/modules/patients/Index';
 import Settings from './components/modules/settings/Index';
 //-----------------routes-------------------//
@@ -55,6 +56,15 @@ const router = new VueRouter({
         /*
         componentes dos módulos
         */
+        {
+            path: '/appointments',
+            name: 'appointments',
+            title: 'Atendimentos',
+            component: Appointments,
+            meta: {
+                title: 'Atendimentos'
+            }
+        },
         {
             path: '/patients',
             name: 'patients',

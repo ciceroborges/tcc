@@ -7,7 +7,7 @@
       <div class="user-panel">
         <div class="pull-left image">
           <img
-            src="dist/img/user2-160x160.jpg"
+            :src="$user.picture ? $user.picture : 'img/user.png'" onerror="this.src='img/user.png';"
             class="img-circle"
             alt="User Image"
           />
@@ -117,7 +117,7 @@ export default {
           name: "appointments",
           title: "Atendimentos",
           route: "appointments",
-          icon: "fa-bars",
+          icon: "fa-clipboard",
           active: false,
         },
         patients: {

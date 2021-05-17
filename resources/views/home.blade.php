@@ -58,7 +58,7 @@ desired effect
 |---------------------------------------------------------|
 -->
 
-<body id="body" class="hold-transition skin-blue sidebar-mini">
+<body id="body" class="hold-transition skin-blue sidebar-mini sidebar-collapse">
     <div id="app" class="wrapper">
         <app></app>
     </div>

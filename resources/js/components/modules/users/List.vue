@@ -53,7 +53,8 @@
                 <td>{{ `#${row.id}` }}</td>
                 <td>
                   <img
-                    src="dist/img/user2-160x160.jpg"
+                     :src="row.picture ? row.picture : 'img/user.png'" 
+                    onerror="this.src='img/user.png';"
                     alt="User Image"
                     class="img-circle"
                     style="width: 25px; height: 25px"

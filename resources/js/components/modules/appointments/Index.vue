@@ -3,11 +3,11 @@
   <div class="content-wrapper">
     <!-- list table -->
     <list
-      :patients="patients"
+      :appointments="appointments"
       :count="count"
       :index="index"
       :edit="edit"
-      ref="PatientList"
+      ref="AppointmentList"
     />
     <!-- search aside -->
     <search @search="search($event)" />
@@ -20,12 +20,12 @@
 </template>
 <script>
 // componentes importados
-import Edit from "../patients/Edit.vue";
-import List from "../patients/List.vue";
-import Search from "../patients/Search.vue";
+import Edit from "../appointments/Edit.vue";
+import List from "../appointments/List.vue";
+import Search from "../appointments/Search.vue";
 
 export default {
-  name: "Patients",
+  name: "Appointments",
   components: {
     Edit,
     List,
@@ -34,12 +34,12 @@ export default {
   data() {
     return {
       //general
-      patients: [],
+      appointments: [],
       //edit
       target: {},
       //search
       filter: null,
-      searched_patient: null,
+      //searched_patient: null,
       //infinite loading
       skip: 0,
       take: 30,
@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    console.log(this.$user);
+    //console.log(this.$user);
   },
   methods: {
     /*--------*/
@@ -56,23 +56,23 @@ export default {
     /*--------*/
     index($state) {
       /* api */
-      const api = `${this.$urlAPI}patient/index`;
+      const api = `${this.$urlAPI}appointment/index`;
       /* request */
       this.$axios
         .get(api, {
           params: {
-            filter: this.searched_patient,
+            //filter: this.searched_patient,
             skip: this.skip,
             take: this.take,
           },
         })
         .then(({ data }) => {
-          if (data.patients.length) {
+          if (data.appointments.length) {
             this.skip = data.skip;
-            this.count = this.patients.length + data.patients.length;
-            this.patients.push(...data.patients);
+            this.count = this.appointments.length + data.appointments.length;
+            this.appointments.push(...data.appointments);
 
-            if (data.patients.length === this.take) {
+            if (data.appointments.length === this.take) {
               $state.loaded();
             } else {
               $state.complete();
@@ -92,25 +92,18 @@ export default {
       /* begin loading spinner*/
       this.$loading(true);
       /* close edit modal */
-      $("#edit-patient").modal("hide");
+      $("#edit-appointment").modal("hide");
       /* api */
-      const api = `${this.$urlAPI}patient/store`;
+      const api = `${this.$urlAPI}appointment/store`;
       /* request */
       this.$axios
         .post(api, {
-          name: $target.name,
-          nickname: $target.nickname,
-          cpf: $target.cpf,
-          birth_date: $target.birth_date,
-          gender: $target.gender,
-          blood_type: $target.blood_type,
-          allergy: $target.allergy,
-          address: $target.address,
-          email: $target.email,
-          phone_number: $target.phone_number,
-          picture: $target.picture,
-          contact_name: $target.contact_name,
-          contact_phone_number: $target.contact_phone_number,
+          department_id: $target.department_id,
+          patient_id: $target.patient_id,
+          anamnesis: $target.anamnesis,
+          status: $target.status,
+          start_date: $target.start_date,
+          end_date: $target.end_date,
         })
         .then(({ data }) => {
           if (data.status) {
@@ -119,7 +112,7 @@ export default {
             alert(data.message);
           } else {
             alert(data.message);
-            $("#edit-patient").modal("show");
+            $("#edit-appointment").modal("show");
           }
           /* stop loading spinner */
           this.$loading(false);
@@ -143,26 +136,19 @@ export default {
       /* begin loading spinner*/
       this.$loading(true);
       /* close edit modal */
-      $("#edit-patient").modal("hide");
+      $("#edit-appointment").modal("hide");
       /* api */
-      const api = `${this.$urlAPI}patient/update`;
+      const api = `${this.$urlAPI}appointment/update`;
       /* request */
       this.$axios
         .put(api, {
           id: $target.id,
-          name: $target.name,
-          nickname: $target.nickname,
-          cpf: $target.cpf,
-          birth_date: $target.birth_date,
-          gender: $target.gender,
-          blood_type: $target.blood_type,
-          allergy: $target.allergy,
-          address: $target.address,
-          email: $target.email,
-          phone_number: $target.phone_number,
-          picture: $target.picture,
-          contact_name: $target.contact_name,
-          contact_phone_number: $target.contact_phone_number,
+          department_id: $target.department_id,
+          patient_id: $target.patient_id,
+          anamnesis: $target.anamnesis,
+          status: $target.status,
+          start_date: $target.start_date,
+          end_date: $target.end_date,
         })
         .then(({ data }) => {
           if (data.status) {
@@ -170,25 +156,17 @@ export default {
               (item) => item.id === data.patient.id
             );
             if (index !== -1) {
-              this.patients[index].name = data.patient.name;
-              this.patients[index].nickname = data.patient.nickname;
-              this.patients[index].cpf = data.patient.cpf;
-              this.patients[index].birth_date = data.patient.birth_date;
-              this.patients[index].gender = data.patient.gender;
-              this.patients[index].blood_type = data.patient.blood_type;
-              this.patients[index].allergy = data.patient.allergy;
-              this.patients[index].address = data.patient.address;
-              this.patients[index].email = data.patient.email;
-              this.patients[index].phone_number = data.patient.phone_number;
-              this.patients[index].picture = data.patient.picture;
-              this.patients[index].contact_name = data.patient.contact_name;
-              this.patients[index].contact_phone_number =
-                data.patient.contact_phone_number;
+              this.appointments[index].department_id = data.appointment.department_id;
+              this.appointments[index].patient_id = data.appointment.patient_id;
+              this.appointments[index].anamnesis = data.appointment.anamnesis;
+              this.appointments[index].status = data.appointment.status;
+              this.appointments[index].start_date = data.appointment.start_date;
+              this.appointments[index].end_date = data.appointment.end_date;
             }
             alert(data.message);
           } else {
             alert(data.message);
-            $("#edit-patient").modal("show");
+            $("#edit-appointment").modal("show");
           }
           /* stop loading spinner */
           this.$loading(false);
@@ -210,15 +188,15 @@ export default {
     /*----------*/
     destroy($target) {
       let $confirm = confirm(
-        `Você tem certeza? O paciente ${$target.name} será excluído. Está ação não poderá ser desfeita.`
+        `Você tem certeza? O atendimento ${$target.id} será excluído. Está ação não poderá ser desfeita.`
       );
       if ($confirm) {
         /* begin loading spinner*/
         this.$loading(true);
         /* close edit modal */
-        $("#edit-patient").modal("hide");
+        $("#edit-appointment").modal("hide");
         /* api */
-        const api = `${this.$urlAPI}patient/destroy`;
+        const api = `${this.$urlAPI}appointment/destroy`;
         /* request */
         this.$axios
           .delete(api, {
@@ -243,7 +221,7 @@ export default {
               alert(data.message);
             } else {
               alert(data.message);
-              $("#edit-patient").modal("hide");
+              $("#edit-appointment").modal("hide");
             }
             /* stop loading spinner */
             this.$loading(false);
@@ -279,26 +257,20 @@ export default {
 
       if ($id === 0) {
         this.target.id = null;
-        this.target.name = null;
-        this.target.nickname = null;
-        this.target.cpf = null;
-        this.target.birth_date = null;
-        this.target.gender = null;
-        this.target.blood_type = null;
-        this.target.allergy = null;
-        this.target.address = null;
-        this.target.email = null;
-        this.target.phone_number = null;
-        this.target.contact_name = null;
-        this.target.contact_phone_number = null;
+        this.target.department_id = null;
+        this.target.patient_id = null;
+        this.target.anamnesis = null;
+        this.target.status = null;
+        this.target.start_date = null;
+        this.target.end_date = null;
         this.target.new_record = true;
         // show edit modal
-        $("#edit-patient").modal("show");
+        $("#edit-appointment").modal("show");
         // stop loading spinner
         this.$loading(false);
       } else {
         /* api */
-        const api = `${this.$urlAPI}patient/find`;
+        const api = `${this.$urlAPI}appointment/find`;
         /* request */
         this.$axios
           .get(api, {
@@ -308,9 +280,9 @@ export default {
           })
           .then(({ data }) => {
             // get target data
-            this.target = data.patient;
+            this.target = data.appointment;
             // show edit modal
-            $("#edit-patient").modal("show");
+            $("#edit-appointment").modal("show");
             // stop loading spinner
             this.$loading(false);
           })
@@ -332,10 +304,10 @@ export default {
     },
     reset() {
       this.filter = this.searched_patient;
-      this.patients = [];
+      this.appointments = [];
       this.skip = 0;
       this.count = 0;
-      this.$refs.PatientList.$refs.infinitePatientsTable.stateChanger.reset();
+      this.$refs.AppointmentList.$refs.infiniteAppointmentsTable.stateChanger.reset();
     }
   },
   watch: {

@@ -20,7 +20,7 @@ class CreateSessionsTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED']);
-            $table->dateTime('date');
+            $table->date('date');
             $table->timestamps();
             $table->softDeletes();
             // foreign keys
