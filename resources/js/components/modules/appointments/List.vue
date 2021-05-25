@@ -10,7 +10,7 @@
         <li>
           <router-link to="#"><i class="fa fa-home"></i> Home</router-link>
         </li>
-        <li class="active">Pacientes</li>
+        <li class="active">Atendimentos</li>
       </ol>
     </section>
     <!-- Main content -->

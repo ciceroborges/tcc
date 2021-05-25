@@ -1,6 +1,6 @@
 <template>
-  <div class="modal fade" id="edit-patient">
-    <div class="modal-dialog">
+  <div class="modal fade" id="edit-appointment">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <button
@@ -11,7 +11,11 @@
           >
             <span aria-hidden="true">×</span>
           </button>
-          <h4 class="modal-title">{{`${this.target.new_record ? 'Adicionar' : 'Gerenciar'} paciente:`}}</h4>
+          <h4 class="modal-title">
+            {{
+              `${this.target.new_record ? "Adicionar" : "Gerenciar"} ${title}:`
+            }}
+          </h4>
         </div>
         <!-- form start -->
         <form role="form" @submit.prevent="callUpdate()">
@@ -20,49 +24,9 @@
               <!-- /.box-header -->
               <div class="box-body">
                 <div class="row">
-                  <div class="col col-md-12">
+                  <div class="col col-md-7">
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Nome completo:</label>
-                      <input
-                        v-model="vm_target.name"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: Lucas da Silva"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Apelido:</label>
-                      <input
-                        v-model="vm_target.nickname"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: Lukinhas"
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">CPF:</label>
-                      <input
-                        pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
-                        title="Digite o CPF no formato xxx.xxx.xxx-xx"
-                        v-model="vm_target.cpf"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: 010.010.010-01"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-4">
-                    <div class="form-group">
-                      <label for="exampleInputFile">Gênero:</label>
+                      <label for="exampleInputFile">Paciente:</label>
                       <multiselect
                         :selectLabel="''"
                         :deselectLabel="''"
@@ -72,8 +36,8 @@
                         :close-on-select="true"
                         :multiple="false"
                         :allowEmpty="false"
-                        :options="gender_options"
-                        v-model="vm_target.gender"
+                        :options="patients"
+                        v-model="vm_target.patient"
                         label="name"
                         track-by="name"
                         placeholder="Selecione..."
@@ -82,9 +46,9 @@
                       </multiselect>
                     </div>
                   </div>
-                  <div class="col col-md-4">
+                  <div class="col col-md-3">
                     <div class="form-group">
-                      <label for="exampleInputFile">Tipo sanguíneo:</label>
+                      <label for="exampleInputFile">Departamento:</label>
                       <multiselect
                         :selectLabel="''"
                         :deselectLabel="''"
@@ -94,8 +58,8 @@
                         :close-on-select="true"
                         :multiple="false"
                         :allowEmpty="false"
-                        :options="blood_type_options"
-                        v-model="vm_target.blood_type"
+                        :options="departments"
+                        v-model="vm_target.department"
                         label="name"
                         track-by="name"
                         placeholder="Selecione..."
@@ -104,13 +68,15 @@
                       </multiselect>
                     </div>
                   </div>
-                  <div class="col col-md-4">
+                  <div class="col col-md-2">
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Data de nascimento:</label>
+                      <label for="exampleInputEmail1"
+                        >Previsão de início:</label
+                      >
                       <input
                         pattern="\d{2}\/\d{2}\/\d{4}"
                         title="Digite a data no formato DD/MM/AAAA"
-                        v-model="vm_target.birth_date"
+                        v-model="vm_target.start_date"
                         type="text"
                         class="form-control"
                         id="exampleInputEmail1"
@@ -121,85 +87,14 @@
                   </div>
                   <div class="col col-md-12">
                     <div class="form-group">
-                      <label for="exampleInputEmail1">Alergia:</label>
+                      <label for="exampleInputEmail1">Anamnese:</label>
                       <textarea
-                        v-model="vm_target.allergy"
+                        v-model="vm_target.anamnesis"
                         type="text"
-                        rows="3"
+                        rows="5"
                         class="form-control"
                         id="exampleInputEmail1"
-                        placeholder="Ex: Dermatite: inflamação na pele que pode causar vermelhidão, coceira, pequenas bolhas e descamação..."
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-12">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Endereço:</label>
-                      <input
-                        v-model="vm_target.address"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: Rua da cidade, 1234, Bairro, Cidade, 00000-000"
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">E-mail:</label>
-                      <input
-                        v-model="vm_target.email"
-                        type="email"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: lucas@mail.com"
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1"
-                        >Número do telefone:</label
-                      >
-                      <input
-                        v-model="vm_target.phone_number"
-                        type="text  "
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: 54999999999 (apenas números)"
-                        pattern="[0-9]{11}"
-                        minlength="11"
-                        maxlength="11"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Nome do contato:</label>
-                      <input
-                        v-model="vm_target.contact_name"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: Joãozinho da Silva"
-                      />
-                    </div>
-                  </div>
-                  <div class="col col-md-6">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1"
-                        >Número de telefone do contato:</label
-                      >
-                      <input
-                        v-model="vm_target.contact_phone_number"
-                        type="text"
-                        class="form-control"
-                        id="exampleInputEmail1"
-                        placeholder="Ex: 54999999999 (apenas números)"
-                        pattern="[0-9]{11}"
-                        minlength="11"
-                        maxlength="11"
+                        placeholder="Ex: O paciente informou que está com coceira e irritação nos olhos. Apresenta sinais de..."
                       />
                     </div>
                   </div>
@@ -207,7 +102,7 @@
                     <div class="checkbox">
                       <label>
                         <input v-model="vm_target.destroy" type="checkbox" />
-                        Excluir paciente
+                        Excluir atendimento
                       </label>
                     </div>
                   </div>
@@ -223,11 +118,54 @@
             >
               <i class="fa fa-close" /> FECHAR
             </button>
-            <button type="submit" class="btn btn-primary">
+            <div class="btn-group dropup" v-if="!vm_target.new_record">
+              <button
+                title="Lista de ações disponíveis"
+                type="button"
+                class="btn bg-olive dropdown-toggle"
+                data-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fa fa-edit" /> AÇÕES
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li>
+                  <a
+                    @click="statusUpdate(vm_target.id, 'IN PROGRESS')"
+                    class="action-info"
+                    href="#"
+                    ><i class="fa fa-play-circle-o" />Iniciar atendimento</a
+                  >
+                </li>
+                <li>
+                  <a
+                    @click="statusUpdate(vm_target.id, 'CONCLUDED')"
+                    class="action-success"
+                    href="#"
+                    ><i class="fa fa-check-circle-o" />Concluir atendimento</a
+                  >
+                </li>
+                <li>
+                  <a
+                    @click="statusUpdate(vm_target.id, 'CANCELED')"
+                    class="action-danger"
+                    href="#"
+                    ><i class="fa fa-ban" />Cancelar atendimento</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              title="Salvar as alterações do formulário"
+            >
               <i class="fa fa-check" /> GRAVAR
             </button>
           </div>
         </form>
+
+        <!-- /.nav-tabs-custom -->
       </div>
       <!-- /.modal-content -->
     </div>
@@ -235,67 +173,57 @@
   </div>
 </template>
 <script>
+// componentes importados
+import Sessions from "../sessions/Index";
 export default {
+  components: {
+    Sessions,
+  },
   props: {
     /** @Objects */
     target: Object,
     /** @Arrays */
+    target_patient: Array,
+    target_department: Array,
+    patients: Array,
+    departments: Array,
     /** @Functions */
     store: Function,
     update: Function,
     destroy: Function,
+    statusUpdate: Function,
   },
   data() {
     return {
       vm_target: {
         id: null,
-        name: null,
-        nickname: null,
-        cpf: null,
-        birth_date: null,
-        gender: null,
-        blood_type: null,
-        allergy: null,
-        address: null,
-        email: null,
-        phone_number: null,
-        contact_name: null,
-        contact_phone_number: null,
+        patient: null,
+        department: null,
+        start_date: null,
+        anamnesis: null,
         new_record: false,
         destroy: false,
       },
-      gender_options: [
-        { name: "Masculino", value: "M" },
-        { name: "Feminino", value: "F" },
-        { name: "Indefinido", value: "I" },
-      ],
-      blood_type_options: [
-        { name: "A+" },
-        { name: "A-" },
-        { name: "B+" },
-        { name: "B-" },
-        { name: "AB+" },
-        { name: "AB-" },
-        { name: "O+" },
-        { name: "O-" },
-      ],
+      title: "atendimento",
+      appointment_tab: true,
+      sessions_tab: false,
     };
   },
   methods: {
     callUpdate() {
       let target = {
-        name: this.vm_target.name,
-        nickname: this.vm_target.nickname,
-        cpf: this.vm_target.cpf,
-        birth_date: this.$moment.convertFromFormat(this.vm_target.birth_date, 'DD/MM/YYYY', 'YYYY-MM-DD'),
-        gender: this.vm_target.gender.value,
-        blood_type: this.vm_target.blood_type.name,
-        allergy: this.vm_target.allergy,
-        address: this.vm_target.address,
-        email: this.vm_target.email,
-        phone_number: this.vm_target.phone_number,
-        contact_name: this.vm_target.contact_name,
-        contact_phone_number: this.vm_target.contact_phone_number,
+        patient: this.vm_target.patient[0]
+          ? this.vm_target.patient[0]
+          : this.vm_target.patient,
+        department: this.vm_target.department[0]
+          ? this.vm_target.department[0]
+          : this.vm_target.department,
+        start_date: this.$moment.convertFromFormat(
+          this.vm_target.start_date,
+          "DD/MM/YYYY",
+          "YYYY-MM-DD"
+        ),
+        anamnesis: this.vm_target.anamnesis,
       };
 
       if (this.vm_target.new_record) {
@@ -309,31 +237,60 @@ export default {
         }
       }
     },
+    activeTab($tab) {
+      switch ($tab) {
+        case "appointment":
+          if (!this.appointment_tab) {
+            this.title = "atendimento";
+            this.appointment_tab = true;
+            this.sessions_tab = false;
+          }
+          break;
+        case "sessions":
+          if (!this.sessions_tab) {
+            this.title = "sessões";
+            this.appointment_tab = false;
+            this.sessions_tab = true;
+          }
+          break;
+      }
+    },
   },
   watch: {
     target() {
+      this.activeTab("appointment");
       this.vm_target.id = this.target.id;
-      this.vm_target.name = this.target.name;
-      this.vm_target.nickname = this.target.nickname;
-      this.vm_target.cpf = this.target.cpf;
-      this.vm_target.birth_date = this.target.birth_date ? this.$moment.convert(this.target.birth_date, 'DD/MM/YYYY') : '';
-      this.vm_target.gender = {
-        name: this.target.gender ? (this.target.gender === "M"  ? "Masculino" : this.target.gender === "F" ? "Feminino"  : "Indefinido") : 'Selecione...',
-        value: this.target.gender,
-      };
-      this.vm_target.blood_type = {
-        name: this.target.blood_type ? this.target.blood_type : 'Selecione...',
-      };
-      this.vm_target.allergy = this.target.allergy;
-      this.vm_target.address = this.target.address;
-      this.vm_target.email = this.target.email;
-      this.vm_target.phone_number = this.target.phone_number;
-      this.vm_target.contact_name = this.target.contact_name;
-      this.vm_target.contact_phone_number = this.target.contact_phone_number;
+      this.vm_target.start_date = this.target.start_date
+        ? this.$moment.convert(this.target.start_date, "DD/MM/YYYY")
+        : "";
+      this.vm_target.anamnesis = this.target.anamnesis;
       this.vm_target.new_record = this.target.new_record;
       this.vm_target.destroy = false;
+    },
+    target_patient() {
+      this.vm_target.patient = this.target_patient;
+    },
+    target_department() {
+      this.vm_target.department = this.target_department;
     },
   },
 };
 </script>
+<style scoped>
+.action-info:hover {
+  background-color: #00c0ef;
+  opacity: 0.92;
+  color: #fff;
+}
+.action-success:hover {
+  background-color: #00a65a;
+  opacity: 0.92;
+  color: #fff;
+}
+.action-danger:hover {
+  background-color: #dd4b39;
+  opacity: 0.92;
+  color: #fff;
+}
+</style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

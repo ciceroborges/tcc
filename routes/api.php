@@ -83,6 +83,7 @@ Route::prefix('appointment')->group(function () {
     Route::post('/store', 'AppointmentController@store');
     /* PUT */
     Route::put('/update', 'AppointmentController@update');
+    Route::put('/status-update', 'AppointmentController@statusUpdate');
     /* DELETE */
     Route::delete('/destroy', 'AppointmentController@destroy');
 });

@@ -1,6 +1,6 @@
 <template>
   <!-- Main Footer -->
-  <footer class="main-footer">
+  <footer class="main-footer no-print">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
       <strong>Versão: </strong>1.0.0

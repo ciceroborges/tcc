@@ -13,7 +13,7 @@ class AppointmentController extends Controller
     {
         /* method */
         $appointments = Appointment::join('departments', 'departments.id', 'appointments.department_id')
-            ->join('patients', 'patients.id', 'appointments.id')
+            ->join('patients', 'patients.id', 'appointments.patient_id')
             ->select(
                 'appointments.id',
                 'appointments.department_id',
@@ -123,12 +123,12 @@ class AppointmentController extends Controller
     {
         /** validation */
         $validation = Validator::make($request->all(), [
-            'department_id' => 'required|int',
-            'patient_id' => 'required|int',
+            'department' => 'required|array',
+            'patient' => 'required|array',
             'anamnesis' => 'required|string',
-            'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
+            //'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            //'end_date' => 'nullable|date',
         ]);
 
         if ($validation->fails()) {
@@ -139,14 +139,14 @@ class AppointmentController extends Controller
                 'status' => 0
             ], 400);
         }
-
+        
         $store = Appointment::create([
-            'department_id' => $request->department_id,
-            'patient_id' => $request->patient_id,
+            'department_id' => $request->department['id'],
+            'patient_id' => $request->patient['id'],
             'anamnesis' => $request->anamnesis,
-            'status' => $request->status,
+            'status' => 'WAITING',
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            //'end_date' => $request->end_date,
         ]);
 
         if ($store) {
@@ -155,6 +155,8 @@ class AppointmentController extends Controller
                     'id' => $store->id,
                     'department_id' => $store->department_id,
                     'patient_id' => $store->patient_id,
+                    'department_name' => $request->department['name'],
+                    'patient_name' => $request->patient['name'],
                     'anamnesis' => $store->anamnesis,
                     'status' => $store->status,
                     'start_date' => $store->start_date,
@@ -179,12 +181,12 @@ class AppointmentController extends Controller
         /** validation */
         $validation = Validator::make($request->all(), [
             'id' => 'required|int',
-            'department_id' => 'required|int',
-            'patient_id' => 'required|int',
+            'department' => 'required|array',
+            'patient' => 'required|array',
             'anamnesis' => 'required|string',
-            'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
+            //'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            //'end_date' => 'nullable|date',
         ]);
 
         if ($validation->fails()) {
@@ -200,19 +202,21 @@ class AppointmentController extends Controller
 
         if ($appointment) {
             Appointment::where('id', $appointment->id)->update([
-                'department_id' => $request->department_id,
-                'patient_id' => $request->patient_id,
+                'department_id' => $request->department['id'],
+                'patient_id' => $request->patient['id'],
                 'anamnesis' => $request->anamnesis,
-                'status' => $request->status,
+                //'status' => $request->status,
                 'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
+                //'end_date' => $request->end_date,
             ]);
 
             return response()->json([
                 'appointment' => [
                     'id' => $request->id,
-                    'department_id' => $request->department_id,
-                    'patient_id' => $request->patient_id,
+                    'department_id' => $request->department['id'],
+                    'patient_id' => $request->patient['id'],
+                    'department_name' => $request->department['name'],
+                    'patient_name' => $request->patient['name'],
                     'anamnesis' => $request->anamnesis,
                     'status' => $request->status,
                     'start_date' => $request->start_date,
@@ -231,6 +235,55 @@ class AppointmentController extends Controller
             ], 404);
         }
     }
+
+    public function statusUpdate(Request $request)
+    {
+        /** validation */
+        $validation = Validator::make($request->all(), [
+            'id' => 'required|int',
+            'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Erro na validação dos parâmetros enviados! Tente novamente. Codigo de erro: ' . $validation->errors(),
+                'status' => 0
+            ], 400);
+        }
+
+        $appointment = Appointment::select('id')->where('id', $request->id)->first();
+
+        if ($appointment) {
+            $fields = [
+                'status' => $request->status
+            ];
+
+            if($request->status === 'CANCELED' || $request->status === 'CONCLUDED') {
+                $fields['end_date'] = NOW();
+            }
+            
+            Appointment::where('id', $appointment->id)->update($fields);
+
+            $fields['id'] = $request->id;
+
+            return response()->json([
+                'appointment' => $fields,
+                'flag' => 'success',
+                'message' => 'Atendimento atualizado com successo.',
+                'status' => 1
+            ]);
+        } else {
+            return response()->json([
+                'e' => true,
+                'flag' => 'info',
+                'message' => 'Atendimento não encontrado! Tente novamente. Caso o erro persista, contate o administrador do website.',
+                'status' => 0
+            ], 404);
+        }
+    }
+
     public function destroy(Request $request)
     {
         /** validation */

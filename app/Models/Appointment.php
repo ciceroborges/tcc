@@ -19,8 +19,9 @@ class Appointment extends Model
         'department_id',
         'patient_id',
         'anamnesis',
-        'complaint',
         'status',
+        'start_date',
+        'end_date'
     ];
 
     /**

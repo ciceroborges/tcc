@@ -1,6 +1,6 @@
 <template>
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div>
     <!-- list table -->
     <list
       :appointments="appointments"
@@ -9,10 +9,6 @@
       :edit="edit"
       ref="AppointmentList"
     />
-    <!-- search aside -->
-    <search @search="search($event)" />
-    <!-- This div must be placed immediately after the control sidebar -->
-    <div class="control-sidebar-bg"></div>
     <!-- edit modal -->
     <edit 
       :target="target"
@@ -22,7 +18,6 @@
       :departments="departments" 
       :store="store" 
       :update="update" 
-      :statusUpdate="statusUpdate"
       :destroy="destroy"
     />
   </div>
@@ -30,16 +25,14 @@
 </template>
 <script>
 // componentes importados
-import Edit from "../appointments/Edit.vue";
-import List from "../appointments/List.vue";
-import Search from "../appointments/Search.vue";
+import Edit from "../sessions/Edit.vue";
+import List from "../sessions/List.vue";
 
 export default {
-  name: "Appointments",
+  name: "Sessions",
   components: {
     Edit,
     List,
-    Search,
   },
   data() {
     return {
@@ -148,6 +141,7 @@ export default {
     /** @update */
     /*----------*/
     update($target) {
+      console.log($target);
       /* begin loading spinner*/
       this.$loading(true);
       /* close edit modal */
@@ -199,56 +193,6 @@ export default {
           /* stop loading spinner */
           this.$loading(false);
         });
-    },
-    statusUpdate($id, $status) {
-      let message = {
-        'IN PROGRESS': 'Ao confirmar, o atendimento estará em progresso. Deseja continuar?',
-        'CONCLUDED': 'Ao confirmar, o atendimento será concluído juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?',
-        'CANCELED': 'Ao confirmar, o atendimento será cancelado juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?', 
-      }
-      let $confirm = confirm(message[$status]);
-      if ($confirm) {
-      /* begin loading spinner*/
-      this.$loading(true);
-      /* close edit modal */
-      $("#edit-appointment").modal("hide");
-      /* api */
-      const api = `${this.$urlAPI}appointment/status-update`;
-      /* request */
-      this.$axios
-        .put(api, {
-          id: $id,
-          status: $status,
-        })
-        .then(({ data }) => {
-          if (data.status) {
-            let index = this.appointments.findIndex(
-              (item) => item.id === data.appointment.id
-            );
-            if (index !== -1) {
-              this.appointments[index].status = data.appointment.status;
-              data.appointment.end_date ? this.appointments[index].end_date = data.appointment.end_date : '';
-            }
-            alert(data.message);
-          } else {
-            alert(data.message);
-            $("#edit-appointment").modal("show");
-          }
-          /* stop loading spinner */
-          this.$loading(false);
-        })
-        .catch((e) => {
-          if (e.response.data) {
-            alert(e.response.data.message);
-          } else {
-            alert(
-              `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
-            );
-          }
-          /* stop loading spinner */
-          this.$loading(false);
-        });
-      }
     },
     /*----------*/
     /** @delete */

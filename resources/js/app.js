@@ -22,6 +22,7 @@ componentes de módulos
 //import Users from './components/modules/users/Index';
 import Appointments from './components/modules/appointments/Index';
 import Patients from './components/modules/patients/Index';
+import Reports from './components/modules/reports/Index';
 import Settings from './components/modules/settings/Index';
 //-----------------routes-------------------//
 Vue.use(VueRouter)
@@ -72,6 +73,15 @@ const router = new VueRouter({
             component: Patients,
             meta: {
                 title: 'Pacientes'
+            }
+        },
+        {
+            path: '/reports',
+            name: 'reports',
+            title: 'Relatórios',
+            component: Reports,
+            meta: {
+                title: 'Relatórios'
             }
         },
         {
@@ -131,7 +141,10 @@ Vue.prototype.$moment = {
     },
     convertFromFormat: ($date, $from, $to) => {
         return moment($date, $from).format($to);
-    }
+    },
+    now(){
+        return `${moment().format('DD/MM/YYYY')} às ${moment().format('HH:mm:ss')}`;
+    },
  };
 //------------------instance----------------//
 const app = new Vue({
