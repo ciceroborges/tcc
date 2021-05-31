@@ -76,6 +76,7 @@ export default {
         .get(api, {
           params: {
             //filter: this.searched_patient,
+            departments: this.$user.departments,
             skip: this.skip,
             take: this.take,
           },

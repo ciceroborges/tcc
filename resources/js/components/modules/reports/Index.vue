@@ -27,47 +27,91 @@
               <form @submit.prevent="index">
                 <div class="col-md-4 col-sm-12">
                   <label>Paciente: </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder=".col-xs-3"
-                  />
+                  <multiselect
+                    :selectLabel="''"
+                    :deselectLabel="''"
+                    :selectedLabel="'selecionado'"
+                    :openDirection="'bottom'"
+                    :hide-selected="false"
+                    :close-on-select="true"
+                    :multiple="false"
+                    :allowEmpty="false"
+                    :options="patients"
+                    v-model="filter.patient"
+                    label="name"
+                    track-by="name"
+                    placeholder="Selecione..."
+                    required
+                  >
+                  </multiselect>
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <label>Departamento: </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder=".col-xs-4"
-                  />
+                  <multiselect
+                    :selectLabel="''"
+                    :deselectLabel="''"
+                    :selectedLabel="'selecionado'"
+                    :openDirection="'bottom'"
+                    :hide-selected="false"
+                    :close-on-select="true"
+                    :multiple="false"
+                    :allowEmpty="false"
+                    :options="departments"
+                    v-model="filter.department"
+                    label="name"
+                    track-by="name"
+                    placeholder="Selecione..."
+                    required
+                  >
+                  </multiselect>
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <label>Status: </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder=".col-xs-5"
-                  />
+                  <multiselect
+                    :selectLabel="''"
+                    :deselectLabel="''"
+                    :selectedLabel="'selecionado'"
+                    :openDirection="'bottom'"
+                    :hide-selected="false"
+                    :close-on-select="true"
+                    :multiple="false"
+                    :allowEmpty="false"
+                    :options="status"
+                    v-model="filter.status"
+                    label="name"
+                    track-by="name"
+                    placeholder="Selecione..."
+                    required
+                  >
+                  </multiselect>
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <label>Data inicial: </label>
                   <input
+                    pattern="\d{2}\/\d{2}\/\d{4}"
+                    title="Digite a data no formato DD/MM/AAAA"
                     type="text"
                     class="form-control"
-                    placeholder=".col-xs-5"
+                    id="exampleInputEmail1"
+                    placeholder="Ex: 01/01/2021"
+                    v-model="filter.initial_date"
                   />
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <label>Data final: </label>
                   <input
+                    pattern="\d{2}\/\d{2}\/\d{4}"
+                    title="Digite a data no formato DD/MM/AAAA"
                     type="text"
                     class="form-control"
-                    placeholder=".col-xs-5"
+                    id="exampleInputEmail1"
+                    placeholder="Ex: 01/01/2021"
+                    v-model="filter.end_date"
                   />
                 </div>
                 <div class="col-md-2 col-sm-12">
                   <br />
-                  <button class="btn btn-primary">
+                  <button class="btn btn-primary" type="submit">
                     <i class="fa fa-print" /> GERAR RELATÓRIO
                   </button>
                 </div>
@@ -80,15 +124,13 @@
     </section>
 
     <!-- Main content -->
-    <section class="invoice">
+    <section class="invoice" v-if="show">
       <!-- title row -->
       <div class="row">
         <div class="col-xs-12">
           <h2 class="page-header">
             <i class="fa fa-file-text"></i> Relatório de Atendimentos
-            <small class="pull-right">{{
-              `Emitido em: ${$moment.now()}.`
-            }}</small>
+            <small class="pull-right">{{ `Emitido em: ${datetime}.` }}</small>
           </h2>
         </div>
         <!-- /.col -->
@@ -108,11 +150,15 @@
         <div class="col-sm-6 invoice-col"></div>
         <!-- /.col -->
         <div class="col-sm-3 invoice-col">
-          <b>Relatório:</b> #007612<br />
-          <b>Data:</b> 20/10/2021 até 20/10/2021<br />
-          <b>Paciente:</b> 2/22/2014<br />
-          <b>Departamento:</b> 968-34567<br />
-          <b>Status:</b> 968-34567
+          <b>Relatório:</b> #007612
+          <br />
+          <b>Data:</b> {{ old_filter.date }}
+          <br />
+          <b>Paciente:</b> {{ old_filter.patient }}
+          <br />
+          <b>Departamento:</b> {{ old_filter.department }}
+          <br />
+          <b>Status:</b> {{ old_filter.status }}
         </div>
         <!-- /.col -->
       </div>
@@ -124,7 +170,6 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>#ID</th>
                 <th>Paciente</th>
                 <th>CPF</th>
                 <th>Contato</th>
@@ -136,93 +181,31 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Call of Duty</td>
-                <td>455-981-221</td>
-                <td>El snort testosterone trophy driving gloves handsome</td>
-                <td>$64.50</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Monsters DVD</td>
-                <td>735-845-642</td>
-                <td>Terry Richardson helvetica tousled street art master</td>
-                <td>$10.70</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
+              <tr v-for="(row, index) in appointments" :key="index">
+                <td>{{ row.patient_name }}</td>
+                <td>{{ row.patient_cpf }}</td>
+                <td>{{ row.patient_phone_number }}</td>
+                <td>{{ row.department_name }}</td>
+                <td>{{ row.anamnesis }}</td>
+                <td>
+                  {{
+                    row.status === "WAITING"
+                      ? "Aguardando"
+                      : row.status === "IN PROGRESS"
+                      ? "Em progresso"
+                      : row.status === "CONCLUDED"
+                      ? "Concluído"
+                      : "Cancelado"
+                  }}
+                </td>
+                <td>{{ $moment.convert(row.start_date, "DD/MM/YYYY") }}</td>
+                <td>
+                  {{
+                    row.end_date
+                      ? $moment.convert(row.end_date, "DD/MM/YYYY")
+                      : "Indefenido"
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -241,6 +224,10 @@ export default {
   data() {
     return {
       appointments: [],
+      patients: [],
+      departments: [],
+      show: false,
+      datetime: null,
       filter: {
         patient: null,
         department: null,
@@ -248,72 +235,173 @@ export default {
         initial_date: null,
         end_date: null,
       },
+      old_filter: {
+        patient: null,
+        department: null,
+        status: null,
+        date: null,
+      },
+      status: [
+        { name: "Todos", value: "ALL" },
+        { name: "Aguardando", value: "WAITING" },
+        { name: "Em progresso", value: "IN PROGRESS" },
+        { name: "Concluído", value: "CONCLUDED" },
+        { name: "Cancelado", value: "CANCELED" },
+      ],
     };
   },
   created() {
-    //console.log(this.$user);
+    this.getPatients();
+    this.getDepartments();
   },
   methods: {
     index() {
       this.$loading(true);
+      this.show = false;
       if (
         this.filter.patient ||
         this.filter.department ||
         this.filter.status ||
-        (this.filter.initial_date && this.filter.end_date)
+        this.filter.initial_date ||
+        this.filter.end_date 
       ) {
-        if (this.filter.initial_date || this.filter.end_date) {
-          alert(
-            "Para filtrar por data, selecione a data inicial e a data final."
-          );
-          this.$loading(false);
-          return;
-        }
-
+        
         this.appointments = [];
         /* api */
         const api = `${this.$urlAPI}report/index`;
+        const filters = {
+          departments: this.$user.departments
+        };
+
+        if (this.filter.patient) {
+          filters.patient_id = this.filter.patient.id;
+        }
+        if (this.filter.department) {
+          filters.department_id = this.filter.department.id;
+        }
+        if (this.filter.status) {
+          filters.status = this.filter.status.value;
+        }
+        if (this.filter.initial_date) {
+          filters.initial_date = this.$moment.convertFromFormat(
+            this.filter.initial_date,
+            "DD/MM/YYYY",
+            "YYYY-MM-DD"
+          );
+        }
+        if (this.filter.end_date) {
+          filters.end_date = this.$moment.convertFromFormat(
+            this.filter.end_date,
+            "DD/MM/YYYY",
+            "YYYY-MM-DD"
+          );
+        }
         /* request */
         this.$axios
           .get(api, {
-            params: {
-              patient: this.filter.patient,
-              department: this.filter.department,
-              status: this.filter.status,
-              initial_date: this.filter.initial_date,
-              end_date: this.filter.end_date,
-            },
+            params: filters,
           })
           .then(({ data }) => {
             if (data.appointments.length) {
-              this.appointments.push(...data.patients);
-              $state.complete();
+              this.appointments = data.appointments;
+              this.showTable();
               this.$loading(false);
             } else {
               alert(
                 "Nenhum resultado encontrado. Mude os filtros e tente novamente."
               );
-              $state.complete();
               this.$loading(false);
             }
           })
           .catch((e) => {
-            console.log(e.response.data.message);
+            console.log(e);
             this.$loading(false);
           });
       } else {
-        if (this.filter.initial_date || this.filter.end_date) {
-          alert(
-            "Para filtrar por data, selecione a data inicial e a data final."
-          );
-          this.$loading(false);
-        } else {
           alert(
             "Para gerar o relatório, utilize pelo menos 1 dos filtros disponíveis."
           );
           this.$loading(false);
-        }
       }
+    },
+    getPatients() {
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+      const api = `${this.$urlAPI}patient/index`;
+      /* request */
+      this.$axios
+        .get(api, {})
+        .then(({ data }) => {
+          this.patients = data.patients;
+          this.patients.unshift({ id: 0, name: "Todos" });
+          this.$loading(false);
+        })
+        .catch((e) => {
+          console.log(e.response.data.message);
+          this.$loading(false);
+        });
+    },
+    getDepartments() {
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+      const api = `${this.$urlAPI}department/index`;
+      /* request */
+      this.$axios
+        .get(api, {})
+        .then(({ data }) => {
+          this.departments = data.departments;
+          this.departments.unshift({ id: 0, name: "Todos" });
+          this.$loading(false);
+        })
+        .catch((e) => {
+          console.log(e.response.data.message);
+          this.$loading(false);
+        });
+    },
+    setOldFilters() {
+      if (this.filter.initial_date && this.filter.end_date) {
+        this.old_filter.date = `De ${this.filter.initial_date} até ${this.filter.end_date}.`;
+      } else {
+        this.old_filter.date = "Não filtrado";
+      }
+
+      if (this.filter.patient) {
+        this.old_filter.patient = this.filter.patient.name;
+      } else {
+        this.old_filter.patient = "Não filtrado";
+      }
+
+      if (this.filter.department) {
+        this.old_filter.department = this.filter.department.name;
+      } else {
+        this.old_filter.department = "Não filtrado";
+      }
+
+      if (this.filter.status) {
+        this.old_filter.status = this.filter.status.name;
+      } else {
+        this.old_filter.status = "Não filtrado";
+      }
+    },
+    showTable() {
+        this.setOldFilters();
+        this.datetime = this.$moment.now();
+        this.show = true;
+    },
+    clear() {
+      this.appointments = [];
+      this.filter.patient = null;
+      this.filter.department = null;
+      this.filter.status = null;
+      this.filter.initial_date = null;
+      this.filter.end_date = null;
+      this.old_filter.patient = null;
+      this.old_filter.department = null;
+      this.old_filter.status = null;
+      this.old_filter.date = null;
+      this.show = false;
     },
   },
 };

@@ -2016,9 +2016,150 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    user: ''
+    user: ""
   },
   created: function created() {//console.log(this.user);
   }
@@ -2635,6 +2776,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.$axios.get(api, {
         params: {
           //filter: this.searched_patient,
+          departments: this.$user.departments,
           skip: this.skip,
           take: this.take
         }
@@ -5795,35 +5937,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -6049,75 +6162,203 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   data: function data() {
     return {
       appointments: [],
+      patients: [],
+      departments: [],
+      show: false,
+      datetime: null,
       filter: {
         patient: null,
         department: null,
         status: null,
         initial_date: null,
         end_date: null
-      }
+      },
+      old_filter: {
+        patient: null,
+        department: null,
+        status: null,
+        date: null
+      },
+      status: [{
+        name: "Todos",
+        value: "ALL"
+      }, {
+        name: "Aguardando",
+        value: "WAITING"
+      }, {
+        name: "Em progresso",
+        value: "IN PROGRESS"
+      }, {
+        name: "Concluído",
+        value: "CONCLUDED"
+      }, {
+        name: "Cancelado",
+        value: "CANCELED"
+      }]
     };
   },
-  created: function created() {//console.log(this.$user);
+  created: function created() {
+    this.getPatients();
+    this.getDepartments();
   },
   methods: {
     index: function index() {
       var _this = this;
 
       this.$loading(true);
+      this.show = false;
 
-      if (this.filter.patient || this.filter.department || this.filter.status || this.filter.initial_date && this.filter.end_date) {
-        if (this.filter.initial_date || this.filter.end_date) {
-          alert("Para filtrar por data, selecione a data inicial e a data final.");
-          this.$loading(false);
-          return;
-        }
-
+      if (this.filter.patient || this.filter.department || this.filter.status || this.filter.initial_date || this.filter.end_date) {
         this.appointments = [];
         /* api */
 
         var api = "".concat(this.$urlAPI, "report/index");
+        var filters = {
+          departments: this.$user.departments
+        };
+
+        if (this.filter.patient) {
+          filters.patient_id = this.filter.patient.id;
+        }
+
+        if (this.filter.department) {
+          filters.department_id = this.filter.department.id;
+        }
+
+        if (this.filter.status) {
+          filters.status = this.filter.status.value;
+        }
+
+        if (this.filter.initial_date) {
+          filters.initial_date = this.$moment.convertFromFormat(this.filter.initial_date, "DD/MM/YYYY", "YYYY-MM-DD");
+        }
+
+        if (this.filter.end_date) {
+          filters.end_date = this.$moment.convertFromFormat(this.filter.end_date, "DD/MM/YYYY", "YYYY-MM-DD");
+        }
         /* request */
 
+
         this.$axios.get(api, {
-          params: {
-            patient: this.filter.patient,
-            department: this.filter.department,
-            status: this.filter.status,
-            initial_date: this.filter.initial_date,
-            end_date: this.filter.end_date
-          }
+          params: filters
         }).then(function (_ref) {
           var data = _ref.data;
 
           if (data.appointments.length) {
-            var _this$appointments;
+            _this.appointments = data.appointments;
 
-            (_this$appointments = _this.appointments).push.apply(_this$appointments, _toConsumableArray(data.patients));
-
-            $state.complete();
+            _this.showTable();
 
             _this.$loading(false);
           } else {
             alert("Nenhum resultado encontrado. Mude os filtros e tente novamente.");
-            $state.complete();
 
             _this.$loading(false);
           }
         })["catch"](function (e) {
-          console.log(e.response.data.message);
+          console.log(e);
 
           _this.$loading(false);
         });
       } else {
-        if (this.filter.initial_date || this.filter.end_date) {
-          alert("Para filtrar por data, selecione a data inicial e a data final.");
-          this.$loading(false);
-        } else {
-          alert("Para gerar o relatório, utilize pelo menos 1 dos filtros disponíveis.");
-          this.$loading(false);
-        }
+        alert("Para gerar o relatório, utilize pelo menos 1 dos filtros disponíveis.");
+        this.$loading(false);
       }
+    },
+    getPatients: function getPatients() {
+      var _this2 = this;
+
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+
+      var api = "".concat(this.$urlAPI, "patient/index");
+      /* request */
+
+      this.$axios.get(api, {}).then(function (_ref2) {
+        var data = _ref2.data;
+        _this2.patients = data.patients;
+
+        _this2.patients.unshift({
+          id: 0,
+          name: "Todos"
+        });
+
+        _this2.$loading(false);
+      })["catch"](function (e) {
+        console.log(e.response.data.message);
+
+        _this2.$loading(false);
+      });
+    },
+    getDepartments: function getDepartments() {
+      var _this3 = this;
+
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+
+      var api = "".concat(this.$urlAPI, "department/index");
+      /* request */
+
+      this.$axios.get(api, {}).then(function (_ref3) {
+        var data = _ref3.data;
+        _this3.departments = data.departments;
+
+        _this3.departments.unshift({
+          id: 0,
+          name: "Todos"
+        });
+
+        _this3.$loading(false);
+      })["catch"](function (e) {
+        console.log(e.response.data.message);
+
+        _this3.$loading(false);
+      });
+    },
+    setOldFilters: function setOldFilters() {
+      if (this.filter.initial_date && this.filter.end_date) {
+        this.old_filter.date = "De ".concat(this.filter.initial_date, " at\xE9 ").concat(this.filter.end_date, ".");
+      } else {
+        this.old_filter.date = "Não filtrado";
+      }
+
+      if (this.filter.patient) {
+        this.old_filter.patient = this.filter.patient.name;
+      } else {
+        this.old_filter.patient = "Não filtrado";
+      }
+
+      if (this.filter.department) {
+        this.old_filter.department = this.filter.department.name;
+      } else {
+        this.old_filter.department = "Não filtrado";
+      }
+
+      if (this.filter.status) {
+        this.old_filter.status = this.filter.status.name;
+      } else {
+        this.old_filter.status = "Não filtrado";
+      }
+    },
+    showTable: function showTable() {
+      this.setOldFilters();
+      this.datetime = this.$moment.now();
+      this.show = true;
+    },
+    clear: function clear() {
+      this.appointments = [];
+      this.filter.patient = null;
+      this.filter.department = null;
+      this.filter.status = null;
+      this.filter.initial_date = null;
+      this.filter.end_date = null;
+      this.old_filter.patient = null;
+      this.old_filter.department = null;
+      this.old_filter.status = null;
+      this.old_filter.date = null;
+      this.show = false;
     }
   }
 });
@@ -8199,6 +8440,11 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
+    if (this.$user.group !== 2) {
+      delete this.link.settings;
+      delete this.link.reports;
+    }
+
     this.active_link = this.$route.name;
     this.link[this.$route.name].active = true;
   },
@@ -35436,7 +35682,198 @@ var staticRenderFns = [
         ])
       ]),
       _vm._v(" "),
-      _c("section", { staticClass: "content container-fluid" })
+      _c("section", { staticClass: "content" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-aqua" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("150")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("New Orders")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-bag" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-aqua" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("150")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("New Orders")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-bag" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-aqua" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("150")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("New Orders")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-bag" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-aqua" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("150")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("New Orders")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-bag" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-aqua" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("150")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("New Orders")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-bag" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-green" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [
+                  _vm._v("53"),
+                  _c("sup", { staticStyle: { "font-size": "20px" } }, [
+                    _vm._v("%")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("p", [_vm._v("Bounce Rate")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-stats-bars" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-yellow" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("44")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("User Registrations")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-person-add" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-xs-6" }, [
+            _c("div", { staticClass: "small-box bg-red" }, [
+              _c("div", { staticClass: "inner" }, [
+                _c("h3", [_vm._v("65")]),
+                _vm._v(" "),
+                _c("p", [_vm._v("Unique Visitors")])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "icon" }, [
+                _c("i", { staticClass: "ion ion-pie-graph" })
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                { staticClass: "small-box-footer", attrs: { href: "#" } },
+                [
+                  _vm._v("More info "),
+                  _c("i", { staticClass: "fa fa-arrow-circle-right" })
+                ]
+              )
+            ])
+          ])
+        ])
+      ])
     ])
   }
 ]
@@ -39158,17 +39595,177 @@ var render = function() {
                   }
                 },
                 [
-                  _vm._m(2),
+                  _c(
+                    "div",
+                    { staticClass: "col-md-4 col-sm-12" },
+                    [
+                      _c("label", [_vm._v("Paciente: ")]),
+                      _vm._v(" "),
+                      _c("multiselect", {
+                        attrs: {
+                          selectLabel: "",
+                          deselectLabel: "",
+                          selectedLabel: "selecionado",
+                          openDirection: "bottom",
+                          "hide-selected": false,
+                          "close-on-select": true,
+                          multiple: false,
+                          allowEmpty: false,
+                          options: _vm.patients,
+                          label: "name",
+                          "track-by": "name",
+                          placeholder: "Selecione...",
+                          required: ""
+                        },
+                        model: {
+                          value: _vm.filter.patient,
+                          callback: function($$v) {
+                            _vm.$set(_vm.filter, "patient", $$v)
+                          },
+                          expression: "filter.patient"
+                        }
+                      })
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
-                  _vm._m(3),
+                  _c(
+                    "div",
+                    { staticClass: "col-md-2 col-sm-12" },
+                    [
+                      _c("label", [_vm._v("Departamento: ")]),
+                      _vm._v(" "),
+                      _c("multiselect", {
+                        attrs: {
+                          selectLabel: "",
+                          deselectLabel: "",
+                          selectedLabel: "selecionado",
+                          openDirection: "bottom",
+                          "hide-selected": false,
+                          "close-on-select": true,
+                          multiple: false,
+                          allowEmpty: false,
+                          options: _vm.departments,
+                          label: "name",
+                          "track-by": "name",
+                          placeholder: "Selecione...",
+                          required: ""
+                        },
+                        model: {
+                          value: _vm.filter.department,
+                          callback: function($$v) {
+                            _vm.$set(_vm.filter, "department", $$v)
+                          },
+                          expression: "filter.department"
+                        }
+                      })
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
-                  _vm._m(4),
+                  _c(
+                    "div",
+                    { staticClass: "col-md-2 col-sm-12" },
+                    [
+                      _c("label", [_vm._v("Status: ")]),
+                      _vm._v(" "),
+                      _c("multiselect", {
+                        attrs: {
+                          selectLabel: "",
+                          deselectLabel: "",
+                          selectedLabel: "selecionado",
+                          openDirection: "bottom",
+                          "hide-selected": false,
+                          "close-on-select": true,
+                          multiple: false,
+                          allowEmpty: false,
+                          options: _vm.status,
+                          label: "name",
+                          "track-by": "name",
+                          placeholder: "Selecione...",
+                          required: ""
+                        },
+                        model: {
+                          value: _vm.filter.status,
+                          callback: function($$v) {
+                            _vm.$set(_vm.filter, "status", $$v)
+                          },
+                          expression: "filter.status"
+                        }
+                      })
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
-                  _vm._m(5),
+                  _c("div", { staticClass: "col-md-2 col-sm-12" }, [
+                    _c("label", [_vm._v("Data inicial: ")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.filter.initial_date,
+                          expression: "filter.initial_date"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        pattern: "\\d{2}\\/\\d{2}\\/\\d{4}",
+                        title: "Digite a data no formato DD/MM/AAAA",
+                        type: "text",
+                        id: "exampleInputEmail1",
+                        placeholder: "Ex: 01/01/2021"
+                      },
+                      domProps: { value: _vm.filter.initial_date },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.filter,
+                            "initial_date",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ]),
                   _vm._v(" "),
-                  _vm._m(6),
+                  _c("div", { staticClass: "col-md-2 col-sm-12" }, [
+                    _c("label", [_vm._v("Data final: ")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.filter.end_date,
+                          expression: "filter.end_date"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        pattern: "\\d{2}\\/\\d{2}\\/\\d{4}",
+                        title: "Digite a data no formato DD/MM/AAAA",
+                        type: "text",
+                        id: "exampleInputEmail1",
+                        placeholder: "Ex: 01/01/2021"
+                      },
+                      domProps: { value: _vm.filter.end_date },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.filter, "end_date", $event.target.value)
+                        }
+                      }
+                    })
+                  ]),
                   _vm._v(" "),
-                  _vm._m(7)
+                  _vm._m(2)
                 ]
               )
             ])
@@ -39177,23 +39774,113 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("section", { staticClass: "invoice" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-xs-12" }, [
-          _c("h2", { staticClass: "page-header" }, [
-            _c("i", { staticClass: "fa fa-file-text" }),
-            _vm._v(" Relatório de Atendimentos\n          "),
-            _c("small", { staticClass: "pull-right" }, [
-              _vm._v(_vm._s("Emitido em: " + _vm.$moment.now() + "."))
+    _vm.show
+      ? _c("section", { staticClass: "invoice" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-xs-12" }, [
+              _c("h2", { staticClass: "page-header" }, [
+                _c("i", { staticClass: "fa fa-file-text" }),
+                _vm._v(" Relatório de Atendimentos\n          "),
+                _c("small", { staticClass: "pull-right" }, [
+                  _vm._v(_vm._s("Emitido em: " + _vm.datetime + "."))
+                ])
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row invoice-info" }, [
+            _vm._m(3),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-sm-6 invoice-col" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-sm-3 invoice-col" }, [
+              _c("b", [_vm._v("Relatório:")]),
+              _vm._v(" #007612\n        "),
+              _c("br"),
+              _vm._v(" "),
+              _c("b", [_vm._v("Data:")]),
+              _vm._v(" " + _vm._s(_vm.old_filter.date) + "\n        "),
+              _c("br"),
+              _vm._v(" "),
+              _c("b", [_vm._v("Paciente:")]),
+              _vm._v(" " + _vm._s(_vm.old_filter.patient) + "\n        "),
+              _c("br"),
+              _vm._v(" "),
+              _c("b", [_vm._v("Departamento:")]),
+              _vm._v(" " + _vm._s(_vm.old_filter.department) + "\n        "),
+              _c("br"),
+              _vm._v(" "),
+              _c("b", [_vm._v("Status:")]),
+              _vm._v(" " + _vm._s(_vm.old_filter.status) + "\n      ")
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-xs-12 table-responsive" }, [
+              _c("table", { staticClass: "table table-striped" }, [
+                _vm._m(4),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.appointments, function(row, index) {
+                    return _c("tr", { key: index }, [
+                      _c("td", [_vm._v(_vm._s(row.patient_name))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(row.patient_cpf))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(row.patient_phone_number))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(row.department_name))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(row.anamnesis))]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(
+                              row.status === "WAITING"
+                                ? "Aguardando"
+                                : row.status === "IN PROGRESS"
+                                ? "Em progresso"
+                                : row.status === "CONCLUDED"
+                                ? "Concluído"
+                                : "Cancelado"
+                            ) +
+                            "\n              "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _vm._v(
+                          _vm._s(
+                            _vm.$moment.convert(row.start_date, "DD/MM/YYYY")
+                          )
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(
+                              row.end_date
+                                ? _vm.$moment.convert(
+                                    row.end_date,
+                                    "DD/MM/YYYY"
+                                  )
+                                : "Indefenido"
+                            ) +
+                            "\n              "
+                        )
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              ])
             ])
           ])
         ])
-      ]),
-      _vm._v(" "),
-      _vm._m(8),
-      _vm._v(" "),
-      _vm._m(9)
-    ]),
+      : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "clearfix" })
   ])
@@ -39240,77 +39927,34 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-4 col-sm-12" }, [
-      _c("label", [_vm._v("Paciente: ")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: ".col-xs-3" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2 col-sm-12" }, [
-      _c("label", [_vm._v("Departamento: ")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: ".col-xs-4" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2 col-sm-12" }, [
-      _c("label", [_vm._v("Status: ")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: ".col-xs-5" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2 col-sm-12" }, [
-      _c("label", [_vm._v("Data inicial: ")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: ".col-xs-5" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-2 col-sm-12" }, [
-      _c("label", [_vm._v("Data final: ")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: ".col-xs-5" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-md-2 col-sm-12" }, [
       _c("br"),
       _vm._v(" "),
-      _c("button", { staticClass: "btn btn-primary" }, [
-        _c("i", { staticClass: "fa fa-print" }),
-        _vm._v(" GERAR RELATÓRIO\n                ")
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [
+          _c("i", { staticClass: "fa fa-print" }),
+          _vm._v(" GERAR RELATÓRIO\n                ")
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-sm-3 invoice-col" }, [
+      _c("address", [
+        _c("strong", [_vm._v("TCC, Clinic.")]),
+        _c("br"),
+        _vm._v("\n          Rua Aldino Loureiro, 9999, Centro"),
+        _c("br"),
+        _vm._v("\n          Carazinho-RS, 99300-00"),
+        _c("br"),
+        _vm._v("\n          Telefone: (54) 3311-5432"),
+        _c("br"),
+        _vm._v("\n          Email: info@tcclinic.com\n        ")
       ])
     ])
   },
@@ -39318,240 +39962,23 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row invoice-info" }, [
-      _c("div", { staticClass: "col-sm-3 invoice-col" }, [
-        _c("address", [
-          _c("strong", [_vm._v("TCC, Clinic.")]),
-          _c("br"),
-          _vm._v("\n          Rua Aldino Loureiro, 9999, Centro"),
-          _c("br"),
-          _vm._v("\n          Carazinho-RS, 99300-00"),
-          _c("br"),
-          _vm._v("\n          Telefone: (54) 3311-5432"),
-          _c("br"),
-          _vm._v("\n          Email: info@tcclinic.com\n        ")
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-6 invoice-col" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-3 invoice-col" }, [
-        _c("b", [_vm._v("Relatório:")]),
-        _vm._v(" #007612"),
-        _c("br"),
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Paciente")]),
         _vm._v(" "),
-        _c("b", [_vm._v("Data:")]),
-        _vm._v(" 20/10/2021 até 20/10/2021"),
-        _c("br"),
+        _c("th", [_vm._v("CPF")]),
         _vm._v(" "),
-        _c("b", [_vm._v("Paciente:")]),
-        _vm._v(" 2/22/2014"),
-        _c("br"),
+        _c("th", [_vm._v("Contato")]),
         _vm._v(" "),
-        _c("b", [_vm._v("Departamento:")]),
-        _vm._v(" 968-34567"),
-        _c("br"),
+        _c("th", [_vm._v("Departamento")]),
         _vm._v(" "),
-        _c("b", [_vm._v("Status:")]),
-        _vm._v(" 968-34567\n      ")
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-xs-12 table-responsive" }, [
-        _c("table", { staticClass: "table table-striped" }, [
-          _c("thead", [
-            _c("tr", [
-              _c("th", [_vm._v("#ID")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Paciente")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("CPF")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Contato")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Departamento")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Anamnese")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Status")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Data de inicio")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Data final")])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("tbody", [
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Call of Duty")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("455-981-221")]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("El snort testosterone trophy driving gloves handsome")
-              ]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$64.50")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Monsters DVD")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("735-845-642")]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v("Terry Richardson helvetica tousled street art master")
-              ]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$10.70")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Grown Ups Blue Ray")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("422-568-642")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Tousled lomo letterpress")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$25.99")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Grown Ups Blue Ray")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("422-568-642")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Tousled lomo letterpress")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$25.99")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Grown Ups Blue Ray")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("422-568-642")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Tousled lomo letterpress")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$25.99")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Grown Ups Blue Ray")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("422-568-642")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Tousled lomo letterpress")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$25.99")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", [_vm._v("1")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Grown Ups Blue Ray")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("422-568-642")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Tousled lomo letterpress")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$25.99")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Need for Speed IV")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("247-925-726")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("Wes Anderson umami biodiesel")]),
-              _vm._v(" "),
-              _c("td", [_vm._v("$50.00")])
-            ])
-          ])
-        ])
+        _c("th", [_vm._v("Anamnese")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Data de inicio")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Data final")])
       ])
     ])
   }

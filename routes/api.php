@@ -87,3 +87,10 @@ Route::prefix('appointment')->group(function () {
     /* DELETE */
     Route::delete('/destroy', 'AppointmentController@destroy');
 });
+/*
+report api routes
+*/
+Route::prefix('report')->group(function () {
+    /* GET */
+    Route::get('/index', 'ReportController@index');
+});

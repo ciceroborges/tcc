@@ -287,13 +287,43 @@ class UserController extends Controller
 
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
-                Auth::login($user);
-                return response()->json([
-                    'user' => Auth::user(),
-                    'flag' => 'success',
-                    'message' => 'Login efetuado com sucesso!',
-                    'status' => 1,
-                ]);
+                $permissions = User::join('user_group', 'user_group.user_id', 'users.id')
+                    ->join('user_department', 'user_department.user_id', 'users.id')
+                    ->selectRaw("
+                        user_group.group_id as 'group',
+                        GROUP_CONCAT(user_department.department_id) as 'departments'
+                    ")
+                    ->where('users.id', $user->id)
+                    ->groupBy('user_group.group_id')
+                    ->first();
+
+                if($permissions) {
+                    $group = $permissions->group;
+
+                    if(strpos($permissions->departments, ',') !== false) {
+                        $departments = array_map('intval', explode(',', $permissions->departments)); 
+                    } else {
+                        $departments = [(int) $permissions->departments];
+                    }
+
+                    $user->group = $group;
+                    $user->departments = $departments;
+
+                    Auth::login($user);
+                    return response()->json([
+                        'user' => Auth::user(),
+                        'flag' => 'success',
+                        'message' => 'Login efetuado com sucesso!',
+                        'status' => 1,
+                    ]);
+                } else {
+                    return response()->json([
+                        'e' => true,
+                        'flag' => 'info',
+                        'message' => 'Cadastro ainda não liberado. Contate o administrador do sistema.',
+                        'status' => 0
+                    ], 404);
+                }
             } else {
                 return response()->json([
                     'e' => true,

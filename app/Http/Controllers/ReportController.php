@@ -12,9 +12,9 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'patient' => 'sometimes|array',
-            'department' => 'sometimes|array',
-            'status' =>  ['sometimes', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
+            'patient_id' => 'sometimes|int',
+            'department_id' => 'sometimes|int',
+            'status' =>  ['sometimes', Rule::in(['ALL', 'WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
             'initial_date' => 'sometimes|date',
             'end_date' => 'sometimes|date',
         ]);
@@ -23,6 +23,7 @@ class ReportController extends Controller
             return response([
                 'e' => true,
                 'flag' => 'error',
+                //'message' => 'Um ou mais filtros foram informados de maneira errada, verifique e tente novamente.',
                 'message' => 'Um ou mais filtros foram informados de maneira errada, verifique e tente novamente.',
                 'status' => 0
             ], 400);
@@ -40,19 +41,26 @@ class ReportController extends Controller
                 'appointments.status',
                 'appointments.start_date',
                 'appointments.end_date',
-            );
+            )
+            ->whereIn('appointments.department_id', $request->departments);
         
-        if ($request->patient) {
-            $appointments->where('patient_id', $request->patient['id']);
+        if (isset($request->patient_id) && $request->patient_id > 0) {
+            $appointments->where('patient_id', $request->patient_id);
         }
-        if ($request->department) {
-            $appointments->where('department_id', $request->department['id']);
+        if (isset($request->department_id) && $request->department_id > 0) {
+            $appointments->where('department_id', $request->department_id);
         }
-        if ($request->status) {
+        if (isset($request->status) && $request->status !== 'ALL') {
             $appointments->where('status', $request->status);
         }
-        if($request->initial_date && $request->end_date) {
-            $appointments->whereBetween('start_date', [$request->initial_date, $request->end_date]);
+        if (isset($request->initial_date) && isset($request->end_date)) {
+            $appointments->where('start_date', '>=', $request->initial_date);
+            $appointments->where('end_date', '<=', $request->end_date);
+
+        } else if (isset($request->initial_date) && !isset($request->end_date)) {
+            $appointments->where('start_date', $request->initial_date);
+        } else if (!isset($request->initial_date) && isset($request->end_date)) {
+            $appointments->where('end_date', $request->end_date);
         }
 
         $appointments = $appointments->orderBy('start_date')->get();

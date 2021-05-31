@@ -173,6 +173,10 @@ export default {
     };
   },
   created() {
+    if(this.$user.group !== 2) {
+      delete this.link.settings;
+      delete this.link.reports;
+    }
     this.active_link = this.$route.name;
     this.link[this.$route.name].active = true;
   },

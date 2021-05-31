@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -24,8 +25,9 @@ class AppointmentController extends Controller
                 'appointments.status',
                 'appointments.start_date',
                 'appointments.end_date',
-            );
-
+            )
+            ->whereIn('appointments.department_id', $request->departments);
+                
         /*
         if ($request->filter) {
             $patients = Appointment::where(function ($query) use ($request) {
