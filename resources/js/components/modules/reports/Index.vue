@@ -5,7 +5,7 @@
     <section class="content-header">
       <h1>
         <i class="fa fa-file-text"></i> Relatórios
-        <small>Gerenciar relatórios dos atendimentos cadastrados</small>
+        <small>| Gerencie os relatórios dos atendimentos cadastrados.</small>
       </h1>
       <ol class="breadcrumb">
         <li>

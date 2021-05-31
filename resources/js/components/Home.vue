@@ -20,138 +20,81 @@
       <!-- Info boxes -->
       <div class="row">
         <div class="col-lg-3 col-xs-6">
+            <router-link to="/appointments">
           <!-- small box -->
-          <div class="small-box bg-aqua">
+          <div class="small-box bg-blue">
             <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
+              <h3>Atendimentos</h3>
+              <p>Gerencie os atendimentos cadastrados no sistema.</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="fa fa-clipboard"></i>
             </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
+            <a href="#" class="small-box-footer">&nbsp;</a>
           </div>
+          </router-link>
         </div>
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
+          <router-link to="/patients">
           <!-- small box -->
-          <div class="small-box bg-aqua">
+          <div class="small-box bg-blue">
             <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
+              <h3>Pacientes</h3>
+              <p>Gerencie os pacientes cadastrados no sistema.</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="fa fa-venus-mars"></i>
             </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
+            <a href="#" class="small-box-footer">&nbsp;</a>
           </div>
+          </router-link>
         </div>
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
+          <router-link to="/reports">
           <!-- small box -->
-          <div class="small-box bg-aqua">
+          <div class="small-box bg-blue">
             <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
+              <h3>Relatórios</h3>
+              <p>Gerencie os relatórios dos atendimentos cadastrados.</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="fa fa-file-text"></i>
             </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
+            <a href="#" class="small-box-footer">&nbsp;</a>
           </div>
+          </router-link>
         </div>
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
+          <router-link to="/settings">
           <!-- small box -->
-          <div class="small-box bg-aqua">
+          <div class="small-box bg-blue">
             <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
+              <h3>Configurações</h3>
+              <p>Gerencie os usuários, grupos e departamentos do sistema.</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="fa fa-cogs"></i>
             </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
+            <a href="#" class="small-box-footer">&nbsp;</a>
           </div>
+          </router-link>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
-            </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-              <p>Bounce Rate</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>44</h3>
-
-              <p>User Registrations</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-xs-6" style="cursor: pointer;" @click="logout">
+          
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3>65</h3>
-
-              <p>Unique Visitors</p>
+              <h3>Logout</h3>
+              <p>Sair do sistema.</p>
             </div>
             <div class="icon">
-              <i class="ion ion-pie-graph"></i>
+              <i class="fa fa-sign-out"></i>
             </div>
-            <a href="#" class="small-box-footer"
-              >More info <i class="fa fa-arrow-circle-right"></i
-            ></a>
+            <a href="#" class="small-box-footer">&nbsp;</a>
           </div>
         </div>
         <!-- ./col -->
@@ -173,5 +116,20 @@ export default {
   created() {
     //console.log(this.user);
   },
+  methods: {
+    logout() {
+        this.$loading(true);
+        localStorage.clear();
+        setTimeout(() => {
+          this.$loading(false);
+          this.$router.push("/login");
+        }, 1000);
+      },
+  }
 };
 </script>
+<style scoped>
+.bg-blue {
+  background-color: #3c8dbc !important; 
+}
+</style>
