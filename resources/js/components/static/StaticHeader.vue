@@ -69,10 +69,24 @@
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-search"></i></a>
           </li>
           <li>
-            <a href="#"><i class="fa fa-sign-out"></i></a>
+            <a @click="logout"><i class="fa fa-sign-out"></i></a>
           </li>
         </ul>
       </div>
     </nav>
   </header>
 </template>
+<script>
+export default {
+  methods: {
+    logout() {
+      this.$loading(true);
+      localStorage.clear();
+      setTimeout(() => {
+        this.$loading(false);
+        this.$router.push("/login");
+      }, 1000);
+    },
+  }
+}
+</script>

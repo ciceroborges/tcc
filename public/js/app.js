@@ -2100,11 +2100,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    user: ""
+  data: function data() {
+    return {
+      user: ""
+    };
   },
-  created: function created() {//console.log(this.user);
+  created: function created() {
+    this.user = JSON.parse(localStorage.getItem('user'));
   },
   methods: {
     logout: function logout() {
@@ -2117,6 +2121,38 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.$router.push("/login");
       }, 1000);
+    },
+    chatAPI: function chatAPI() {
+      var _this2 = this;
+
+      /* begin loading spinner*/
+      this.$loading(true);
+      /* api */
+
+      var instance = "289744";
+      var token = "k3c6af2ydi4dxwmo";
+      var api = "https://api.chat-api.com/instance".concat(instance, "/sendMessage?token=").concat(token);
+      /* request */
+
+      this.$axios.post(api, {
+        phone: "5592993138892",
+        body: 'Ai você fala o seguinte: "- Mas vocês acabaram isso?" Vou te falar: -"Não, está em andamento!" Tem obras que "vai" durar pra depois de 2010. Agora, por isso, nós já não desenhamos, não começamos a fazer projeto do que nós "podêmo fazê"? 11, 12, 13, 14... Por que é que não?'
+      }).then(function (_ref) {
+        var data = _ref.data;
+        alert(JSON.stringify(data));
+
+        _this2.$loading(false);
+      })["catch"](function (e) {
+        if (e.response.data) {
+          alert(e.response.data.message);
+        } else {
+          alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+        }
+        /* stop loading spinner */
+
+
+        _this2.$loading(false);
+      });
     }
   }
 });
@@ -2885,9 +2921,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var _this4 = this;
 
       var message = {
-        'IN PROGRESS': 'Ao confirmar, o atendimento estará em progresso. Deseja continuar?',
-        'CONCLUDED': 'Ao confirmar, o atendimento será concluído juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?',
-        'CANCELED': 'Ao confirmar, o atendimento será cancelado juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?'
+        "IN PROGRESS": "Ao confirmar, o atendimento estará em progresso. Deseja continuar?",
+        CONCLUDED: "Ao confirmar, o atendimento será concluído juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?",
+        CANCELED: "Ao confirmar, o atendimento será cancelado juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?"
       };
       var $confirm = confirm(message[$status]);
 
@@ -2915,10 +2951,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
             if (index !== -1) {
               _this4.appointments[index].status = data.appointment.status;
-              data.appointment.end_date ? _this4.appointments[index].end_date = data.appointment.end_date : '';
+              data.appointment.end_date ? _this4.appointments[index].end_date = data.appointment.end_date : "";
             }
 
+            _this4.sms(data.phone_number, data.phone_message);
+
             alert(data.message);
+            console.log(data);
           } else {
             alert(data.message);
             $("#edit-appointment").modal("show");
@@ -2940,6 +2979,39 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         });
       }
     },
+    sms: function sms($phone_number, $phone_message) {
+      var _this5 = this;
+
+      console.log('caiu aqui');
+      /* begin loading spinner*/
+
+      this.$loading(true);
+      /* api */
+
+      var instance = "289744";
+      var token = "k3c6af2ydi4dxwmo";
+      var api = "https://api.chat-api.com/instance".concat(instance, "/sendMessage?token=").concat(token);
+      /* request */
+
+      this.$axios.post(api, {
+        phone: "55".concat($phone_number),
+        body: $phone_message
+      }).then(function (_ref5) {
+        var data = _ref5.data;
+
+        _this5.$loading(false);
+      })["catch"](function (e) {
+        if (e.response.data) {
+          alert(e.response.data.message);
+        } else {
+          alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+        }
+        /* stop loading spinner */
+
+
+        _this5.$loading(false);
+      });
+    },
 
     /*----------*/
 
@@ -2947,7 +3019,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*----------*/
     destroy: function destroy($target) {
-      var _this5 = this;
+      var _this6 = this;
 
       var $confirm = confirm("Voc\xEA tem certeza? O atendimento #".concat($target.id, " de ").concat($target.patient.name, " ser\xE1 exclu\xEDdo. Est\xE1 a\xE7\xE3o n\xE3o poder\xE1 ser desfeita."));
 
@@ -2966,11 +3038,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           params: {
             id: $target.id
           }
-        }).then(function (_ref5) {
-          var data = _ref5.data;
+        }).then(function (_ref6) {
+          var data = _ref6.data;
 
           if (data.status) {
-            _this5.reset();
+            _this6.reset();
             /*
             let index = this.users.findIndex(
               (item) => item.id === data.patient.id
@@ -2992,7 +3064,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           /* stop loading spinner */
 
 
-          _this5.$loading(false);
+          _this6.$loading(false);
         })["catch"](function (e) {
           if (e.response.data) {
             alert(e.response.data.message);
@@ -3002,7 +3074,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           /* stop loading spinner */
 
 
-          _this5.$loading(false);
+          _this6.$loading(false);
         });
       }
     },
@@ -3013,7 +3085,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*-------*/
     getPatients: function getPatients() {
-      var _this6 = this;
+      var _this7 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -3022,19 +3094,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "patient/index");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref6) {
-        var data = _ref6.data;
-        _this6.patients = data.patients;
+      this.$axios.get(api, {}).then(function (_ref7) {
+        var data = _ref7.data;
+        _this7.patients = data.patients;
 
-        _this6.$loading(false);
+        _this7.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this6.$loading(false);
+        _this7.$loading(false);
       });
     },
     getDepartments: function getDepartments() {
-      var _this7 = this;
+      var _this8 = this;
 
       /* begin loading spinner*/
       this.$loading(true);
@@ -3043,15 +3115,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var api = "".concat(this.$urlAPI, "department/index");
       /* request */
 
-      this.$axios.get(api, {}).then(function (_ref7) {
-        var data = _ref7.data;
-        _this7.departments = data.departments;
+      this.$axios.get(api, {}).then(function (_ref8) {
+        var data = _ref8.data;
+        _this8.departments = data.departments;
 
-        _this7.$loading(false);
+        _this8.$loading(false);
       })["catch"](function (e) {
         console.log(e.response.data.message);
 
-        _this7.$loading(false);
+        _this8.$loading(false);
       });
     },
 
@@ -3067,7 +3139,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     /*----------*/
     edit: function edit($id) {
-      var _this8 = this;
+      var _this9 = this;
 
       // start loading spinner
       this.$loading(true);
@@ -3099,36 +3171,36 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           params: {
             id: $id
           }
-        }).then(function (_ref8) {
-          var data = _ref8.data;
+        }).then(function (_ref9) {
+          var data = _ref9.data;
           // get target data
-          _this8.target = data.appointment; // get target patient
+          _this9.target = data.appointment; // get target patient
 
           if (data.appointment.patient_id) {
-            var index = _this8.patients.findIndex(function (item) {
+            var index = _this9.patients.findIndex(function (item) {
               return item.id === data.appointment.patient_id;
             });
 
             if (index !== -1) {
-              _this8.target_patient.push(_this8.patients[index]);
+              _this9.target_patient.push(_this9.patients[index]);
             }
           } // get target group
 
 
           if (data.appointment.department_id) {
-            var _index = _this8.departments.findIndex(function (item) {
+            var _index = _this9.departments.findIndex(function (item) {
               return item.id === data.appointment.department_id;
             });
 
             if (_index !== -1) {
-              _this8.target_department.push(_this8.departments[_index]);
+              _this9.target_department.push(_this9.departments[_index]);
             }
           } // show edit modal
 
 
           $("#edit-appointment").modal("show"); // stop loading spinner
 
-          _this8.$loading(false);
+          _this9.$loading(false);
         })["catch"](function (e) {
           if (e.response.data) {
             alert(e.response.data.message);
@@ -3137,7 +3209,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           } // stop loading spinner
 
 
-          _this8.$loading(false);
+          _this9.$loading(false);
         });
       }
     },
@@ -8206,6 +8278,111 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     user: ''
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    logout: function logout() {
+      var _this = this;
+
+      this.$loading(true);
+      localStorage.clear();
+      setTimeout(function () {
+        _this.$loading(false);
+
+        _this.$router.push("/login");
+      }, 1000);
+    }
   }
 });
 
@@ -35666,137 +35843,152 @@ var render = function() {
     _vm._m(0),
     _vm._v(" "),
     _c("section", { staticClass: "content" }, [
-      _c("div", { staticClass: "row" }, [
-        _c(
-          "div",
-          { staticClass: "col-lg-3 col-xs-6" },
-          [
-            _c("router-link", { attrs: { to: "/appointments" } }, [
-              _c("div", { staticClass: "small-box bg-blue" }, [
-                _c("div", { staticClass: "inner" }, [
-                  _c("h3", [_vm._v("Atendimentos")]),
+      _c(
+        "div",
+        { staticClass: "row" },
+        [
+          _c(
+            "div",
+            { staticClass: "col-lg-3 col-xs-6" },
+            [
+              _c("router-link", { attrs: { to: "/appointments" } }, [
+                _c("div", { staticClass: "small-box bg-blue" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v("Atendimentos")]),
+                    _vm._v(" "),
+                    _c("p", [
+                      _vm._v("Gerencie os atendimentos cadastrados no sistema.")
+                    ])
+                  ]),
                   _vm._v(" "),
-                  _c("p", [
-                    _vm._v("Gerencie os atendimentos cadastrados no sistema.")
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "icon" }, [
-                  _c("i", { staticClass: "fa fa-clipboard" })
-                ]),
+                  _c("div", { staticClass: "icon" }, [
+                    _c("i", { staticClass: "fa fa-clipboard" })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    { staticClass: "small-box-footer", attrs: { href: "#" } },
+                    [_vm._v(" ")]
+                  )
+                ])
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "col-lg-3 col-xs-6" },
+            [
+              _c("router-link", { attrs: { to: "/patients" } }, [
+                _c("div", { staticClass: "small-box bg-blue" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v("Pacientes")]),
+                    _vm._v(" "),
+                    _c("p", [
+                      _vm._v("Gerencie os pacientes cadastrados no sistema.")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "icon" }, [
+                    _c("i", { staticClass: "fa fa-venus-mars" })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    { staticClass: "small-box-footer", attrs: { href: "#" } },
+                    [_vm._v(" ")]
+                  )
+                ])
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm.user.group === 2
+            ? [
+                _c(
+                  "div",
+                  { staticClass: "col-lg-3 col-xs-6" },
+                  [
+                    _c("router-link", { attrs: { to: "/reports" } }, [
+                      _c("div", { staticClass: "small-box bg-blue" }, [
+                        _c("div", { staticClass: "inner" }, [
+                          _c("h3", [_vm._v("Relatórios")]),
+                          _vm._v(" "),
+                          _c("p", [
+                            _vm._v(
+                              "Gerencie os relatórios dos atendimentos cadastrados."
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "icon" }, [
+                          _c("i", { staticClass: "fa fa-file-text" })
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "small-box-footer",
+                            attrs: { href: "#" }
+                          },
+                          [_vm._v(" ")]
+                        )
+                      ])
+                    ])
+                  ],
+                  1
+                ),
                 _vm._v(" "),
                 _c(
-                  "a",
-                  { staticClass: "small-box-footer", attrs: { href: "#" } },
-                  [_vm._v(" ")]
+                  "div",
+                  { staticClass: "col-lg-3 col-xs-6" },
+                  [
+                    _c("router-link", { attrs: { to: "/settings" } }, [
+                      _c("div", { staticClass: "small-box bg-blue" }, [
+                        _c("div", { staticClass: "inner" }, [
+                          _c("h3", [_vm._v("Configurações")]),
+                          _vm._v(" "),
+                          _c("p", [
+                            _vm._v(
+                              "Gerencie os usuários, grupos e departamentos do sistema."
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "icon" }, [
+                          _c("i", { staticClass: "fa fa-cogs" })
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "small-box-footer",
+                            attrs: { href: "#" }
+                          },
+                          [_vm._v(" ")]
+                        )
+                      ])
+                    ])
+                  ],
+                  1
                 )
-              ])
-            ])
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-lg-3 col-xs-6" },
-          [
-            _c("router-link", { attrs: { to: "/patients" } }, [
-              _c("div", { staticClass: "small-box bg-blue" }, [
-                _c("div", { staticClass: "inner" }, [
-                  _c("h3", [_vm._v("Pacientes")]),
-                  _vm._v(" "),
-                  _c("p", [
-                    _vm._v("Gerencie os pacientes cadastrados no sistema.")
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "icon" }, [
-                  _c("i", { staticClass: "fa fa-venus-mars" })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  { staticClass: "small-box-footer", attrs: { href: "#" } },
-                  [_vm._v(" ")]
-                )
-              ])
-            ])
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-lg-3 col-xs-6" },
-          [
-            _c("router-link", { attrs: { to: "/reports" } }, [
-              _c("div", { staticClass: "small-box bg-blue" }, [
-                _c("div", { staticClass: "inner" }, [
-                  _c("h3", [_vm._v("Relatórios")]),
-                  _vm._v(" "),
-                  _c("p", [
-                    _vm._v(
-                      "Gerencie os relatórios dos atendimentos cadastrados."
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "icon" }, [
-                  _c("i", { staticClass: "fa fa-file-text" })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  { staticClass: "small-box-footer", attrs: { href: "#" } },
-                  [_vm._v(" ")]
-                )
-              ])
-            ])
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-lg-3 col-xs-6" },
-          [
-            _c("router-link", { attrs: { to: "/settings" } }, [
-              _c("div", { staticClass: "small-box bg-blue" }, [
-                _c("div", { staticClass: "inner" }, [
-                  _c("h3", [_vm._v("Configurações")]),
-                  _vm._v(" "),
-                  _c("p", [
-                    _vm._v(
-                      "Gerencie os usuários, grupos e departamentos do sistema."
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "icon" }, [
-                  _c("i", { staticClass: "fa fa-cogs" })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  { staticClass: "small-box-footer", attrs: { href: "#" } },
-                  [_vm._v(" ")]
-                )
-              ])
-            ])
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass: "col-lg-3 col-xs-6",
-            staticStyle: { cursor: "pointer" },
-            on: { click: _vm.logout }
-          },
-          [_vm._m(1)]
-        )
-      ])
+              ]
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "col-lg-3 col-xs-6",
+              staticStyle: { cursor: "pointer" },
+              on: { click: _vm.logout }
+            },
+            [_vm._m(1)]
+          )
+        ],
+        2
+      )
     ])
   ])
 }
@@ -41725,7 +41917,11 @@ var render = function() {
               _vm._v(" "),
               _vm._m(3),
               _vm._v(" "),
-              _vm._m(4)
+              _c("li", [
+                _c("a", { on: { click: _vm.logout } }, [
+                  _c("i", { staticClass: "fa fa-sign-out" })
+                ])
+              ])
             ])
           ])
         ]
@@ -41786,16 +41982,6 @@ var staticRenderFns = [
     return _c("li", [
       _c("a", { attrs: { href: "#", "data-toggle": "control-sidebar" } }, [
         _c("i", { staticClass: "fa fa-search" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("a", { attrs: { href: "#" } }, [
-        _c("i", { staticClass: "fa fa-sign-out" })
       ])
     ])
   }
@@ -59913,15 +60099,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _StaticHeader_vue_vue_type_template_id_0b3f167e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StaticHeader.vue?vue&type=template&id=0b3f167e& */ "./resources/js/components/static/StaticHeader.vue?vue&type=template&id=0b3f167e&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _StaticHeader_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./StaticHeader.vue?vue&type=script&lang=js& */ "./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _StaticHeader_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _StaticHeader_vue_vue_type_template_id_0b3f167e___WEBPACK_IMPORTED_MODULE_0__["render"],
   _StaticHeader_vue_vue_type_template_id_0b3f167e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -59935,6 +60123,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/js/components/static/StaticHeader.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_StaticHeader_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./StaticHeader.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/static/StaticHeader.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_StaticHeader_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

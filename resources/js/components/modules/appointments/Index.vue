@@ -14,14 +14,14 @@
     <!-- This div must be placed immediately after the control sidebar -->
     <div class="control-sidebar-bg"></div>
     <!-- edit modal -->
-    <edit 
+    <edit
       :target="target"
       :target_patient="target_patient"
       :target_department="target_department"
       :patients="patients"
-      :departments="departments" 
-      :store="store" 
-      :update="update" 
+      :departments="departments"
+      :store="store"
+      :update="update"
       :statusUpdate="statusUpdate"
       :destroy="destroy"
     />
@@ -172,10 +172,13 @@ export default {
               (item) => item.id === data.appointment.id
             );
             if (index !== -1) {
-              this.appointments[index].department_id = data.appointment.department_id;
-              this.appointments[index].department_name = data.appointment.department_name;
+              this.appointments[index].department_id =
+                data.appointment.department_id;
+              this.appointments[index].department_name =
+                data.appointment.department_name;
               this.appointments[index].patient_id = data.appointment.patient_id;
-              this.appointments[index].patient_name = data.appointment.patient_name;
+              this.appointments[index].patient_name =
+                data.appointment.patient_name;
               this.appointments[index].anamnesis = data.appointment.anamnesis;
               //this.appointments[index].status = data.appointment.status;
               this.appointments[index].start_date = data.appointment.start_date;
@@ -203,39 +206,77 @@ export default {
     },
     statusUpdate($id, $status) {
       let message = {
-        'IN PROGRESS': 'Ao confirmar, o atendimento estará em progresso. Deseja continuar?',
-        'CONCLUDED': 'Ao confirmar, o atendimento será concluído juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?',
-        'CANCELED': 'Ao confirmar, o atendimento será cancelado juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?', 
-      }
+        "IN PROGRESS":
+          "Ao confirmar, o atendimento estará em progresso. Deseja continuar?",
+        CONCLUDED:
+          "Ao confirmar, o atendimento será concluído juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?",
+        CANCELED:
+          "Ao confirmar, o atendimento será cancelado juntamente com todas as sessões vinculadas a ele que ainda nao foram encerradas. Deseja continuar?",
+      };
       let $confirm = confirm(message[$status]);
       if ($confirm) {
+        /* begin loading spinner*/
+        this.$loading(true);
+        /* close edit modal */
+        $("#edit-appointment").modal("hide");
+        /* api */
+        const api = `${this.$urlAPI}appointment/status-update`;
+        /* request */
+        this.$axios
+          .put(api, {
+            id: $id,
+            status: $status,
+          })
+          .then(({ data }) => {
+            if (data.status) {
+              let index = this.appointments.findIndex(
+                (item) => item.id === data.appointment.id
+              );
+              if (index !== -1) {
+                this.appointments[index].status = data.appointment.status;
+                data.appointment.end_date
+                  ? (this.appointments[index].end_date =
+                      data.appointment.end_date)
+                  : "";
+              }
+              this.sms(data.phone_number, data.phone_message);
+              alert(data.message);
+              console.log(data);
+            } else {
+              alert(data.message);
+              $("#edit-appointment").modal("show");
+            }
+            /* stop loading spinner */
+            this.$loading(false);
+          })
+          .catch((e) => {
+            if (e.response.data) {
+              alert(e.response.data.message);
+            } else {
+              alert(
+                `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
+              );
+            }
+            /* stop loading spinner */
+            this.$loading(false);
+          });
+      }
+    },
+    sms($phone_number, $phone_message) {
+      console.log('caiu aqui');
       /* begin loading spinner*/
       this.$loading(true);
-      /* close edit modal */
-      $("#edit-appointment").modal("hide");
       /* api */
-      const api = `${this.$urlAPI}appointment/status-update`;
+      const instance = "289744";
+      const token = "k3c6af2ydi4dxwmo";
+      const api = `https://api.chat-api.com/instance${instance}/sendMessage?token=${token}`;
       /* request */
       this.$axios
-        .put(api, {
-          id: $id,
-          status: $status,
+        .post(api, {
+          phone: `55${$phone_number}`,
+          body: $phone_message,
         })
         .then(({ data }) => {
-          if (data.status) {
-            let index = this.appointments.findIndex(
-              (item) => item.id === data.appointment.id
-            );
-            if (index !== -1) {
-              this.appointments[index].status = data.appointment.status;
-              data.appointment.end_date ? this.appointments[index].end_date = data.appointment.end_date : '';
-            }
-            alert(data.message);
-          } else {
-            alert(data.message);
-            $("#edit-appointment").modal("show");
-          }
-          /* stop loading spinner */
           this.$loading(false);
         })
         .catch((e) => {
@@ -249,7 +290,6 @@ export default {
           /* stop loading spinner */
           this.$loading(false);
         });
-      }
     },
     /*----------*/
     /** @delete */
@@ -432,7 +472,7 @@ export default {
       this.skip = 0;
       this.count = 0;
       this.$refs.AppointmentList.$refs.infiniteAppointmentsTable.stateChanger.reset();
-    }
+    },
   },
   watch: {
     searched_patient() {

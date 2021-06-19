@@ -266,14 +266,51 @@ class AppointmentController extends Controller
                 $fields['end_date'] = NOW();
             }
             
-            Appointment::where('id', $appointment->id)->update($fields);
+            $update = Appointment::where('id', $appointment->id)->update($fields);
 
             $fields['id'] = $request->id;
+
+            $phone_number = null;
+            $phone_message = null;
+            if($update) {
+                $appointment = Appointment::join('departments', 'departments.id', 'appointments.department_id')
+                ->join('patients', 'patients.id', 'appointments.patient_id')
+                ->select(
+                    'appointments.start_date', 
+                    'appointments.end_date',
+                    'departments.name as department_name',
+                    'patients.name as patient_name',
+                    'patients.phone_number',    
+                )
+                ->where('appointments.id', $request->id)
+                ->first();
+                
+                $phone_number = $appointment->phone_number;
+
+                if($appointment) {
+                    switch($request->status) {
+                        case 'WAITING':
+                            $phone_message = 'Olá '.$appointment->patient_name.', você possuí um atendimento de '.$appointment->department_name.' agendado para: '.$appointment->start_date. '. Aguardamos você ;)';
+                            break;
+                        case 'IN PROGRESS':
+                            $phone_message = 'Olá '.$appointment->patient_name.', seu atendimento de '.$appointment->department_name.' foi iniciado em: '.date('d/m/Y').'. Em caso de dúvidas entre em contato ;)';
+                            break;
+                        case 'CANCELED': 
+                            $phone_message = 'Olá '.$appointment->patient_name.', seu atendimento de '.$appointment->department_name.' foi cancelado em: '.date('d/m/Y').'. Caso queira agendar um novo atendimento, entre em contato ;)';
+                            break;
+                        case 'CONCLUDED': 
+                            $phone_message = 'Olá '.$appointment->patient_name.', seu atendimento de '.$appointment->department_name.' foi concluído em: '.date('d/m/Y').'. Obrigado ;)';
+                            break;    
+                    }
+                }
+            }
 
             return response()->json([
                 'appointment' => $fields,
                 'flag' => 'success',
                 'message' => 'Atendimento atualizado com successo.',
+                'phone_number' => $phone_number,
+                'phone_message' => $phone_message,
                 'status' => 1
             ]);
         } else {
