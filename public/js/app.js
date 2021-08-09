@@ -2982,14 +2982,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     sms: function sms($phone_number, $phone_message) {
       var _this5 = this;
 
-      console.log('caiu aqui');
       /* begin loading spinner*/
-
       this.$loading(true);
       /* api */
 
-      var instance = "289744";
-      var token = "k3c6af2ydi4dxwmo";
+      var instance = "307301";
+      var token = "od81zmne8wnq4yoo";
       var api = "https://api.chat-api.com/instance".concat(instance, "/sendMessage?token=").concat(token);
       /* request */
 
@@ -3002,9 +3000,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _this5.$loading(false);
       })["catch"](function (e) {
         if (e.response.data) {
-          alert(e.response.data.message);
+          console.log(e.response.data.message);
         } else {
-          alert("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
+          console.log("Ocorreu um problema durante a execu\xE7\xE3o! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. C\xF3digo de erro: ( ".concat(e, " )."));
         }
         /* stop loading spinner */
 

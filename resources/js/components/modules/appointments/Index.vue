@@ -263,12 +263,11 @@ export default {
       }
     },
     sms($phone_number, $phone_message) {
-      console.log('caiu aqui');
       /* begin loading spinner*/
       this.$loading(true);
       /* api */
-      const instance = "289744";
-      const token = "k3c6af2ydi4dxwmo";
+      const instance = "307301";
+      const token = "od81zmne8wnq4yoo";
       const api = `https://api.chat-api.com/instance${instance}/sendMessage?token=${token}`;
       /* request */
       this.$axios
@@ -281,9 +280,9 @@ export default {
         })
         .catch((e) => {
           if (e.response.data) {
-            alert(e.response.data.message);
+           console.log(e.response.data.message);
           } else {
-            alert(
+            console.log(
               `Ocorreu um problema durante a execução! Tente novamente. Caso o problema persista, reporte o erro ao administrador do sistema. Código de erro: ( ${e} ).`
             );
           }

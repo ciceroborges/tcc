@@ -72,6 +72,7 @@ Route::prefix('patient')->group(function () {
     /* DELETE */
     Route::delete('/destroy', 'PatientController@destroy');
 });
+
 /*
 appointment api routes
 */
@@ -87,6 +88,7 @@ Route::prefix('appointment')->group(function () {
     /* DELETE */
     Route::delete('/destroy', 'AppointmentController@destroy');
 });
+
 /*
 report api routes
 */

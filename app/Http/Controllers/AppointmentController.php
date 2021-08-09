@@ -77,6 +77,7 @@ class AppointmentController extends Controller
             ], 404);
         }
     }
+
     public function find(Request $request)
     {
         /** validation */
@@ -121,6 +122,7 @@ class AppointmentController extends Controller
             ], 404);
         }
     }
+
     public function store(Request $request)
     {
         /** validation */
@@ -128,9 +130,7 @@ class AppointmentController extends Controller
             'department' => 'required|array',
             'patient' => 'required|array',
             'anamnesis' => 'required|string',
-            //'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
             'start_date' => 'required|date',
-            //'end_date' => 'nullable|date',
         ]);
 
         if ($validation->fails()) {
@@ -148,7 +148,6 @@ class AppointmentController extends Controller
             'anamnesis' => $request->anamnesis,
             'status' => 'WAITING',
             'start_date' => $request->start_date,
-            //'end_date' => $request->end_date,
         ]);
 
         if ($store) {
@@ -186,9 +185,7 @@ class AppointmentController extends Controller
             'department' => 'required|array',
             'patient' => 'required|array',
             'anamnesis' => 'required|string',
-            //'status' =>  ['required', Rule::in(['WAITING', 'IN PROGRESS', 'CANCELED', 'CONCLUDED'])],
             'start_date' => 'required|date',
-            //'end_date' => 'nullable|date',
         ]);
 
         if ($validation->fails()) {
@@ -207,9 +204,7 @@ class AppointmentController extends Controller
                 'department_id' => $request->department['id'],
                 'patient_id' => $request->patient['id'],
                 'anamnesis' => $request->anamnesis,
-                //'status' => $request->status,
                 'start_date' => $request->start_date,
-                //'end_date' => $request->end_date,
             ]);
 
             return response()->json([
@@ -359,4 +354,5 @@ class AppointmentController extends Controller
             ], 404);
         }
     }
+    
 }
